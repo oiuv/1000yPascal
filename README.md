@@ -17,10 +17,10 @@
 Help\杂货商.txt           #交易界面内容
 Init\Npc.sdb              #初始化NPC设置
 NpcSetting\杂货商.sdb      #NPC自动说话内容（非必需）
-NpcSetting\杂货商.txt      #买卖物品列表
-Script\Script.sdb         #脚本索引
-Script\杂货商.txt         #交易脚本代码
-Setting\CreateNpc88.sdb  #在编号88的地图上生成NPC
+NpcSetting\杂货商.txt       #买卖物品列表
+Script\Script.sdb          #脚本索引
+Script\杂货商.txt          #交易脚本代码
+Setting\CreateNpc88.sdb   #在编号88的地图上生成NPC
 ```
 
 本教程重点针对Script目录下的编程相关做说明，所有行为控制代码都在这里。
