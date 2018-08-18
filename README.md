@@ -79,6 +79,7 @@ end.
 
 pascal游戏开发基础说明：
 * pascal除字符串变量外，不区分大小写
+* pascal函数分function（有返回值）和procedure（无返回值）
 * pascal变量声明方法为：var Str:String;（好非主流的方法）
 * pascal赋值为“:=”，而“=”为逻辑运算符（又是一种非主流的用法）
 * 游戏主要要使用的数据类型：integer、string、boolean
