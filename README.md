@@ -75,4 +75,4 @@ end;
 end.
 ```
 
-具体开发中，游戏语法大概可分为procedure过程、callfunc方法和print方法三大类。
+从以上代码可见，基础语法和pascal一至，而游戏特定功能的语法可分为procedure过程、callfunc方法和print方法三大类。关于pascal的基础语法，这里不做说明，主要是针对游戏功能方法补充文档。 
