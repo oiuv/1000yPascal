@@ -25,7 +25,7 @@ Setting\CreateNpc88.sdb   #在编号88的地图上生成NPC
 
 本教程重点针对Script目录下的编程相关做说明，所有行为控制代码都在这里。
 
-游戏中每一个互动模块（比如一个NPC）都是一个单元，对应Script目录下一个文件,在pascal语言中，unit的基本结构如下：
+游戏中每一个互动单位（比如一个NPC）都是一个单元unit，对应Script目录下一个文件,在pascal语言中，unit的基本结构如下：
 ```pascal
 unit Unit1;  
 
@@ -36,7 +36,7 @@ implementation  
 end.
 ```
 
-而在千年中，以游戏中的福袋为列，OnDblClick这个procedure（过程）为福袋功能，其它部分为所有单元都有的基本结构。
+在千年中，以游戏中的福袋为列:
 ```pascal
 unit 福袋;
 
@@ -75,7 +75,7 @@ end;
 end.
 ```
 
-从以上代码可见，基础语法和pascal一至，而游戏特定功能的语法可分为procedure过程、function、callfunc方法和print方法几类。
+以上代码中，OnDblClick这个procedure（过程）为福袋功能，其它部分为所有单元都有的基本结构。从以上代码可见，基础语法和pascal一至，而游戏特定功能的语法可分为procedure过程、function、callfunc方法和print方法几类。
 
 pascal游戏开发基础说明：
 * pascal除字符串变量外，不区分大小写
