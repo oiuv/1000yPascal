@@ -75,7 +75,7 @@ end;
 end.
 ```
 
-从以上代码可见，基础语法和pascal一至，而游戏特定功能的语法可分为procedure过程、callfunc方法和print方法三大类。
+从以上代码可见，基础语法和pascal一至，而游戏特定功能的语法可分为procedure过程、function、callfunc方法和print方法几类。
 
 pascal游戏开发基础说明：
 * pascal除字符串变量外，不区分大小写
