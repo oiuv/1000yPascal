@@ -75,4 +75,13 @@ end;
 end.
 ```
 
-从以上代码可见，基础语法和pascal一至，而游戏特定功能的语法可分为procedure过程、callfunc方法和print方法三大类。关于pascal的基础语法，这里不做说明，主要是针对游戏功能方法补充文档。 
+从以上代码可见，基础语法和pascal一至，而游戏特定功能的语法可分为procedure过程、callfunc方法和print方法三大类。
+
+pascal游戏开发基础说明：
+* pascal除字符串变量外，不区分大小写
+* pascal变量声明方法为：var Str:String;（好非主流的方法）
+* pascal赋值为“:=”，而“=”为逻辑运算符（又是一种非主流的用法）
+* 游戏主要要使用的数据类型：integer、string、boolean
+* 游戏中使用_代替空格
+
+
