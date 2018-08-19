@@ -1,4 +1,4 @@
-获取当前玩家姓名
+获取当前游戏单位的名称
 
 ```pascal
 Str := callfunc ('getname');
