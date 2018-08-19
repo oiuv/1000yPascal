@@ -84,5 +84,6 @@ pascal游戏开发基础说明：
 * pascal赋值为“:=”，而“=”为逻辑运算符（又是一种非主流的用法）
 * 游戏主要要使用的数据类型：integer、string、boolean
 * 游戏中部分方法中使用_代替空格
+* System.txt中当前游戏单位为触发事件的玩家，其它脚本中当前游戏单位为绑定脚本的NPC、Monster、DynamicObject
 
 
