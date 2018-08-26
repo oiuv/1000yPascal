@@ -89,7 +89,6 @@ Str := callfunc ('getsenderitemexistencebykind 60 1');
 Str := callfunc ('getsenderjobgrade');
 Str := callfunc ('getsenderjobkind');
 Str := callfunc ('getsendername');
-Str := callfunc ('getsendername');   
 Str := callfunc ('getsenderposition');
 Str := callfunc ('getsenderqueststr');
 Str := callfunc ('getsenderrace');
