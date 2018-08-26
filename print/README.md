@@ -1,5 +1,5 @@
 print 指令示例，包括炎黄新章新增指令哦。
-
+```pascal
 print ('activebank');
 print ('bohitallbyname 地下石巨人 monster false');
 print ('bohitallbyname 地下石巨人 monster true');
@@ -67,3 +67,4 @@ print ('usemagicgradeup 0 1');
 print ('usemagicgradeup 0 2');
 print ('usemagicgradeup 1 1');
 print ('usemagicgradeup 1 2');
+```
