@@ -1,4 +1,4 @@
-callfunc 示例,示例包括了炎黄新章新增指令哦。
+callfunc 示例，包括了炎黄新章新增指令哦。
 ```pascal
 Str := callfunc ('checkalivemopcount 96 monster 蜘蛛女王B');
 Str := callfunc ('checkenoughspace 4');
