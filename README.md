@@ -1,4 +1,5 @@
 # 千年游戏开发手册
+
 古老的千年使用的是pascal语言，开发相关目录结构如下：
 ```
 ├─event
@@ -78,6 +79,7 @@ end.
 以上代码中，OnDblClick这个procedure（过程）为福袋功能，其它部分为所有单元都有的基本结构。从以上代码可见，基础语法和pascal一至，而游戏特定功能的语法可分为procedure过程、function、callfunc方法和print方法几类。
 
 ## procedure
+
 * function OnDanger (aStr : String) : String;
 * function OnMove (aStr : String) : String;
 * procedure OnApproach (aStr : String);
@@ -105,12 +107,15 @@ end.
 
 
 ## pascal游戏开发基础说明：
+
 * pascal除字符串变量外，不区分大小写
 * pascal函数分function（有返回值）和procedure（无返回值）
 * pascal变量声明方法为：var Str:String;（好非主流的方法）
 * pascal赋值为“:=”，而“=”为逻辑运算符（又是一种非主流的用法）
 * 游戏主要要使用的数据类型：integer、string、boolean
-* 游戏中部分方法中使用_代替空格
+* 游戏中部分方法中字符串使用`_`代表空格`,`代表换行
 * System.txt中当前游戏单位为触发事件的玩家，其它脚本中当前游戏单位为绑定脚本的NPC、Monster、DynamicObject
 
+更多Pascal内容请见[help\Pascal.md](help\Pascal.md)
 
+> 千年游戏QQ群：2887111

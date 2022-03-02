@@ -10,3 +10,17 @@ begin
 end;
 
 ```
+
+## 示例
+
+```pascal
+function OnDanger (aStr : String) : String;
+begin
+   if aStr = '火箭' then begin
+      Result := 'true';
+      exit;
+   end;
+
+   Result := 'false';
+end;
+```
