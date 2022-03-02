@@ -116,6 +116,6 @@ end.
 * 游戏中部分方法中字符串使用`_`代表空格`,`代表换行
 * System.txt中当前游戏单位为触发事件的玩家，其它脚本中当前游戏单位为绑定脚本的NPC、Monster、DynamicObject
 
-更多Pascal内容请见[help\Pascal.md](help\Pascal.md)
+更多Pascal内容请见[help\Pascal.md](help/Pascal.md)
 
 > 千年游戏QQ群：2887111

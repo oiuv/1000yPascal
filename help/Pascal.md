@@ -38,6 +38,21 @@ begin { main program block starts}
 end. { the end of main program block }
 ```
 
+示例：
+```pascal
+program HelloWorld;
+uses crt;
+(* Here the main program block starts *)
+begin
+   writeln('Hello, World!');
+   readkey;
+end. 
+```
+
+第一行`program HelloWorld;` 表示程序的名称。
+第二行`uses crt;`是一个预处理器命令，它告诉编译器在进行实际编译之前包含crt单元。
+begin和end语句中包含的下一行是主程序块。Pascal中的每个块都包含在begin语句和end语句中，需要注意的是表示主程序结束的结束语句end后面是句号（.）而不是分号（;）。
+
 ### 注释
 
 多行注释以括号（* ... *）括在括号和星号中。Pascal允许在大括号{...}中包含单行注释。
@@ -75,6 +90,20 @@ var
    iCount : Integer;
 ```
 
+变量赋值使用的是`:=`，这和现在大多数高级语言不同，需特别注意。
+
+示例：
+```pascal
+   Str := callfunc ('getsenderrace');
+```
+
+注意：默认情况下，Pascal中的变量不会初始化为零，它们可能含有垃圾值。 因此，在程序中初始化变量是一种更好的做法，变量可以在其声明中初始化（分配初始值）。
+
+```
+var
+variable_name : type = value;
+```
+
 ### 运算符
 
 Pascal语言的运算符多数和其它高级语言一至，以下二个不同：
@@ -84,13 +113,15 @@ Pascal语言的运算符多数和其它高级语言一至，以下二个不同�
 
 ### 流程控制
 
-千年中最常用的流程控制为`if - then 语句`，示例：
+流程控制主要分为选择结构和循环结构，千年中最常用的流程控制为`if - then 语句`，示例：
 
 ```pascal
    if Str <> '1' then begin
       exit;
    end;
 ```
+
+这里`begin end;`为语句块，可以理解为其它高级语言中的`{}`。
 
 ### 函数/程序
 
@@ -111,7 +142,7 @@ begin
    ...
    < statements >
    ...
-   name:= expression;
+   name := expression;
 end;
 ```
 
@@ -151,7 +182,11 @@ unit Unit1;  
 
 interface  
 
+{函数和过程的声明}
+
 implementation  
+
+{函数和过程的实现}
 
 end.
 ```
