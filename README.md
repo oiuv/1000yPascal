@@ -14,27 +14,33 @@
 ```
 
 如果在游戏中新增一个交易NPC，开发涉及如下目录：
-```
-名称：杂货商
 
-Help\杂货商.txt           #交易界面内容
-Init\Npc.sdb              #初始化NPC设置
-NpcSetting\杂货商.sdb      #NPC自动说话内容（非必需）
-NpcSetting\杂货商.txt       #买卖物品列表
-Script\Script.sdb          #脚本索引
-Script\杂货商.txt          #交易脚本代码
-Setting\CreateNpc88.sdb   #在编号88的地图上生成NPC
-```
+> 名称：杂货商
+
+文件|说明
+---|---
+Help\杂货商.txt|交易界面内容
+Init\Npc.sdb|初始化NPC设置
+NpcSetting\杂货商.sdb|NPC自动说话内容（非必需）
+NpcSetting\杂货商.txt|买卖物品列表
+Script\Script.sdb|脚本索引
+Script\杂货商.txt|交易脚本代码
+Setting\CreateNpc88.sdb|在编号88的地图上生成NPC
 
 本教程重点针对Script目录下的编程相关做说明，所有行为控制代码都在这里。
 
 游戏中每一个互动单位（比如一个NPC）都是一个单元unit，对应Script目录下一个文件，在pascal语言中，unit的基本结构如下：
+
 ```pascal
-unit Unit1;  
+unit Unit1;  
 
-interface  
+interface
 
-implementation  
+{ 过程或函数声明 }
+
+implementation
+
+{ 过程或函数实现 }
 
 end.
 ```
@@ -94,4 +100,5 @@ end.
 
 更多Pascal内容请见[help\Pascal.md](help/Pascal.md)
 
-> 千年游戏QQ群：2887111
+* 千年游戏QQ群：2887111（可下载服务端）
+* 云端千年网站：https://1000y.gameivy.com/
