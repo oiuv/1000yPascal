@@ -1,4 +1,4 @@
-当游戏单元被攻击时激活，返回值为攻击者。
+当游戏单元被攻击时激活判断是否有效攻击，返回值为`true/false`。
 
 ```pascal
 function OnDanger (aStr : String) : String;

@@ -1,3 +1,5 @@
+这里是系统提供的过程，通过print调用。
+
 print 指令示例，包括炎黄新章新增指令哦。
 ```pascal
 print ('activebank');
