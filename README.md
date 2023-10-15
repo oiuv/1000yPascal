@@ -90,11 +90,12 @@ end.
 
 ## pascal游戏开发基础说明
 
-* pascal除字符串变量外，不区分大小写
-* pascal函数分function（有返回值）和procedure（无返回值）
-* pascal变量声明方法为：var Str:String;（好非主流的方法）
-* pascal赋值为“:=”，而“=”为逻辑运算符（又是一种非主流的用法）
-* 游戏主要要使用的数据类型：integer、string、boolean
+* pascal除字符串变量外，**不区分大小写**
+* pascal函数分`function`（有返回值）和`procedure`（无返回值）
+* pascal变量声明方法为：`var Str:String;`
+* pascal赋值为`:=`，而`=`为逻辑运算符
+* 在Pascal语言中，`+` 是用于字符串拼接的运算符，**在千年中一条语句仅可使用一次拼接，且不可以拼接字符串和函数**。 
+* 游戏主要要使用的数据类型：`integer`、`string`、`boolean`
 * 游戏中部分方法中字符串使用`_`代表空格`,`代表换行
 * System.txt中当前游戏单位为触发事件的玩家，其它脚本中当前游戏单位为绑定脚本的NPC、Monster、DynamicObject
 
