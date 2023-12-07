@@ -22,25 +22,21 @@ implementation
 procedure OnUserStart (aStr : String);
 var
    Str : String;
-   CompleteQuest, CurrentQuest : Integer;
+   FirstQuest : Integer;
 begin
-   Str := callfunc ('getcompletequest');
-   CompleteQuest := StrToInt (Str);
-   Str := callfunc ('getcurrentquest');
-   CurrentQuest := StrToInt (Str);
-
-   if CompleteQuest < 1 then begin
-      if CurrentQuest < 1 then begin
-         Str := callfunc ('getname');
-         Str := 'sendsendertopmsg 欢迎新玩家[' + Str;
-         Str := Str + '],来到云端千年的武侠世界';
-         print (str);
-         Str := 'changecompletequest 1';
-         print (str);
-         Str := 'changecurrentquest 1';
-         print (str);
-         exit;
-      end;
+   // 因为1号系统脚本直接在玩家身上调用:
+   // SetScript (1);
+   // 所以callfunc不用加sender
+   Str := callfunc ('getfirstquest');
+   FirstQuest := StrToInt (Str);
+   if FirstQuest < 1 then begin
+      Str := callfunc ('getname');
+      Str := 'sendsendertopmsg 欢迎新玩家[' + Str;
+      Str := Str + '],来到云端千年的武侠世界';
+      print (str);
+      Str := 'changefirstquest 1';
+      print (str);
+      exit;
    end;
 end;
 
