@@ -2,82 +2,11 @@
 
 本目录中包括了TGS核心代码、炎黄新章游戏资料、游戏开发文档，游戏开发手册。
 
+## 常量定义
+
+游戏常量（物品类型、武功分类、职业品级、地图类型等）详见 [constants/ 目录](constants/README.md)。
+
 ## 资料说明
-
-```
-   # 区域最大常数
-   JOB_KIND_MAX               = 4;
-   JOB_GRADE_MAX              = 6;
-   ITEM_GRADE_MAX             = 10;
-   ITEM_UPGRADE_MAX           = 4;
-
-   JOB_SOUND_TRUE             = '9210';  # 职业音效：成功
-   JOB_SOUND_FALSE            = '9211';  # 职业音效：失败
-
-   # 职业种类
-   JOB_KIND_NONE              = 0;   # 职业种类：无
-   JOB_KIND_ALCHEMIST         = 1;   # 职业种类：铸造师
-   JOB_KIND_CHEMIST           = 2;   # 职业种类：炼丹师
-   JOB_KIND_DESIGNER          = 3;   # 职业种类：裁缝
-   JOB_KIND_CRAFTSMAN         = 4;   # 职业种类：工匠
-   JOB_KIND_SMELT             = 99;  # 职业种类：冶炼专用定义常数
-   JOB_KIND_MINER             = 5;   # 职业种类：矿工
-
-   # 职位
-   JOB_GRADE_NONE             = 0;   # 职位：无
-   JOB_GRADE_NAMELESSWORKER   = 1;   # 职位：初级工（经验值：100-1999）
-   JOB_GRADE_TECHNICIAN       = 2;   # 职位：技能工（经验值：2000-3999）
-   JOB_GRADE_SKILLEDWORKER    = 3;   # 职位：熟练工（经验值：4000-5999）
-   JOB_GRADE_EXPERT           = 4;   # 职位：达人（经验值：6000-7999）
-   JOB_GRADE_MASTER           = 5;   # 职位：名人（经验值：8000-9999）
-   JOB_GRADE_VIRTUEMAN        = 6;   # 职位：神工（经验值：9999 完成任务） 
-
-   # 种族
-   RACE_NONE          = 0;
-   RACE_HUMAN         = 1;
-   RACE_ITEM          = 2;
-   RACE_MONSTER       = 3;
-   RACE_NPC           = 4;
-   RACE_DYNAMICOBJECT = 5;
-   RACE_STATICITEM    = 6;
-
-   CLASS_NONE         = 0;
-   CLASS_HUMAN        = 1;
-   CLASS_MONSTER      = 2;
-   CLASS_NPC          = 3;
-   CLASS_ITEM         = 4;
-   CLASS_DYNOBJECT    = 5;
-   CLASS_GUILDSTONE   = 6;
-   CLASS_GUILDNPC     = 7;
-   CLASS_GATE         = 8;
-   CLASS_STATICITEM   = 9;
-   CLASS_DOOR         = 10;
-   CLASS_SERVEROBJ    = 11;
-   CLASS_MINEOBJECT   = 12;
-
-   # 装备部位
-   ARR_BODY           = 0;
-   ARR_GLOVES         = 1;
-   ARR_UPUNDERWEAR    = 2;
-   ARR_SHOES          = 3;
-   ARR_DOWNUNDERWEAR  = 4;
-
-   ARR_UPOVERWEAR     = 6;
-   ARR_HAIR           = 7;
-   ARR_CAP            = 8;
-   ARR_WEAPON         = 9;
-
-   //2003-04-04
-   ROLE_NONE            = 0;
-   ROLE_HEAVY_FIGHTER   = 1;
-   ROLE_LIGHT_FIGHTER   = 2;
-   ROLE_BOWMAN          = 3;
-   ROLE_HANDMAN         = 4;
-
-   ITEM_DRUG_TYPE_A = 0; // 在服用后，以秒为单位，属性值会上升一定量的试剂（在一段时间内使一定量的属性值上升）
-   ITEM_DRUG_TYPE_B = 1; // 在服用后，会使整体属性值上升一定百分比，持续一段时间
-   ITEM_DRUG_TYPE_C = 2; // 增加最大值/属性值，持续一段时间
-```
 
 ### Init目录
 
