@@ -1,0 +1,463 @@
+<style>
+:root { --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #c9d1d9; --heading: #f0f6fc; --accent: #58a6ff; --accent2: #7ee787; --warn: #f0883e; --danger: #f85149; --purple: #bc8cff; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 20px; max-width: 1200px; margin: 0 auto; }
+h1 { color: var(--heading); font-size: 2em; border-bottom: 2px solid var(--accent); padding-bottom: 12px; margin-bottom: 20px; }
+h2 { color: var(--accent); font-size: 1.5em; margin: 30px 0 15px; cursor: pointer; }
+h2:hover { color: var(--accent2); }
+h3 { color: var(--purple); font-size: 1.15em; margin: 20px 0 10px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 15px 0; }
+.arch-diagram { background: #0d1117; border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin: 15px 0; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 13px; color: var(--accent2); white-space: pre; overflow-x: auto; line-height: 1.4; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 14px; }
+th { background: #21262d; color: var(--accent); text-align: left; padding: 10px 12px; border: 1px solid var(--border); }
+td { padding: 8px 12px; border: 1px solid var(--border); }
+tr:hover td { background: #1c2128; }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600; margin: 2px; }
+.tag-blue { background: #1f3a5f; color: var(--accent); }
+.tag-green { background: #1a3a2a; color: var(--accent2); }
+.tag-orange { background: #3a2a1a; color: var(--warn); }
+.tag-red { background: #3a1a1a; color: var(--danger); }
+.tag-purple { background: #2a1a3a; color: var(--purple); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin: 15px 0; }
+.stat { text-align: center; padding: 15px; }
+.stat-num { font-size: 2em; font-weight: 700; color: var(--accent); }
+.stat-label { font-size: 0.85em; color: #8b949e; }
+.flow { background: #0d1117; border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin: 10px 0; font-family: monospace; font-size: 13px; white-space: pre; overflow-x: auto; color: var(--text); line-height: 1.5; }
+.risk-high { color: var(--danger); font-weight: 700; }
+.risk-med { color: var(--warn); font-weight: 700; }
+.risk-low { color: var(--accent2); font-weight: 700; }
+.section { margin-bottom: 30px; }
+.toc { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 25px; }
+.toc a { color: var(--accent); text-decoration: none; display: block; padding: 4px 0; }
+.toc a:hover { color: var(--accent2); }
+.highlight { color: var(--accent2); font-weight: 600; }
+code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; color: var(--accent2); }
+</style>
+
+<h1>🏯 千年（1000y）游戏服务器 — 全面深度分析报告</h1>
+<p style="color:#8b949e;margin-bottom:20px;">分析日期：2026-08-19 ｜ 分析范围：全部源码目录 ｜ 技术栈：Delphi 7 + Python</p>
+
+<div class="toc">
+<strong style="color:var(--heading);">📑 目录</strong>
+<a href="#s1">一、项目概述与技术栈</a>
+<a href="#s2">二、系统架构</a>
+<a href="#s3">三、目录结构与模块职责</a>
+<a href="#s4">四、游戏服务器核心 (TGS1000)</a>
+<a href="#s5">五、登录认证流程</a>
+<a href="#s6">六、数据库设计</a>
+<a href="#s7">七、Python 辅助服务</a>
+<a href="#s8">八、安全机制与风险</a>
+<a href="#s9">九、关键发现与总结</a>
+</div>
+
+<div class="grid">
+<div class="card stat"><div class="stat-num">7</div><div class="stat-label">独立服务组件</div></div>
+<div class="card stat"><div class="stat-num">300+</div><div class="stat-label">游戏数据/脚本文件</div></div>
+<div class="card stat"><div class="stat-num">165+</div><div class="stat-label">Pascal 脚本文件</div></div>
+<div class="card stat"><div class="stat-num">60+</div><div class="stat-label">物品类型</div></div>
+</div>
+
+<div class="section" id="s1">
+<h2>一、项目概述与技术栈</h2>
+<div class="card">
+<p><strong>项目名称</strong>：千年（1000y / Thousand Years）— 炎黄新章 D7 修复版</p>
+<p><strong>项目性质</strong>：经典韩国武侠 2D MMORPG 的完整服务端 + 客户端源码</p>
+<p><strong>游戏特色</strong>：完整的武侠 RPG 体系 — 门派/武功/绝学/元气/阴阳/炼丹/采矿/结婚/竞技场</p>
+</div>
+
+<table>
+<tr><th>类别</th><th>技术</th><th>说明</th></tr>
+<tr><td>主要语言</td><td><span class="tag tag-blue">Delphi 7</span></td><td>Object Pascal，VCL 窗体架构</td></tr>
+<tr><td>辅助语言</td><td><span class="tag tag-green">Python</span></td><td>测试/监控/协议分析/部分服务重写</td></tr>
+<tr><td>网络协议</td><td><span class="tag tag-purple">TCP + UDP</span></td><td>自定义二进制协议，包头0x28 包尾0x29</td></tr>
+<tr><td>数据库</td><td><span class="tag tag-orange">MSSQL / SDB / FDB</span></td><td>正式用MSSQL，开发用自定义文件数据库</td></tr>
+<tr><td>加密</td><td><span class="tag tag-red">AES + uCrypt</span></td><td>AES(.obj) + 自定义类Base64加密</td></tr>
+<tr><td>脚本系统</td><td><span class="tag tag-blue">Pascal Script</span></td><td>内嵌解释器，NPC/事件逻辑热更新</td></tr>
+<tr><td>图形接口</td><td><span class="tag tag-purple">DirectX</span></td><td>客户端渲染</td></tr>
+</table>
+</div>
+
+<div class="section" id="s2">
+<h2>二、系统架构</h2>
+
+<div class="arch-diagram">                      ┌─────────────┐
+                      │   互联网     │
+                      └──────┬──────┘
+                             │
+                ┌────────────▼────────────┐
+                │  Balance (TCP:3053)     │  ← 客户端第一入口
+                │  负载均衡 + 网关注册     │  ← UDP:3030 接收Gate心跳
+                └────────────┬────────────┘
+                             │ 返回最优Gate地址
+                ┌────────────▼────────────┐
+                │  Gate (TCP:3054)        │  ← ★ 核心通信枢纽
+                │  网关服务器              │
+                └──┬─────┬─────┬─────┬───┘
+                   │     │     │     │
+      ┌────────────┘     │     │     └────────────┐
+      ▼                  ▼     ▼                  ▼
+┌───────────┐  ┌──────────┐ ┌──────────┐ ┌───────────────┐
+│Login(3050)│  │ DB(3051) │ │Game(3052)│ │ Paid (3049)   │
+│ 登录认证   │  │ 数据持久化│ │ 游戏逻辑  │ │ 付费验证      │
+└───────────┘  └──────────┘ └──────────┘ └───────────────┘
+                                    │
+                   ┌────────────────┼────────────────┐
+                   ▼                ▼                ▼
+           ┌──────────┐    ┌──────────┐    ┌──────────┐
+           │Battle    │    │ Notice   │    │ UDP日志   │
+           │(3040)    │    │ (3020)   │    │(6000-6022)│
+           │ 跨服对战  │    │ 公告监控  │    │ 6维日志   │
+           └──────────┘    └──────────┘    └──────────┘</div>
+
+<div class="card">
+<h3>模块依赖关系</h3>
+<div class="flow">┌─────────────────────────────────────────────────┐
+│          1000ydef/ (基础类型定义层)                │
+│      deftype.pas(3967行) · AUtil32.pas           │
+└─────────────────────┬───────────────────────────┘
+                      │
+┌─────────────────────▼───────────────────────────┐
+│          Common/ + FastNet/ (公共库层)            │
+│  uPackets · uCrypt · uBuffer · SQLite3 · Psock  │
+└─────────────────────┬───────────────────────────┘
+                      │
+    ┌────────┬────────┼────────┬──────────┬──────────┐
+    ▼        ▼        ▼        ▼          ▼          ▼
+ balance  gate    login     db     gameserver   client</div>
+</div>
+
+<div class="card">
+<h3>安全设计</h3>
+<p>仅 <span class="highlight">Balance(3053)</span> 和 <span class="highlight">Gate(3054)</span> 端口对外开放，其余服务全部部署在内网。</p>
+</div>
+</div>
+
+<div class="section" id="s3">
+<h2>三、目录结构与模块职责</h2>
+
+<h3>3.1 核心共享库</h3>
+<table>
+<tr><th>目录</th><th>职责</th><th>关键文件</th></tr>
+<tr><td><code>1000ydef/</code></td><td>全局类型和常量定义，被所有项目引用</td><td>deftype.pas (消息码/物品类型/游戏常量)、AUtil32.pas</td></tr>
+<tr><td><code>Common/</code></td><td>所有服务共用的核心模块</td><td>uPackets.pas (协议)、uCrypt.pas (加密)、ScriptCls.pas (脚本引擎)、SQLite3.pas</td></tr>
+<tr><td><code>FastNet/</code></td><td>第三方 Delphi 网络组件库</td><td>Psock.pas、NMUDP.pas、NMs_stream.pas、NMFtp.pas 等 20+ 组件</td></tr>
+</table>
+
+<h3>3.2 服务器组件</h3>
+<table>
+<tr><th>目录</th><th>模块</th><th>端口</th><th>职责</th></tr>
+<tr><td><code>balance/</code></td><td>负载均衡</td><td>TCP:3053, UDP:3030</td><td>按最少连接数算法分配最优网关</td></tr>
+<tr><td><code>gate_biscuit/</code></td><td>网关服务器</td><td>TCP:3054</td><td><strong>核心枢纽</strong>，转发数据到 Login/DB/Game/Paid</td></tr>
+<tr><td><code>loginsdb_biscuit/</code></td><td>SDB 登录</td><td>TCP:3050</td><td>SDB 文件数据库认证（开发环境）</td></tr>
+<tr><td><code>loginsql/</code></td><td>SQL 登录</td><td>TCP:3050</td><td>MSSQL 认证（正式运营）</td></tr>
+<tr><td><code>db/</code></td><td>数据库服务器</td><td>TCP:3051, 1024, 1020</td><td>角色数据持久化（FDB格式）</td></tr>
+<tr><td><code>gameserver-tgs1000/</code></td><td>游戏服务器</td><td>TCP:3052</td><td>全部游戏逻辑主进程</td></tr>
+</table>
+
+<h3>3.3 客户端与辅助工具</h3>
+<table>
+<tr><th>目录</th><th>职责</th></tr>
+<tr><td><code>client/</code></td><td>完整的 Delphi Windows 游戏客户端，含 40+ 功能窗体（登录/角色/交易/技能/公会/背包等）</td></tr>
+<tr><td><code>authentication/</code></td><td>离线授权生成工具（硬件指纹 + SHA1 + AES 授权码）</td></tr>
+<tr><td><code>python_services/</code></td><td>Python 辅助服务集（协议分析/服务重写/日志收集/监控）</td></tr>
+<tr><td><code>docs/</code></td><td>完整的千年游戏脚本开发手册（Git 子模块）</td></tr>
+</table>
+</div>
+
+<div class="section" id="s4">
+<h2>四、游戏服务器核心 (TGS1000)</h2>
+
+<div class="card">
+<h3>运行模型：单进程 + Timer 驱动</h3>
+<p>核心是 <span class="highlight">10ms 间隔</span>的主游戏循环 <code>TimerProcess</code>，每 tick 轮询更新所有子系统：</p>
+<div class="flow">TFrmMain.TimerProcess (每10ms)
+  ├── GateConnectorList.Update()    ← Gate 网关通信
+  ├── ConnectorList.Update()        ← 连接管理
+  ├── UserList.Update()             ← 玩家更新
+  ├── ManagerList.Update()          ← 地图/怪物/NPC 更新
+  ├── GuildList.Update()            ← 帮会
+  ├── ArenaObjList.Update()         ← 竞技场
+  ├── Zhuang.Update()               ← 庄园
+  ├── ScriptManager.Update()        ← 脚本引擎
+  └── ... 其他子系统 (监狱/天气/音效/区域效果)</div>
+</div>
+
+<h3>核心功能模块一览</h3>
+<div class="grid">
+<div class="card">
+<h3>👤 玩家管理</h3>
+<p><code>UUser.pas</code> / <code>uUserSub.pas</code></p>
+<ul style="padding-left:20px;font-size:14px;">
+<li>属性系统（生命/内外功/阴阳/天赋/道德...）</li>
+<li>装备栏 8 位 + 背包 30 格 + 材料 5 格</li>
+<li>个人商店 10 格</li>
+<li>邮件/交易/组队/结婚系统</li>
+<li>宏检测 (TMacroChecker)</li>
+</ul>
+</div>
+<div class="card">
+<h3>⚔️ 战斗系统</h3>
+<p><code>uSkills.pas</code> / <code>uMonster.pas</code></p>
+<ul style="padding-left:20px;font-size:14px;">
+<li>近战(FM_HIT) / 远程弓(FM_BOW) / 掌法(FM_WINDOFHAND)</li>
+<li>暴击(FM_CRITICAL) / 法术</li>
+<li>伤害计算含属性相克（火/水/冰）</li>
+<li>元气等级影响伤害/防御/攻速/回避/命中</li>
+</ul>
+</div>
+<div class="card">
+<h3>🗺️ 地图与 AOI</h3>
+<p><code>MapUnit.pas</code> / <code>fieldmsg.pas</code></p>
+<ul style="padding-left:20px;font-size:14px;">
+<li>九宫格 AOI (16×16 分块)</li>
+<li>消息只广播到周围 9 块内对象</li>
+<li>多地图类型：ICE/FIRE/BATTLE/GUILDBATTLE...</li>
+<li>碰撞检测 + 区域属性管理</li>
+</ul>
+</div>
+<div class="card">
+<h3>👹 怪物 & NPC</h3>
+<p><code>uMonster.pas</code> / <code>uNpc.pas</code></p>
+<ul style="padding-left:20px;font-size:14px;">
+<li>AI 攻击 + 仇恨列表 + 视野检测</li>
+<li>BOSS 怪/小怪/PK 怪类型</li>
+<li>NPC 买卖/对话/交易/拍卖</li>
+<li>死亡掉落 + 经验分配</li>
+</ul>
+</div>
+<div class="card">
+<h3>📜 武功系统</h3>
+<p><code>svClass.pas</code></p>
+<ul style="padding-left:20px;font-size:14px;">
+<li>基本武功（拳/剑/锤/枪/弓/轻功/呼吸/护身）</li>
+<li>浪人武功 / 酒术妖术</li>
+<li>绝世武功（招式 + 必杀技 + 特殊）</li>
+<li>属性相克表 (AM_WHRelationTable)</li>
+</ul>
+</div>
+<div class="card">
+<h3>🏰 帮会系统</h3>
+<p><code>uGuild.pas</code> / <code>uGuildSub.pas</code></p>
+<ul style="padding-left:20px;font-size:14px;">
+<li>基石耐久度系统</li>
+<li>帮主/副帮主(≤3)/帮众权限</li>
+<li>帮会 NPC(≤5) / 仓库 / 能量</li>
+<li>同盟系统</li>
+</ul>
+</div>
+<div class="card">
+<h3>🎭 脚本引擎</h3>
+<p><code>uScriptManager.pas</code> / <code>ScriptCls.pas</code></p>
+<ul style="padding-left:20px;font-size:14px;">
+<li>Pascal 脚本解释器</li>
+<li>20+ 事件回调 (OnDie/OnHear/OnTimer...)</li>
+<li>callfunc() 查询 + print() 执行</li>
+<li>热更新无需重编译</li>
+</ul>
+</div>
+<div class="card">
+<h3>🔧 职业/生活技能</h3>
+<p><code>svClass.pas</code> (TJobClass)</p>
+<ul style="padding-left:20px;font-size:14px;">
+<li>炼金术士 / 炼丹术士 / 服饰家 / 匠人 / 矿工</li>
+<li>6 级晋升：无名工→功能工→熟练工→达人→名人→大人</li>
+</ul>
+</div>
+</div>
+
+<div class="card">
+<h3>对象生命周期</h3>
+<div class="flow">Create → Initial → StartProcess (注册到FieldPhone, 发送FM_CREATE)
+  → Update(CurTick)  [每10ms tick更新逻辑]
+  → EndProcess (发送FM_DESTROY, 从FieldPhone注销)
+  → Destroy</div>
+</div>
+</div>
+
+<div class="section" id="s5">
+<h2>五、登录认证流程</h2>
+
+<div class="card">
+<h3>完整登录流程</h3>
+<div class="flow">阶段1: 客户端 ──→ Balance (TCP:3053)
+  └─ 遍历所有Gate，选 UserCount 最小的 → 返回Gate地址
+
+阶段2: 客户端 ──→ Gate (TCP:3054)
+  └─ Gate 创建 TConnector，状态 gs_none
+
+阶段3: 登录认证
+  └─ Gate ──→ Login (TCP:3050) 发送 LG_SELECT
+  └─ Login 查询DB返回 TLGRecord
+  └─ Gate 验证 PrimaryKey + PassWord
+
+阶段4: 角色选择/创建
+  └─ 创建: Gate ──→ DB (TCP:3051) 发送 DB_CREATENEW
+  └─ 选择: Gate ──→ DB 发送 DB_SELECT，验证归属
+
+阶段5: 进入游戏
+  └─ Gate 附加付费数据 ──→ Game (TCP:3052) 发送 GM_CONNECT
+  └─ Game 确认 → Gate 发送 DB_LOCK 锁定角色
+  └─ 状态切换为 gs_playing，此后数据透传</div>
+</div>
+
+<div class="card">
+<h3>网关状态机</h3>
+<div class="flow">游戏状态: gs_none → gs_login → gs_agree → gs_selectchar → gs_gotogame → gs_playing
+窗口状态: cw_none → cw_login → cw_selectchar → cw_main
+
+超时机制:
+  • 非游戏状态 60秒无响应 → 发送 [TIMEOUT]
+  • 非游戏状态 5分钟 → 强制断开
+  • 每秒包频率 > 10 → 强制断开</div>
+</div>
+</div>
+
+<div class="section" id="s6">
+<h2>六、数据库设计</h2>
+
+<div class="card">
+<h3>三种数据库</h3>
+<table>
+<tr><th>类型</th><th>格式</th><th>使用场景</th><th>模块</th></tr>
+<tr><td><span class="tag tag-blue">MSSQL</span></td><td>关系型数据库 (ODBC)</td><td>正式运营 — 账号数据</td><td>loginsql/</td></tr>
+<tr><td><span class="tag tag-green">SDB</span></td><td>字符串键值文件</td><td>开发测试 — 账号/配置</td><td>loginsdb_biscuit/</td></tr>
+<tr><td><span class="tag tag-orange">FDB</span></td><td>自定义二进制文件数据库</td><td>角色数据持久化</td><td>db/</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h3>角色数据结构 (TDBRecord)</h3>
+<table>
+<tr><th>分类</th><th>字段</th></tr>
+<tr><td>基础信息</td><td>PrimaryKey(角色名,20B) · MasterName(账号,20B) · Password(10B) · Guild(门派) · Sex · Lover(配偶)</td></tr>
+<tr><td>位置</td><td>ServerId · X · Y</td></tr>
+<tr><td>基础属性</td><td>Light · Dark · Energy · InPower · OutPower · Magic · Life · Talent · Virtue · GoodChar · BadChar</td></tr>
+<tr><td>当前状态</td><td>CurEnergy · CurLife · CurHealth · CurSatiety · CurPoisoning · CurSeek(Head/Arm/Leg)</td></tr>
+<tr><td>装备</td><td>WearItemArr[0..7] — 8 个穿戴位</td></tr>
+<tr><td>背包</td><td>HaveItemArr[0..29] — 30 格</td></tr>
+<tr><td>材料</td><td>HaveMaterialItemArr[0..4] — 5 格</td></tr>
+<tr><td>商店</td><td>HaveMarketItemArr[0..9] — 10 格</td></tr>
+<tr><td>武功</td><td>Basic[0..9] + HaveMagic[0..29] + RiseMagic[0..29] + Mystery[0..29] + BestSpecial[0..14] + BestProtect[0..4] + BestAttack[0..4]</td></tr>
+<tr><td>任务</td><td>CompleteQuestNo · CurrentQuestNo · QuestStr · FirstQuestNo</td></tr>
+<tr><td>职业</td><td>JobKind · ExtJobKind · CurJobExp</td></tr>
+<tr><td>完整性</td><td>CRCKey (CRC32 校验)</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h3>FDB 文件格式</h3>
+<div class="flow">文件头 (TDBHeader):
+  ID: "IDX" (4 bytes)
+  RecordCount: Integer
+  RecordDataSize: Integer
+  RecordFullSize: Integer (含索引)
+
+索引头 (TIndexHeader):
+  IndexRecordCount · BlankRecordCount · FDBUpdateDate
+
+数据区: 连续 packed record，预分配 10,000 条空白记录
+操作接口: TDBProvider (Insert / Select / Update / Delete)</div>
+</div>
+</div>
+
+<div class="section" id="s7">
+<h2>七、Python 辅助服务</h2>
+
+<div class="card">
+<table>
+<tr><th>类别</th><th>文件</th><th>功能</th></tr>
+<tr><td><span class="tag tag-purple">加密</span></td><td>uCrypt.py, 1000yCrypto.py</td><td>Python 版加密算法 + 命令行工具（加密/解密/数据包解析）</td></tr>
+<tr><td><span class="tag tag-blue">协议分析</span></td><td>tcp_proxy.py, udp_proxy.py</td><td>通用 TCP/UDP 代理抓包（HEX/ASCII 日志）</td></tr>
+<tr><td><span class="tag tag-green">服务重写</span></td><td>1000y_balance.py</td><td>Python 版 Balance 负载均衡（完全兼容原版协议）</td></tr>
+<tr><td><span class="tag tag-green">服务重写</span></td><td>paid_server.py</td><td>付费验证（SQLite + 5种付费模式 + CLI管理）</td></tr>
+<tr><td><span class="tag tag-orange">网关代理</span></td><td>gate_proxy.py</td><td>版本号转换 + IP白名单 + 实时解密显示</td></tr>
+<tr><td><span class="tag tag-orange">数据工具</span></td><td>fdb_reader.py</td><td>FDB 数据库文件读取/JSON 导出</td></tr>
+<tr><td><span class="tag tag-blue">日志服务</span></td><td>udp_logger/*.py (6个)</td><td>物品/鼠标/监控/付费/连线/对象 — UDP日志接收</td></tr>
+<tr><td><span class="tag tag-blue">分析工具</span></td><td>udp_logger/*_analyzer.py (4个)</td><td>物品/鼠标/对象/付费日志分析</td></tr>
+</table>
+</div>
+
+<div class="card">
+<h3>定位</h3>
+<p>Python 服务<strong>不是完整的服务端重写</strong>，而是辅助工具集：</p>
+<ul style="padding-left:20px;">
+<li>🔍 协议分析与逆向工程</li>
+<li>🔄 替代部分需要灵活修改的服务（Balance、Paid）</li>
+<li>📊 日志收集与数据分析</li>
+<li>🔌 客户端兼容性代理</li>
+</ul>
+</div>
+</div>
+
+<div class="section" id="s8">
+<h2>八、安全机制与风险</h2>
+
+<div class="card">
+<table>
+<tr><th>机制</th><th>实现方式</th><th>风险</th></tr>
+<tr><td>网络加密</td><td>自定义类Base64 (LCG随机种子=1 + Fisher-Yates洗牌)</td><td><span class="risk-med">⚠️ 中</span> — 随机种子为常量，加密表可还原</td></tr>
+<tr><td>服务器授权</td><td>SHA1+AES 硬件指纹授权码，注册表存储</td><td><span class="risk-low">✅ 基本有效</span></td></tr>
+<tr><td>IP 白名单</td><td>IPList.txt 文件加载</td><td><span class="risk-med">⚠️ 中</span> — 文件缺失时放行所有连接</td></tr>
+<tr><td>包频率限制</td><td>滑动窗口，每秒≤10包</td><td><span class="risk-low">✅ 有效</span></td></tr>
+<tr><td>数据完整性</td><td>CRC32 校验 (TDBRecord.CRCKey)</td><td><span class="risk-low">✅ 基本有效</span></td></tr>
+<tr><td>SQL 注入防护</td><td>分号/单引号检查</td><td><span class="risk-med">⚠️ 中</span> — 仅基础防护，使用字符串拼接SQL</td></tr>
+<tr><td>角色名过滤</td><td>DONTCHAR.TXT 禁用列表</td><td><span class="risk-low">✅ 有效</span></td></tr>
+<tr><td>密码存储</td><td><strong>明文存储</strong></td><td><span class="risk-high">🔴 高风险</span></td></tr>
+<tr><td>SimplePass</td><td>固定偏移数组位移替换</td><td><span class="risk-high">🔴 高风险</span> — 等同无加密</td></tr>
+</table>
+</div>
+</div>
+
+<div class="section" id="s9">
+<h2>九、关键发现与总结</h2>
+
+<div class="grid">
+<div class="card">
+<h3>🏗️ 架构特点</h3>
+<ul style="padding-left:20px;font-size:14px;">
+<li>经典 MMORPG 分层架构，职责分离清晰</li>
+<li>网关中心化，Gate 是所有通信的核心枢纽</li>
+<li>单线程 Timer 驱动 (10ms)，简单可靠</li>
+<li>九宫格 AOI，高效的场景消息分发</li>
+<li>脚本驱动，Pascal 脚本热更新</li>
+<li>数据驱动，SDB 文本文件控制游戏内容</li>
+</ul>
+</div>
+<div class="card">
+<h3>✨ 技术亮点</h3>
+<ul style="padding-left:20px;font-size:14px;">
+<li>完整的武侠 RPG 系统</li>
+<li>60+ 种物品类型</li>
+<li>165+ 个 NPC 脚本</li>
+<li>6 维 UDP 日志 + 分析工具</li>
+<li>Python 工具链支持渐进迁移</li>
+<li>完善的帮会/结婚/竞技场系统</li>
+</ul>
+</div>
+<div class="card">
+<h3>⚠️ 改进建议</h3>
+<ul style="padding-left:20px;font-size:14px;">
+<li>密码改用 bcrypt/argon2 哈希</li>
+<li>通信加密引入随机种子或改用 AES</li>
+<li>SQL 查询改用参数化</li>
+<li>IP白名单文件缺失时拒绝所有</li>
+<li>加强授权码存储保护</li>
+</ul>
+</div>
+<div class="card">
+<h3>📦 代码规模</h3>
+<ul style="padding-left:20px;font-size:14px;">
+<li><strong>7</strong> 个独立服务组件</li>
+<li><strong>40+</strong> 游戏服务器核心源文件</li>
+<li><strong>40+</strong> 客户端窗体文件对</li>
+<li><strong>300+</strong> 游戏数据/脚本文件</li>
+<li><strong>20+</strong> Python 辅助脚本</li>
+<li><strong>50+</strong> 开发文档</li>
+</ul>
+</div>
+</div>
+</div>
+
+<p style="text-align:center;color:#8b949e;margin-top:40px;padding-top:20px;border-top:1px solid var(--border);">
+— 报告生成完毕 · 基于对项目全部源码目录的深度分析 —
+</p>
