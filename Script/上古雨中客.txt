@@ -1,0 +1,197 @@
+unit 上古雨中客;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDie (aStr : String);
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnDie (aStr : String);
+begin
+   print ('mapaddobjbytick monster 上古雨中客2 178 176 1 97 false 800');
+end;
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+begin
+   Str := callfunc ('getsenderrace');
+   if Str = '1' then begin
+      print ('showwindow .\help\上古雨中客.txt 0');
+      exit;
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   n, iCount : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'request' then begin
+      Str := callfunc ('getsenderitemexistence 雨中客锦囊:1');
+      if Str = 'true' then begin
+         print ('say 看来._准备还是有些不足哇');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 玉仙的无情双刀:1');
+      if Str = 'true' then begin
+         print ('say 看来._准备还是有些不足哇');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满');
+         exit;
+      end;
+
+      print ('putsendermagicitem 雨中客锦囊:1 @上古雨中客 3');
+      print ('say 我的眼力还不错吧');
+      print ('sendsenderchatmessage 拿20个_疾风灵符来 2');
+      exit;
+   end;
+   if aStr = 'removal' then begin
+      Str := callfunc ('getsenderitemexistence 雨中客锦囊:1');
+      if Str = 'false' then begin
+         print ('say 阁下似乎帮不上我什么忙');
+         exit;
+      end;
+      if Str = 'true' then begin
+         Str := callfunc ('getsenderitemexistence 疾风灵符:20');
+         if Str = 'false' then begin
+            print ('say 拿_20个疾风灵符来');
+            exit;
+         end;
+         if Str = 'true' then begin
+            Str := callfunc ('checkenoughspace');
+            if Str = 'false' then begin
+               print ('say 物品栏已满');
+               exit;
+            end;
+            print ('getsenderitem 雨中客锦囊:1');
+            print ('getsenderallitem 疾风灵符');
+            print ('putsendermagicitem 龙虎灵符:8 @上古雨中客 3');
+            print ('say 辛苦了_终于可以安稳入睡了');
+            print ('sendsenderchatmessage 雨中客任务顺利完成 2');
+            exit;
+         end;
+      end;
+      exit;
+   end;
+   if aStr = 'returntreasure' then begin
+      Str := callfunc ('getsenderitemexistence 王妃金冠:1');
+      if Str = 'false' then begin
+         print ('say 阁下_或许.. 50');
+         print ('say 江湖上传得_沸沸扬扬的_王陵四大宝物_是否有所耳闻? 150');
+         exit;   
+      end;
+      Str := callfunc ('getsenderitemexistence 公主戒指:1');
+      if Str = 'false' then begin
+         print ('say 阁下_或许.. 50');
+         print ('say 江湖上传得_沸沸扬扬的_王陵四大宝物_是否有所耳闻? 150');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 公主项链:1');
+      if Str = 'false' then begin
+         print ('say 阁下_或许.. 50');
+         print ('say 江湖上传得_沸沸扬扬的_王陵四大宝物_是否有所耳闻? 150');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 王子宝剑:1');
+      if Str = 'false' then begin
+         print ('say 阁下_或许.. 50');
+         print ('say 江湖上传得_沸沸扬扬的_王陵四大宝物_是否有所耳闻? 150');
+         exit;
+      end;
+
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+
+      print ('getsenderitem 王妃金冠:1');
+      print ('getsenderitem 公主戒指:1');
+      print ('getsenderitem 公主项链:1');
+      print ('getsenderitem 王子宝剑:1');            
+
+      Str := callfunc ('getsendersex');
+      n := StrToInt (Str);
+      if n = 1 then begin
+         print ('putsendermagicitem 男子雨中客斗笠 @上古雨中客 3');
+      end;
+      if n = 2 then begin
+         print ('putsendermagicitem 女子雨中客斗笠 @上古雨中客 3');
+      end;
+      print ('say 如此贵重之物_阁下是如何获得的! 50');
+      print ('say 作为_酬劳_请收下本人的斗笠 150');
+      exit;
+   end;
+   if aStr = 'goarea' then begin
+      Str := callfunc ('getremainmaptime 5 0');
+      if Str = 'true' then begin
+         print ('say 再会...');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 王陵守护印:1');
+      if Str = 'false' then begin
+         print ('say 手上没有王陵守护印吧...');
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 2');
+      if Str = 'true' then begin
+         print ('say 禁止使用辅助性武功');
+         exit;
+      end;
+
+      Str := callfunc ('getusercount 76');
+      iCount := StrToInt (Str);
+      if iCount > 0 then begin
+         print ('say 稍等._禁区好像有人');
+         exit;
+      end;
+
+      Str := callfunc ('checkalivemopcount 76 monster 禁地护卫武士');
+      iCount := StrToInt (Str);
+      if iCount = 0 then begin
+         print ('say 稍等...');
+         exit;
+      end;
+
+      Str := callfunc ('checkentermap 76');
+      if Str = 'false' then begin
+         print ('say 稍等片刻...');
+         exit;
+      end;
+
+      print ('say 小子_明年的今天就是你的忌日');
+      print ('mapregen 76');
+
+      print ('getsenderallitem 王陵守护印');
+      Name := callfunc ('getsendername');
+      Str := 'movespace ' + Name;
+      Str := Str + ' user 76 14 21';
+      print (Str);
+
+      print ('boMapEnter 76 false');      
+      exit;         
+   end;
+end;
+
+end.

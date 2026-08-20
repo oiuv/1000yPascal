@@ -1,0 +1,63 @@
+unit event西域魔人虚像4;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDie (aStr : String);
+procedure OnRegen (aStr : String);
+
+var
+   n : Integer = 0;
+
+implementation
+
+procedure OnRegen (aStr : String);
+begin
+   n := 0;
+end;
+
+procedure OnDie (aStr : String);
+var
+   Str : String;
+begin
+   if n > 1 then exit;
+
+   Str := callfunc ('checkalivemopcount 96 monster 魔道士B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 北方魔人B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 火王B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 太极公子B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 石大王B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 东天王魂B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 北霸王魂B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 首领级雪巨人B2');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 首领级野兽族B2');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 四臂金刚B2');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 童颜鬼B');
+   if Str <> '0' then exit;
+
+   inc (n);
+   print ('bohitallbyname 西域魔人虚像D monster true');
+end;
+
+end.

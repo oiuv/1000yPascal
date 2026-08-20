@@ -1,0 +1,238 @@
+unit 比武老侠客;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnCreate (aStr : String);
+procedure OnDie (aStr : String);
+procedure OnHit (aStr : String);
+procedure OnChangeState (aStr : String);
+procedure OnGetResult (aStr : String);
+
+implementation
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   iCount : Integer;
+begin
+   if aStr = 'npcstart' then begin
+      Str := callfunc ('getsenderserverid');
+      if Str <> '60' then exit;
+
+      Str := callfunc ('getsenderrace');
+      if Str <> '1' then exit;
+
+      Str := callfunc ('checksenderpowerwearitem');
+      iCount := StrToInt (Str);
+      if iCount > 0 then begin
+         print ('say 请先脱掉带属性值的装备!');
+         Name := callfunc ('getsendername');
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 1 546 475 100';
+         print (Str);
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 0');
+      if Str = 'true' then begin
+         print ('say 你选错武功了!');
+         Name := callfunc ('getsendername');
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 1 546 475 100';
+         print (Str);
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 1');
+      if Str = 'true' then begin
+         print ('say 你选错武功了!');
+         Name := callfunc ('getsendername');
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 1 546 475 100';
+         print (Str);
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 3');
+      if Str = 'true' then begin
+         print ('say 你选错武功了!');
+         Name := callfunc ('getsendername');
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 1 546 475 100';
+         print (Str);
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 4');
+      if Str = 'true' then begin
+         print ('say 你选错武功了!');
+         Name := callfunc ('getsendername');
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 1 546 475 100';
+         print (Str);
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 5');
+      if Str = 'true' then begin
+         print ('say 你选错武功了!');
+         Name := callfunc ('getsendername');
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 1 546 475 100';
+         print (Str);
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 6');
+      if Str = 'true' then begin
+         print ('say 你选错武功了!');
+         Name := callfunc ('getsendername');
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 1 546 475 100';
+         print (Str);
+         exit;
+      end;
+      
+      Str := callfunc ('getsendercurpowerlevelname');
+      if Str <> '' then begin
+         print ('say 禁止开镜进入');
+         Name := callfunc ('getsendername');
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 1 546 475 100';
+         print (Str);
+         exit;
+      end;
+
+      Str := callfunc ('getsenderuseattackskilllevel');
+      if Str <> '9999' then begin
+         print ('say 就你这点功夫也敢来挑战我？');
+         Name := callfunc ('getsendername');
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 1 546 475 100';
+         print (Str);
+         exit;
+      end;
+
+      print ('directmovespace 比武老侠客 npc 60 20 18 0');
+
+      print ('commandicebyname 比武老侠客 npc 500');
+      print ('setallowhitbytick true 500');      
+
+      Name := callfunc ('getsendername');
+      Str := 'commandicebyname ' + Name;
+      Str := Str + ' user 500';
+      print (Str);
+
+      print ('senderrefill');
+
+      print ('say 如果你实在想比 50');
+      print ('say 我将奉陪到底 400');
+      exit;
+   end;
+end;
+
+procedure OnHit (aStr : String);
+var
+   Str , Name : String;
+begin
+      Str := callfunc ('getsenderuseattackskilllevel');
+      if Str <> '9999' then begin
+         print ('say 你还是换个厉害的武功再来和我打吧！');
+         Name := callfunc ('getsendername');
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 1 546 475 100';
+         print (Str);
+         exit;
+      end;
+end;
+
+procedure OnCreate (aStr : String);
+var
+   Str : String;
+begin
+   Str := callfunc ('getsenderrace');
+   if Str <> '1' then begin
+      exit;
+   end;
+
+   Str := 'showwindow .\help\比武老侠客.txt 1';
+   print (Str);
+   exit;
+end;
+
+procedure OnDie (aStr : String);
+var
+   Str, Name, Item : String;
+   iCount, iKind : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   if Str <> '1' then exit;
+
+   print ('say 恭喜恭喜_让老朽佩服不已');
+
+   print ('mapregen 61');
+
+   Name := callfunc ('getsendername');
+   Str := 'movespace ' + Name;
+   Str := Str + ' user 61 17 18 500';
+   print (Str);
+   
+   Str := callfunc ('getsendercurpowerlevel');  //境界等级
+   iKind := StrToInt (Str);
+   if iKind > 9 then exit;   
+   
+   Str := callfunc ('checkenoughspace');
+   if Str = 'false' then begin
+      print ('sendsenderchatmessage 你物品栏已满，未能获得过关奖品... 1');
+      exit;
+   end;
+   
+   iCount := Random(4);
+   if iCount = 0 then begin
+      iKind := Random(3);
+      if iKind = 0 then Item := '熊胆一:50';
+      if iKind = 1 then Item := '玉露丸:20';
+      if iKind = 2 then Item := '蝎子尾巴:50';
+   end;
+   if iCount > 0 then Item := '月之音:4';
+   Str := 'putsendermagicitem ' + Item;
+   Str := Str + ' @比武老侠客 4';
+   print (Str);
+   Str := 'sendsendertopmsg ' + Name;
+   Str := Str + '_战胜_比武老侠客,获得奖品_';
+   Str := Str + Item;
+   print (Str);
+   //Name := callfunc ('getsendername');
+   //Str := 'senditemmoveinfo ' + Name;
+   //Str := Str + ',<比武老侠客>,<过关>,0,0,0,0,,';
+   //print (Str);
+end;
+
+procedure OnChangeState (aStr : String);
+var
+   Str, Name : String;
+begin
+   if aStr <> 'die' then exit;
+
+   Str := callfunc ('getsenderrace');
+   if Str <> '1' then exit;
+
+   print ('say 小小年纪_就有如此高深的武功 50');
+   print ('say 日后要继续修炼... 400');
+
+   Name := callfunc ('getsendername');
+   Str := 'movespace ' + Name;
+   Str := Str + ' user 1 546 475 600';
+   print (Str);
+   Str := 'sendsendertopmsg ' + Name;
+   Str := Str + ',挑战_比武老侠客_失败';
+   print (Str);
+end;
+
+end.

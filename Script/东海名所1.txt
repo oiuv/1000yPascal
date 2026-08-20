@@ -1,0 +1,28 @@
+unit 东海名所1;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDieBefore (aStr : String);
+
+implementation
+
+procedure OnDieBefore (aStr : String);
+begin
+   //疙家 何辑瘤绰 家府
+   print ('sendsound 9329.wav 43');
+   exit;
+end;
+
+end.

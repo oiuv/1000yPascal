@@ -1,0 +1,37 @@
+unit 婵娟花;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+   rInt : integer;
+begin
+	print ('say 但愿人长久，千里共婵娟……');
+end;
+
+procedure OnGetResult (aStr : String);
+
+begin
+
+end;
+
+end.

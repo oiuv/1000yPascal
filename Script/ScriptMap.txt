@@ -1,0 +1,52 @@
+unit ScriptMap;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+// 地图脚本只支持以下二个过程
+procedure OnTimer (aStr : String);
+procedure OnEventTimer (aStr : String);
+
+var
+   n : integer = 0;
+
+implementation
+
+// 地图脚本每分钟触发一次
+procedure OnTimer (aStr : String);
+begin
+   // 参数aStr在地图触发的脚本中为空
+   n := 0;
+   // 地图脚本中好像callfunc都无效，只能用和Sender和Self无关的print过程
+   // print ('sendnoticemsgformapuser 115 <OnTimer>Map定时提醒！ 1');
+   // aStr := 'sendnoticemsgformapuser 115 <OnTimer>Map定时提醒！ 3';
+   // aStr := 'sendsendertopmsg 注意,游戏活动开始';
+   // aStr := 'mapregen 115';
+   // print (aStr);
+end;
+
+// MAP_TYPE_KILLONLYONE有效，RegenInterval剩30秒时触发（会触发N次）
+procedure OnEventTimer (aStr : String);
+var
+   Str : String;
+begin
+   Inc(n);
+   if n = 60 then begin
+      // print ('mapregen 115');
+      Str := 'sendnoticemsgformapuser 115 <OnEventTimer>Map事件触发！ 1';
+      print (Str);
+   end;
+end;
+
+end.

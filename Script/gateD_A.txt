@@ -1,0 +1,55 @@
+unit gateD_A;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+function OnMove (aStr : String) : String;
+
+implementation
+
+function OnMove (aStr : String) : String;
+var
+   Str : String;
+begin
+   Result := 'false';
+
+   Str := callfunc ('checkalivemopcount 96 monster ÈÌÕßB');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster »ðºüÀêB');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster °×ºüÀêB');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster ÀÏ»¢B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster °×ÀÏ»¢B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster Ð«×ÓB');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster Ï¬Å£B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster Ê¯¾ÞÈËB');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster ½©Ê¬B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster Í¶Ê¯Å®B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster É½ÔôB');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster ²òÀÇB');
+   if Str <> '0' then exit;
+   
+   Result := 'true';
+end;
+
+end.

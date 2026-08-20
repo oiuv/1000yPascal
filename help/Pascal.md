@@ -1,222 +1,122 @@
-## Pascal语言基础
+# 千年脚本语法
 
-Pascal程序基本上由以下部分组成:
+千年脚本外观接近 Pascal，但实际由 `ScriptCls.pas` 和 `Common/ScriptBasic.pas` 的定制解释器加载。这里只记录当前解释器可确认的语法；通用 Pascal 教程中的写法不能直接套用。
 
-1. 程序名称
-2. 使用命令
-3. 类型声明
-4. 常量声明
-5. 变量声明
-6. 函数声明
-7. 程序声明
-8. 主程序块
-9. 每个块中的语句和表达式
-10. 注释
-
-每个pascal程序通常严格按照该顺序具有标题语句，声明和执行部分。以下格式显示了Pascal程序的基本语法：
-
-```pascal
-program {name of the program}
-uses {comma delimited names of libraries you use}
-const {global constant declaration block}
-var {global variable declaration block}
-
-function {function declarations, if any}
-{ local variables }
-begin
-...
-end;
-
-procedure { procedure declarations, if any}
-{ local variables }
-begin
-...
-end;
-
-begin { main program block starts}
-...
-end. { the end of main program block }
-```
-
-示例：
-```pascal
-program HelloWorld;
-uses crt;
-(* Here the main program block starts *)
-begin
-   writeln('Hello, World!');
-   readkey;
-end. 
-```
-
-第一行`program HelloWorld;` 表示程序的名称。
-第二行`uses crt;`是一个预处理器命令，它告诉编译器在进行实际编译之前包含crt单元。
-begin和end语句中包含的下一行是主程序块。Pascal中的每个块都包含在begin语句和end语句中，需要注意的是表示主程序结束的结束语句end后面是句号（.）而不是分号（;）。
-
-### 注释
-
-多行注释以括号（* ... *）括在括号和星号中。Pascal允许在大括号{...}中包含单行注释。
-
-```pascal
-(* 这是多行注释
-   它将跨越多行。 *)
-
-{ 这是Pascal中的单行注释 }
-```
-
-### 不区分大小写
-
-Pascal是一种不区分大小写的语言，这意味着您可以在两种情况下都编写变量，函数和过程。与变量A_Variable，a_variable和A_VARIABLE在Pascal中的含义相同。
-
-### 变量与数据类型
-
-变量定义放在以var关键字开头的块中，然后是变量的定义，如下所示：
-
-```
-var
-A_Variable, B_Variable ... : Variable_Type;
-```
-
-Variable_Type为变量数据类型，在千年中主要用到三种：
-
-- String
-- Integer
-- Boolean
-
-如：
-```pascal
-var
-   Str, Name : String;
-   iCount : Integer;
-```
-
-变量赋值使用的是`:=`，这和现在大多数高级语言不同，需特别注意。
-
-示例：
-```pascal
-   Str := callfunc ('getsenderrace');
-```
-
-注意：默认情况下，Pascal中的变量不会初始化为零，它们可能含有垃圾值。 因此，在程序中初始化变量是一种更好的做法，变量可以在其声明中初始化（分配初始值）。
-
-```
-var
-variable_name : type = value;
-```
-
-### 运算符
-
-Pascal语言的运算符多数和其它高级语言一至，以下二个不同：
-
-- := 为赋值运算符
-- =  为逻辑等运算符
-
-### 流程控制
-
-流程控制主要分为选择结构和循环结构，千年中最常用的流程控制为`if - then 语句`，示例：
-
-```pascal
-   if Str <> '1' then begin
-      exit;
-   end;
-```
-
-这里`begin end;`为语句块，可以理解为其它高级语言中的`{}`。
-
-### 函数/程序
-
-在Pascal中，procedure是一组要执行的指令，没有返回值，而function是具有返回值的过程。函数/程序的定义如下: 
-
-```
-Function Func_Name(params...) : Return_Value;
-Procedure Proc_Name(params...);
-```
-
-函数调用如下：
-
-```pascal
-function name(argument(s): type1; argument(s): type2; ...): function_type;
-local declarations;
-
-begin
-   ...
-   < statements >
-   ...
-   name := expression;
-end;
-```
-
-过程调用如下：
-```pascal
-procedure name(argument(s): type1, argument(s): type 2, ... );
-   < local declarations >
-begin
-   < procedure body >
-end;
-```
-
-千年中主要是使用各种procedure实现游戏逻辑。示例：
-
-```pascal
-procedure OnDieBefore (aStr : String);
-begin
-   print ('sendsound 9422.wav 45');
-   exit;
-end;
-```
-
-### 单元
-
-Pascal 程序可以包含称为单元的模块。一个单元可能由一些代码块组成，这些代码块又由变量和类型声明，语句，过程等组成。Pascal中有许多内置单元，并且 Pascal 允许程序员定义和编写自己的单元以供使用。后来在各种程序中。
-
-要创建一个单元，您需要编写要存储在其中的模块或子程序，并将其保存在扩展名为.pas的文件中。该文件的第一行应以关键字unit开头，后跟该单元的名称。
-
-以下是创建Pascal单位的三个重要步骤：
-1. 文件名和单元名应该完全相同。因此，我们的单元calculateArea将保存在名为calculateArea.pas的文件中。
-2. 下一行应包含一个interface关键字。在此行之后，您将编写本单元中所有功能和过程的声明。
-3. 在函数声明之后，紧接着写单词Implementation，这也是一个关键字。在包含关键字实现的行之后，提供所有子程序的定义。
-
-在pascal语言中，unit的基本结构如下：
-```pascal
-unit Unit1;  
-
-interface  
-
-{函数和过程的声明}
-
-implementation  
-
-{函数和过程的实现}
-
-end.
-```
-
-在千年游戏中每一个互动单位（比如一个NPC）都是一个单元unit，对应Script目录下一个文件,不过文件不是以.pas为扩展名，而是直接用.txt为扩展名。我们写的所有脚本都是单元脚本，然后通过配置在游戏中调用。
-
-千年单元基本格式如下：
+## 文件结构
 
 ```pascal
 unit 单元名称;
 
 interface
 
-function  GetToken (aStr, aToken, aSep : String) : String;
-function  CompareStr (aStr1, aStr2 : String) : Boolean;
-function  callfunc (aText: string): string;
-procedure print (aText: string);
-function  Random (aScope: integer): integer;
-function  Length (aText: string): integer;
-procedure Inc (aInt: integer);
-procedure Dec (aInt: integer);
-function  StrToInt (astr: string): integer;
-function  IntToStr (aInt: integer): string;
-procedure exit;
+function callfunc (aText : String) : String;
+procedure print (aText : String);
+procedure OnLeftClick (aStr : String);
 
-{ 过程或函数声明 }
+var
+   Counter : Integer = 0;
 
 implementation
 
-{ 过程或函数实现 }
+procedure OnLeftClick (aStr : String);
+var
+   Str, Cmd : String;
+begin
+   Str := callfunc ('getsendername');
+   Cmd := 'sendsenderchatmessage 欢迎_' + Str;
+   print (Cmd);
+end;
 
 end.
 ```
+
+加载器识别 `unit`、`interface`、`extern`、`var`、`implementation` 和 `end.`。`unit` 名会被保存，但当前加载器没有强制它与 `.txt` 文件名相同；脚本文件由 `Script.SDB` 映射。
+
+不支持 `program`、`uses`、`const`、`type`、类、数组、集合、异常处理、`writeln`、`readln` 等完整 Pascal 功能。
+
+## 标识符、字符串与注释
+
+- 非字符串记号会统一转成小写，因此关键字、变量、过程和函数名不区分大小写。
+- 单引号内的字符串保持原始大小写。`uScriptManager.pas` 直接比较 `print`/`callfunc` 字符串中的接口名，并不会先调用 `LowerCase`；必须使用索引所列的精确拼写与大小写。CallFunc 名称均为小写，Print 中还存在 `boMapEnter`、`decreasePrisonTime` 这样的历史混合大小写名称。对象名、地图名和物品名同样保持实际名称。
+- 当前 `SkipBlank` 只实现 `//` 行注释。源码注释虽然提到 `{...}` 和 `(*...*)`，解析器并没有跳过它们；脚本中不要使用。
+- 字符串常用 `_` 表示命令参数中的空格，部分窗口或消息命令使用逗号表示换行；是否替换由具体命令实现决定。
+
+## 变量与类型
+
+只支持三种类型：
+
+```pascal
+var
+   Count : Integer;
+   Name : String;
+   Enabled : Boolean;
+```
+
+解释器为变量分配结构后会先清零，所以未显式初始化的值分别是 `0`、空字符串和 `False`。声明时可为整数和字符串提供初值：
+
+```pascal
+var
+   Count : Integer = 1;
+   Name : String = '测试';
+```
+
+过程参数、局部变量、全局 `var` 和 `extern` 变量均由解释器自己的变量表管理。不要假设原生 Delphi 的作用域、类型转换或内存行为。
+
+## 赋值与表达式
+
+赋值使用 `:=`，比较使用 `=`、`<>`、`>`、`<`、`>=`、`<=`。当前执行器实现整数 `+`、`-`、`*`、`/`、`div`、`mod` 和字符串 `+`，但编译器按固定记号位置生成指令，复杂或连续表达式应拆开：
+
+```pascal
+Cmd := 'sendsendertopmsg ' + Name;
+Cmd := Cmd + '_获得奖励';
+Count := Count + 1;
+```
+
+不要把函数调用直接嵌入长表达式；先接收返回值，再参与计算或拼接。
+
+## 条件与循环
+
+`if ... then begin ... end;` 已实现，当前词法/编译器没有 `else` 分支：
+
+```pascal
+if Str = 'false' then begin
+   exit;
+end;
+```
+
+`for` 由编译器展开为初始化、比较和递增指令。仓库脚本极少依赖复杂循环，新增逻辑应先用测试对象验证边界。
+
+## 内置函数与过程
+
+脚本只能调用 `interface` 中声明且解释器实现的内置项：
+
+| 名称 | 行为 |
+|---|---|
+| `callfunc(Text)` | 调用当前 `TScriptManager.CallFunction` 注册的查询接口 |
+| `print(Text)` | 把文本作为游戏命令交给 `CommandScript`，不是普通输出 |
+| `GetToken` | 按分隔符取出第一个分段并返回剩余字符串 |
+| `CompareStr` | 比较两个字符串是否相等 |
+| `IntToStr` / `StrToInt` | 整数与字符串转换 |
+| `Length` | 字符串长度 |
+| `Random(N)` | `0..N-1` 的随机整数 |
+| `Inc` / `Dec` | 整数变量加一/减一 |
+| `exit` | 结束当前事件 |
+
+有效的游戏接口分别见 [`../callfunc/`](../callfunc/) 和 [`../print/`](../print/)。
+
+## Self、Sender 与返回值
+
+`Self` 是正在执行脚本的对象，`Sender` 是触发者；二者的真实类型由事件调用点决定：
+
+- `System.OnUserStart`：`Self` 是登录玩家，`Sender=nil`。
+- NPC 点击、说话等交互：`Self` 通常是 NPC，`Sender` 通常是玩家。
+- 动态对象机关事件：`Self` 是 `DynamicObject`，某些自动事件没有 `Sender`。
+- 攻击事件：`Self` 是受击对象，`Sender` 通常是攻击者。
+
+基础 `TBasicObject` 的许多玩家专用虚方法只返回默认值或不执行操作；只有对象实际为 `TUser` 时，任务、职业、背包等接口才会读写玩家数据。
+
+事件返回值也只有调用方主动检查时才生效。`OnDanger` 返回精确字符串 `false` 可取消对应攻击路径；传送门检查路径中的 `OnMove` 返回 `false` 可阻止进入。普通过程返回内容不会自动改变游戏流程。
+
+## 版本兼容
+
+[`../Script/`](../Script/README.md) 是神武奇章线上脚本，当前 `gameserver-tgs1000/bin/Script` 是炎黄新章随包脚本。脚本中的真实用法不等于当前仍注册该接口：两套 `龙师父.txt` 都残留 `getjobgrade`，而当前分派器没有该分支，应使用 `getsenderjobgrade`。

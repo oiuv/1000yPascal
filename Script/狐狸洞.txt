@@ -1,0 +1,26 @@
+unit ∫¸¿Í∂¥;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnTimer (aStr : String);
+
+implementation
+
+procedure OnTimer (aStr : String);
+begin
+   print ('checkitemregen …˙»‚ 100 84 10 60');
+end;
+
+end.

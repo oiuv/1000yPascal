@@ -1,0 +1,113 @@
+unit 迷宫老侠客;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+begin
+   Str := callfunc ('getsenderrace');
+   if Str = '1' then begin
+      print ('showwindow .\help\迷宫老侠客.txt 1');
+      exit;
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str : String;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'takeback' then begin
+      Str := callfunc ('getsenderitemexistence 玉仙的无情双刀:1');
+      if Str = 'false' then begin
+         print ('say 阁下有何指教?');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 黑马武士:20');
+      if Str = 'false' then begin
+         print ('say 找回20个遗失的黑马武士');
+         exit;
+      end;
+
+      print ('getsenderitem 玉仙的无情双刀:1');
+      print ('getsenderallitem 黑马武士');
+
+      print ('putsendermagicitem 青铜武士:8 @迷宫老侠客 4');
+
+      print ('sendsenderchatmessage 玉仙_任务完成得不错 2'); 
+      print ('say 感激不尽 100');
+      print ('say 托阁下的福_新罗珍贵的至宝 200');
+      print ('say 才能完好保存 300');
+      print ('say 我们的玉仙能答应吗? 400');      
+      exit;
+   end;
+   if aStr = 'makebul' then begin
+      Str := callfunc ('getsendercompletequest');
+      if Str <> '1500' then begin
+         print ('say 想要不灭_拿来材料吧');
+         exit;
+      end;
+      Str := callfunc ('getsendercurrentquest');
+      if Str <> '1550' then begin
+         print ('say 想要不灭_拿来材料吧');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 侠客指环:1');
+      if Str = 'false' then begin
+         print ('say 想要不灭_拿来侠客指环吧');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 牌王:1');
+      if Str = 'false' then begin
+         print ('say 想要不灭_拿来牌王吧');
+         exit;
+      end; 
+      Str := callfunc ('getsenderitemexistence 珍品玉玺:1');
+      if Str = 'false' then begin
+         print ('say 想要不灭_拿来珍品玉玺吧');
+         exit;
+      end; 
+      Str := callfunc ('getsenderitemexistence 珍品新罗金冠:1');
+      if Str = 'false' then begin
+         print ('say 想要不灭_拿来珍品新罗金冠吧');
+         exit;
+      end;
+
+      print ('changesendercompletequest 1600');
+      print ('changesendercurrentquest 1600');
+
+      print ('getsenderitem 侠客指环:1');
+      print ('getsenderitem 牌王:1');
+      print ('getsenderitem 珍品玉玺:1');
+      print ('getsenderitem 珍品新罗金冠:1');
+
+      print ('putsendermagicitem 不灭:1 @迷宫老侠客 4');
+
+      print ('say 恭喜您._此戒指遇火不化 100');
+      print ('say 用坚硬的钢铁去削 200');
+      print ('say 也不留任何痕迹... 300');
+      exit;
+   end;
+end;
+
+end.

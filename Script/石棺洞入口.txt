@@ -1,0 +1,29 @@
+unit Ê¯¹×¶´Èë¿Ú;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnRegen (aStr : String);
+
+implementation
+
+procedure OnRegen (aStr : String);
+begin
+   print ('changedynobjstate »ðÌ³ false');
+   print ('changedynobjstate »ðÌ³ false');
+   print ('changedynobjstate »ðÌ³ false');
+   print ('changedynobjstate »ðÌ³ false');
+end;
+
+end.

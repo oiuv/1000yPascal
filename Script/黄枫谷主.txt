@@ -1,0 +1,85 @@
+unit 黄枫谷主;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\黄枫谷主.txt 1';
+      print (Str);
+      exit;
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str : String;
+   iChance : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'change' then begin
+      Str := callfunc ('getsenderitemexistence 血皇塔钥匙:1');
+      if Str = 'false' then begin
+         print ('say 你还不符合兑换的条件呢。'); 
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 鬼魂令牌:5');
+      if Str = 'false' then begin
+         print ('say 兑换装备需要5块鬼魂令牌。');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+
+      print ('getsenderitem 鬼魂令牌:5');
+      iChance := Random (9);
+      if iChance = 5 then begin
+         print ('putsendermagicitem 英雄宝牌:3 @黄枫谷主 4');
+         print ('say 这些英雄宝牌应该对你有用。');
+         exit;
+      end;
+      Str := '鹰雕手:1';
+      iChance := Random (30);
+      if iChance > 6 then Str := '清月天剑:1';
+      if iChance > 10 then Str := '天云宝刀:1';
+      if iChance > 16 then Str := '白骨魔棒:1';
+      if iChance > 21 then Str := '天龙月斧:1';
+      if iChance > 25 then Str := '归魂斗甲:1';
+      if iChance > 28 then Str := '大脉神弓:1';
+      Str := 'putsendermagicitem ' + Str;
+      Str := Str + ' @黄枫谷主 4';
+      print (Str);
+      print ('say 少侠，这件装备送给你，希望你能好好利用它。');
+      exit;
+   end;
+end;
+
+end.

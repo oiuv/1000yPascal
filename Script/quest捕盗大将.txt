@@ -1,0 +1,201 @@
+unit quest捕盗大将;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\quest捕盗大将.txt 1';
+      print (Str);
+      exit; 
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   iRandom : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'quest' then begin
+      Str := callfunc ('getsenderitemexistence 梅花夫人书札:1');
+      if Str = 'false' then begin
+         print ('say 来者面可不善啊.');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 老板娘书札:1');
+      if Str = 'true' then begin
+         print ('say 来者面可不善啊.');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 铁匠书札:1');
+      if Str = 'true' then begin
+         print ('say 来者面可不善啊.');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 药材商书札:1');
+      if Str = 'true' then begin
+         print ('say 来者面可不善啊.');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 风兄书札:1');
+      if Str = 'true' then begin
+         print ('say 来者面可不善啊.');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+
+      print ('getsenderitem 梅花夫人书札:1');
+      print ('showwindow .\help\quest捕盗大将1.txt 0');      
+      exit;
+   end;
+   if aStr = 'sure' then begin
+      print ('showwindow .\help\quest捕盗大将2.txt 0');      
+      exit;
+   end;   
+   if aStr = 'rejection' then begin
+      exit;
+   end;
+   if aStr = 'close_1' then begin
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 捕盗大将书札:1');
+      if Str = 'true' then begin
+         print ('say 来者面可不善啊.');
+         exit;
+      end;
+
+      print ('putsendermagicitem 捕盗大将书札:1 @quest捕盗大将 4');
+      exit;
+   end;
+   if aStr = 'fetter' then begin
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 捕盗大将书札:1');
+      if Str = 'false' then begin
+         print ('say 来者面可不善啊.');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 脚镣:1');
+      if Str = 'false' then begin
+         print ('showwindow .\help\quest捕盗大将5.txt 1');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 男子卒兵娃娃2:1');
+      if Str = 'false' then begin
+         print ('showwindow .\help\quest捕盗大将5.txt 1');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 女子卒兵娃娃2:1');
+      if Str = 'false' then begin
+         print ('showwindow .\help\quest捕盗大将5.txt 1');
+         exit;
+      end;
+
+      print ('getsenderitem 脚镣:1');
+      print ('getsenderitem 男子卒兵娃娃2:1');
+      print ('getsenderitem 女子卒兵娃娃2:1');
+      print ('showwindow .\help\quest捕盗大将4.txt 0');
+
+      print ('getsenderitem 捕盗大将书札:1');
+
+      iRandom := Random (5);
+      if iRandom = 0 then begin
+         Name := callfunc ('getquestitem 4');
+         Str := 'putsendermagicitem ' + Name;
+         Str := Str + ' @quest捕盗大将 4';
+         print (Str);
+         exit;
+      end;
+      if iRandom = 1 then begin
+         Name := callfunc ('getquestitem 6');
+         Str := 'putsendermagicitem ' + Name;
+         Str := Str + ' @quest捕盗大将 4';
+         print (Str);
+         exit;
+      end;
+      if iRandom = 2 then begin
+         Name := callfunc ('getquestitem 7');
+         Str := 'putsendermagicitem ' + Name;
+         Str := Str + ' @quest捕盗大将 4';
+         print (Str);
+         exit;
+      end;
+      if iRandom = 3 then begin
+         Str := callfunc ('getsenderitemexistence 招式全集:1');
+         if Str = 'true' then begin
+            Name := callfunc ('getquestitem 2');
+            Str := 'putsendermagicitem ' + Name;
+            Str := Str + ' @quest捕盗大将 4';
+            print (Str);
+            exit;
+         end;
+
+         print ('putsendermagicitem 招式全集:1 @quest捕盗大将 4');
+         exit;
+      end;
+      if iRandom = 4 then begin
+         Str := callfunc ('getsenderitemexistence 四大神功全集:1');
+         if Str = 'true' then begin
+            Name := callfunc ('getquestitem 2');
+            Str := 'putsendermagicitem ' + Name;
+            Str := Str + ' @quest捕盗大将 4';
+            print (Str);
+            exit;
+         end;
+
+         print ('putsendermagicitem 四大神功全集:1 @quest捕盗大将 4');
+         exit;
+      end;
+      exit;
+   end;
+   if aStr = 'close_2' then begin
+      exit;
+   end;
+   if aStr = 'continue' then begin
+      exit;
+   end;
+   if aStr = 'giveup' then begin
+      print ('getsenderitem 捕盗大将书札:1');
+      print ('getsenderitem 脚镣:1');
+      print ('getsenderitem 男子卒兵娃娃2:1');
+      print ('getsenderitem 女子卒兵娃娃2:1');
+      exit;
+   end;
+end;
+
+end.

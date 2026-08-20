@@ -23,7 +23,7 @@
 | `ITEM_KIND_TICKET` | 18 | 门票 | 传送门使用的移动符/门票 |
 | `ITEM_KIND_HIDESKILL` | 19 | 隐身术 | 隐身技能物品 |
 | `ITEM_KIND_CANTMOVE` | 20 | 不可移动 | 无法放入背包的物品 |
-| `ITEM_KIND_ITEMLOG` | 21 | 日志物品 | 带日志记录的福袋物品 |
+| `ITEM_KIND_ITEMLOG` | 21 | 福袋入口物品 | 历史常量名含 `ITEMLOG`；实际界面是个人储物空间，不是获取日志 |
 | `ITEM_KIND_CHANGER` | 22 | 变换器 | 变身/转换类物品 |
 | `ITEM_KIND_SHOWSKILL` | 23 | 显示技能 | 展示类技能物品 |
 | `ITEM_KIND_WEARITEM2` | 24 | 穿戴物品2 | 第二种穿戴物品（武器类） |

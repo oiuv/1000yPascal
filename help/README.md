@@ -1,6 +1,6 @@
 # 千年服务端技术资料
 
-本目录维护 TGS 运维、配置和脚本开发文档。事实核对只使用三类资料：项目 Pascal 源码、`gameserver-tgs1000/bin` 实际程序目录，以及 [炎黄新章游戏资料](炎黄新章游戏资料/README.md)。文档与源码冲突时，以当前源码加载器和实际配置表头为准；不要根据字段名猜测行为。
+本目录维护 TGS 运维、配置和脚本开发文档。事实核对只使用项目 Pascal 源码、`gameserver-tgs1000/bin` 实际程序目录、[炎黄新章游戏资料](炎黄新章游戏资料/README.md)，以及用户提供的 [神武奇章线上脚本](../Script/README.md)。当前接口和加载语义以炎黄源码/随包为准；神武脚本只证明该线上版本的真实用法。不要根据字段名猜测行为，也不要把两个版本的同名脚本默认视为相同。
 
 ## 核心指南
 
@@ -11,8 +11,18 @@
 - [game.ini 游戏参数](game.ini.md)
 - [常量索引](constants/README.md)
 - [Pascal 脚本说明](Pascal.md)、[Script.SDB 与脚本入口](Script.md)
-- [事件配置](Event.md)、[任务公告](QuestNotice.md)、[物品日志](ITEMLOG.md)
+- [事件配置](Event.md)、[任务公告](QuestNotice.md)、[ITEMLOG 福袋数据](ITEMLOG.md)
 - [制造配置](manufacture.md)、[材料配置](Material.md)
+
+## 运行资源与扩展数据
+
+- [AdditionalAttrib 附加属性表](AdditionalAttrib.md)
+- [SMP/SMA 地图文件](MapFiles.md)
+- [NpcSetting 配置](NpcSetting.md)
+- [help 窗口文本](HelpFiles.md)
+- [程序根目录文本资源](RuntimeResources.md)
+- [运行时 SDB 与 Guild 数据](RuntimeData.md)
+- [源码与资料审查记录](AuditReport.md)
 
 ## Init 数据表
 
@@ -51,6 +61,6 @@
 
 ## 源码镜像与历史资料
 
-`TGS核心源码/` 和本目录的 `deftype.pas` 是便于查阅的镜像，权威版本仍是仓库根目录下的项目源码；源码更新后必须同步镜像。`readme.chm`、`TGS2011.chm` 属于历史帮助文件，只能作为辅助线索，不能覆盖当前源码与实际配置。
+`TGS核心源码/` 和本目录的 `deftype.pas` 是便于查阅的镜像，权威版本仍是仓库根目录下的项目源码；源码更新后必须同步镜像。`readme.chm`、`TGS2011.chm` 属于历史帮助文件，只能作为辅助线索，不能覆盖当前源码与实际配置。版本脚本的比较结论和迁移检查见 [Script 归档说明](../Script/README.md)。
 
 原始炎黄文本使用 CP936/GBK；技术 Markdown 统一使用 UTF-8。

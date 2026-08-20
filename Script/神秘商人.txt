@@ -1,0 +1,239 @@
+unit 神秘商人;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnLeftClick (aStr : String);
+procedure OnGetResult (aStr : String);
+
+implementation
+
+procedure OnGetResult (aStr : String);
+var
+   Str : String;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+
+   if aStr = 'buyGZP' then begin
+      Str := callfunc ('getsenderitemexistence 公子牌:1');
+      if Str = 'true' then begin
+         print ('say 你已经有公子牌了。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 仙人卷轴:1');
+      if Str = 'false' then begin
+         print ('say 没有仙人卷轴，你要这个做什么？');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 金元:100');
+      if Str = 'false' then begin
+         print ('say 拿一百金元来吧！一手交钱，一手交货。');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+
+      print ('getsenderitem 金元:100');
+      Str := 'putsendermagicitem 公子牌 @神秘商人 4';
+      print (Str);
+      print ('say 别让老侠客知道是从我这买的，否则后果自负！');
+   end;
+
+   if aStr = 'buySHP' then begin
+      Str := callfunc ('getsenderitemexistence 守护牌:1');
+      if Str = 'true' then begin
+         print ('say 你已经有守护牌了。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 仙人卷轴:1');
+      if Str = 'false' then begin
+         print ('say 没有仙人卷轴，你要这个做什么？');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 金元:150');
+      if Str = 'false' then begin
+         print ('say 拿一百五十金元来吧！一手交钱，一手交货。');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+
+      print ('getsenderitem 金元:150');
+      Str := 'putsendermagicitem 守护牌 @神秘商人 4';
+      print (Str);
+      print ('say 别让老侠客知道是从我这买的，否则后果自负！');
+   end;
+
+   if aStr = 'buySSP' then begin
+      Str := callfunc ('getsenderitemexistence 术士牌:1');
+      if Str = 'true' then begin
+         print ('say 你已经有术士牌了。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 仙人卷轴:1');
+      if Str = 'false' then begin
+         print ('say 没有仙人卷轴，你要这个做什么？');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 金元:200');
+      if Str = 'false' then begin
+         print ('say 拿二百金元来吧！一手交钱，一手交货。');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+
+      print ('getsenderitem 金元:200');
+      Str := 'putsendermagicitem 术士牌 @神秘商人 4';
+      print (Str);
+      print ('say 别让老侠客知道是从我这买的，否则后果自负！');
+   end;
+
+   if aStr = 'buyZ1' then begin
+      Str := callfunc ('getsenderitemexistence 金元:10000');
+      if Str = 'false' then begin
+         print ('say 拿10000金元来吧！一手交钱，一手交货。');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+
+      print ('getsenderitem 金元:10000');
+      Str := 'putsendermagicitem 残月掌 @神秘商人 4';
+      print (Str);
+      print ('say 这本残月掌秘籍得来不易，好好修炼吧！');
+   end;
+
+   if aStr = 'buyZ2' then begin
+      Str := callfunc ('getsenderitemexistence 金元:20000');
+      if Str = 'false' then begin
+         print ('say 拿20000金元来吧！一手交钱，一手交货。');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+
+      print ('getsenderitem 金元:20000');
+      Str := 'putsendermagicitem 阴阳掌 @神秘商人 4';
+      print (Str);
+      print ('say 这本阴阳掌秘籍得来不易，好好修炼吧！');
+   end;
+
+   if aStr = 'buyZ3' then begin
+      Str := callfunc ('getsenderitemexistence 金元:30000');
+      if Str = 'false' then begin
+         print ('say 拿30000金元来吧！一手交钱，一手交货。');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+
+      print ('getsenderitem 金元:30000');
+      Str := 'putsendermagicitem 流影掌 @神秘商人 4';
+      print (Str);
+      print ('say 这本流影掌秘籍得来不易，好好修炼吧！');
+   end;
+
+   if aStr = 'buyZ4' then begin
+      Str := callfunc ('getsenderitemexistence 金元:40000');
+      if Str = 'false' then begin
+         print ('say 拿40000金元来吧！一手交钱，一手交货。');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+
+      print ('getsenderitem 金元:40000');
+      Str := 'putsendermagicitem 七伤掌 @神秘商人 4';
+      print (Str);
+      print ('say 这本七伤掌秘籍得来不易，好好修炼吧！');
+   end;
+
+   if aStr = 'buyZ5' then begin
+      Str := callfunc ('getsenderitemexistence 金元:50000');
+      if Str = 'false' then begin
+         print ('say 拿50000金元来吧！一手交钱，一手交货。');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+
+      print ('getsenderitem 金元:50000');
+      Str := 'putsendermagicitem 玄冰掌 @神秘商人 4';
+      print (Str);
+      print ('say 这本玄冰掌秘籍得来不易，好好修炼吧！');
+   end;
+
+   if aStr = 'buyZ6' then begin
+      Str := callfunc ('getsenderitemexistence 金元:60000');
+      if Str = 'false' then begin
+         print ('say 拿60000金元来吧！一手交钱，一手交货。');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+
+      print ('getsenderitem 金元:60000');
+      Str := 'putsendermagicitem 烈焰掌 @神秘商人 4';
+      print (Str);
+      print ('say 这本烈焰掌秘籍得来不易，好好修炼吧！');
+   end;
+
+end;
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\神秘商人.txt 0';
+      print (Str);
+      exit;
+   end;
+end;
+
+end.
+

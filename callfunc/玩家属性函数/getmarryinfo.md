@@ -60,4 +60,4 @@ end;
 ## 相关函数
 - `getmarryclothes` — 获取结婚服装信息
 - `getsendersex` — 获取玩家性别
-- `getparty` — 获取组队信息
+- `getparty` — 获取婚姻记录中的婚礼 `Party` 标志（不是通用组队状态）

@@ -1,0 +1,67 @@
+unit 霸王僧侣;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnLeftClick (aStr : String);
+procedure OnGetResult (aStr : String);
+
+implementation
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   iCount : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   Str := callfunc ('getsenderitemexistence 霸王令牌:1');
+   if Str = 'false' then begin
+      print ('say 没有霸王令牌是进不去的');
+      exit;
+   end;
+   Str := callfunc ('getusercount 96');
+   iCount := StrToInt (Str);
+   if iCount > 0 then begin
+      print ('say 现在里面有人，请稍等');
+      exit;
+   end;
+
+   print ('mapregen 96');
+
+   print ('getsenderitem 霸王令牌:1');
+   Name := callfunc ('getsendername');
+   Str := 'movespace ' + Name;
+   Str := Str + ' user 96 25 60';
+   print (Str);
+
+   print ('boMapEnter 96 false');
+end;
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\霸王僧侣.txt 1';
+      print (Str);
+      exit; 
+   end;
+end;
+
+end.

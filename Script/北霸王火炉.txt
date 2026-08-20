@@ -1,0 +1,82 @@
+unit 北霸王火炉;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnTurnOn (aStr : String);
+procedure OnTurnOff (aStr : String);
+procedure OnTimer (aStr : String);
+
+var
+   n : integer = 0;
+   boCall : String = '';
+
+implementation
+
+
+procedure OnTurnOn (aStr : String);
+var
+   Str : String;
+begin
+
+   Str := callfunc ('checkobjectalive 北海雪原 dynamicobject 被捆绑的北霸王');
+   if Str = 'false' then begin
+      exit;
+   end;
+
+   Str := callfunc ('checkobjectalive 北海雪原 monster 北霸王魂1');
+   if Str = 'true' then begin
+      exit;
+   end;
+
+   boCall := 'true';
+   n := 2;
+   print ('changedynobjstate 被捆绑的北霸王 true');
+end;
+
+procedure OnTurnOff (aStr : String);
+var
+   Str : String;
+begin
+   Str := callfunc ('checkobjectalive 北海雪原 monster 北霸王魂1');
+   if Str = 'true' then begin
+      print ('mapdelobjbyname monster 北霸王魂1');
+   end;
+
+   Str := callfunc ('checkobjectalive 北海雪原 monster 远距离野神族3');
+   if Str = 'true' then begin
+      print ('mapdelobjbyname monster 远距离野神族3');
+   end;
+   exit;
+end;
+
+procedure OnTimer (aStr : String);
+begin
+   Dec(n);
+   if n = 0 then begin
+      if boCall = 'true' then begin
+         print ('mapaddobjbyname monster 北霸王魂1 237 37 2 0 false');
+         print ('mapaddobjbyname monster 远距离野神族3 234 33 2 0 false');
+         print ('mapaddobjbyname monster 远距离野神族3 241 40 2 0 false');
+         print ('mapaddobjbyname monster 远距离野神族3 237 44 2 0 false');
+         print ('mapaddobjbyname monster 远距离野神族3 230 37 2 0 false');
+         boCall := 'false';
+      end;
+   end;
+end;
+
+
+
+
+end.

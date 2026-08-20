@@ -49,11 +49,11 @@ print ('changesendercurrentquest 1350');
 ## 注意事项
 
 1. **作用于玩家**：通过 `aSender` 执行，修改的是触发脚本的玩家的已完成任务
-2. **与 changecompletequest 的区别**：`changesendercompletequest` 修改玩家的任务，`changecompletequest` 修改自身（NPC）的任务
+2. **与 changecompletequest 的区别**：本命令作用于 `aSender`；`changecompletequest` 作用于 `aSelf`。只有目标对象实际为 `TUser` 时写入才有效
 3. **通常配合 changesendercurrentquest**：完成当前任务后同时更新已完成和当前任务编号
 
 ## 相关命令
 - `changesendercurrentquest` — 修改玩家当前任务
 - `changesenderfirstquest` — 修改玩家第一个任务
 - `changesenderqueststr` — 修改玩家任务字符串
-- `changecompletequest` — 改变自身已完成任务
+- `changecompletequest` — 调用 `aSelf` 的修改方法（基础对象为空操作）

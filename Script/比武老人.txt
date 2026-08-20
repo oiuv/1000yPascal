@@ -1,0 +1,188 @@
+unit 比武老人;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnLeftClick (aStr : String);
+procedure OnGetResult (aStr : String);
+
+implementation
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name, item : String;
+   iCount : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   
+   if aStr = 'gonpcroom' then begin
+      Str := callfunc ('checksenderpowerwearitem');
+      iCount := StrToInt (Str);
+      if iCount > 0 then begin
+         print ('say 为了公平起见,请脱掉将技能装备');
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 0');
+      if Str = 'true' then begin
+         print ('say 不能用门武');
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 1');
+      if Str = 'true' then begin
+         print ('say 不能使用掌法');
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 3');
+      if Str = 'true' then begin
+         print ('say 禁用二级武功');
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 4');
+      if Str = 'true' then begin
+         print ('say 禁用二级武功');
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 5');
+      if Str = 'true' then begin
+         print ('say 禁用4大神功');
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 6');
+      if Str = 'true' then begin
+         print ('say 禁用绝世武功');
+         exit;
+      end;
+      Str := callfunc ('getsendercurpowerlevelname');
+      if Str <> '' then begin
+         print ('say 开镜_不能入场');
+         exit;
+      end;
+      Str := callfunc ('getsenderuseattackskilllevel');
+      if Str <> '9999' then begin
+         print ('say 就你这点功夫，能打的过谁呀？');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 太极药水:1');
+      // Str := callfunc ('getsenderitemexistence 金元:1');
+      if Str = 'false' then begin
+         print ('say 你身上没带太极药水吧？！');
+         // print ('say 给我一金元的入场费吧！');
+         exit;
+      end;
+      Str := callfunc ('getusercount 55');
+      iCount := StrToInt (Str);
+      if iCount > 0 then begin
+         print ('say 捕盗大将现在很忙');
+         exit;
+      end;
+      Str := callfunc ('getusercount 56');
+      iCount := StrToInt (Str);
+      if iCount > 0 then begin
+         print ('say 捕盗大将现在很忙');
+         exit;
+      end;
+      Str := callfunc ('checkalivemopcount 55 npc 比武捕盗大将');
+      iCount := StrToInt (Str);
+      if iCount = 0 then begin
+         print ('say 捕盗大将现在很忙_请稍候');
+         exit;
+      end;
+      Str := callfunc ('checkalivemopcount 56 npc 比武梅花夫人');
+      iCount := StrToInt (Str);
+      if iCount = 0 then begin
+         print ('say 捕盗大将现在很忙_请稍候');
+         exit;
+      end;
+      Str := callfunc ('checkentermap 55');
+      if Str = 'false' then begin
+         print ('say 请稍后...');
+         exit;
+      end;
+
+      print ('mapregen 55');
+
+      print ('getsenderitem 太极药水:1');
+      // print ('getsenderitem 金元:1');
+      Name := callfunc ('getsendername');
+      Str := 'movespace ' + Name;
+      Str := Str + ' user 55 17 18';
+      print (Str);
+      Str := 'sendsendertopmsg ' + Name;
+      Str := Str + ',开始挑战比武擂台';
+      print (Str);
+
+      print ('boMapEnter 55 false');
+      exit;
+   end;
+
+   if aStr = 'gift' then begin
+      Str := callfunc ('getsenderitemexistence 天火液:1');
+      if Str = 'false' then begin
+         print ('say 天火液都没有，你拿什么来兑换？');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+      print ('getsenderitem 天火液:1');
+      Str := callfunc ('getsenderitemexistence 储物袋:1');
+      if Str = 'false' then begin
+         iCount := Random(5);
+         if iCount = 0 then Item := '储物袋:1';
+         if iCount = 1 then Item := '金元:5';
+         if iCount = 2 then Item := '金元:10';
+         if iCount = 3 then Item := '回城卷轴:10';
+         if iCount = 4 then Item := callfunc ('getrandomitem 4');
+      end;
+      if Str = 'true' then begin
+         iCount := Random(5);
+         if iCount = 0 then Item := callfunc ('getrandomitem 0');
+         if iCount = 1 then Item := '金元:5';
+         if iCount = 2 then Item := '金元:10';
+         if iCount = 3 then Item := '回城卷轴:10';
+         if iCount = 4 then Item := callfunc ('getrandomitem 4');
+      end;
+      Str := 'putsendermagicitem ' + Item;
+      Str := Str + ' @比武老人 4';
+      print (Str);
+      Name := callfunc ('getsendername');
+      Str := 'sendsendertopmsg ' + Name;
+      Str := Str + '_从_比武老人,兑换到_';
+      Str := Str + Item;
+      print (Str);
+      exit;
+   end;
+
+end;
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\比武老人.txt 1';
+      print (Str);
+      exit; 
+   end;
+end;
+
+end.

@@ -1,0 +1,257 @@
+unit 铁匠;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\铁匠.txt 0';
+      print (Str);
+      exit; 
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   nCur, nDura : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'sell' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 0';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'buy' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 1';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'smelting' then begin
+      print ('showwindow .\help\铁匠提炼.txt 0');
+      exit;
+   end;
+   if aStr = 'exchange' then begin
+      print ('showwindow .\help\铁匠交换.txt 0');
+      exit;
+   end;
+   if aStr = 'repair' then begin
+      Str := callfunc ('getsenderrepairitem 9 27');
+      if Str = '-1' then begin
+         print ('say ……？');
+         exit;
+      end;
+      if Str = '0' then begin
+         print ('say 没带要修理的物品');
+         exit;
+      end;
+      if Str = '1' then begin
+         print ('say 老兄,_怎么没带锄头就来了!');
+         exit;
+      end;
+      if Str = '2' then begin
+         print ('say 老兄,_这不是修修还能用吗!');
+         exit;
+      end;
+      if Str = '3' then begin
+         print ('say 修理不了了，还是另买个吧?');
+         exit;
+      end;
+      exit;
+   end;
+   if aStr = 'repair2' then begin
+      Str := callfunc ('getsenderrepairitem 9 57');
+      if Str = '-1' then begin
+         print ('say ……？');
+         exit;
+      end;
+      if Str = '0' then begin
+         print ('say 没带要修理的物品');
+         exit;
+      end;
+      if Str = '1' then begin
+         print ('say 老兄,_怎么没带锄头就来了!');
+         exit;
+      end;
+      if Str = '2' then begin
+         print ('say 老兄,_这不是完好无损的吗!');
+         exit;
+      end;
+      if Str = '3' then begin
+         print ('say 修理不了了，还是另买个吧?');
+         exit;
+      end;
+      exit;
+   end;
+   if aStr = 'steel1' then begin
+      print ('sendersmeltitem 钢铁');
+      exit;
+   end;
+   if aStr = 'steel2' then begin
+      print ('sendersmeltitem 墨铁');
+      exit;
+   end;
+   if aStr = 'steel3' then begin
+      print ('sendersmeltitem 玄铁');
+      exit;
+   end;
+   if aStr = 'steel4' then begin
+      print ('sendersmeltitem 熔岩铁');
+      exit;
+   end;
+   if aStr = 'steel5' then begin
+      print ('sendersmeltitem 千年衔铁');
+      exit;
+   end;
+   if aStr = 'metal1' then begin
+      print ('sendersmeltitem 青铜');
+      exit;
+   end;
+   if aStr = 'metal2' then begin
+      print ('sendersmeltitem 黄铜');
+      exit;
+   end;
+   if aStr = 'metal3' then begin
+      print ('sendersmeltitem 砂金');
+      exit;
+   end;
+   if aStr = 'metal4' then begin
+      print ('sendersmeltitem 黄金');
+      exit;
+   end;
+   if aStr = 'metal5' then begin
+      print ('sendersmeltitem 白金');
+      exit;
+   end;
+   if aStr = 'metal6' then begin
+      print ('sendersmeltitem 千年纯金');
+      exit;
+   end;
+   if aStr = 'rock1' then begin
+      print ('sendersmeltitem 硅石');
+      exit;
+   end;
+   if aStr = 'rock2' then begin
+      print ('sendersmeltitem 黑石');
+      exit;
+   end;
+   if aStr = 'rock3' then begin
+      print ('sendersmeltitem 月石');
+      exit;
+   end;
+   if aStr = 'rock4' then begin
+      print ('sendersmeltitem 玄石');
+      exit;
+   end;
+   if aStr = 'rock5' then begin
+      print ('sendersmeltitem 耀阳石');
+      exit;
+   end;
+   if aStr = 'rock6' then begin
+      print ('sendersmeltitem 千年金刚石');
+      exit;
+   end;
+   if aStr = 'jewel1' then begin
+      print ('sendersmeltitem 青玉');
+      exit;
+   end;
+   if aStr = 'jewel2' then begin
+      print ('sendersmeltitem 绿玉');
+      exit;
+   end;
+   if aStr = 'jewel3' then begin
+      print ('sendersmeltitem 黄玉');
+      exit;
+   end;
+   if aStr = 'jewel4' then begin
+      print ('sendersmeltitem 白玉');
+      exit;
+   end;
+   if aStr = 'jewel5' then begin
+      print ('sendersmeltitem 黑珍珠');
+      exit;
+   end;
+   if aStr = 'jewel6' then begin
+      print ('sendersmeltitem 千年水晶');
+      exit;
+   end;
+
+   if aStr = 'metal7' then begin
+      print ('sendersmeltitem2 黄铜');
+      exit;
+   end;
+   if aStr = 'metal8' then begin
+      print ('sendersmeltitem2 砂金');
+      exit;
+   end;
+   if aStr = 'metal9' then begin
+      print ('sendersmeltitem2 黄金');
+      exit;
+   end;
+   if aStr = 'metal10' then begin
+      print ('sendersmeltitem2 白金');
+      exit;
+   end;
+   if aStr = 'rock7' then begin
+      print ('sendersmeltitem2 黑石');
+      exit;
+   end;
+   if aStr = 'rock8' then begin
+      print ('sendersmeltitem2 月石');
+      exit;
+   end;
+   if aStr = 'rock9' then begin
+      print ('sendersmeltitem2 玄石');
+      exit;
+   end;
+   if aStr = 'rock10' then begin
+      print ('sendersmeltitem2 耀阳石');
+      exit;
+   end;
+   if aStr = 'jewel7' then begin
+      print ('sendersmeltitem2 绿玉');
+      exit;
+   end;
+   if aStr = 'jewel8' then begin
+      print ('sendersmeltitem2 黄玉');
+      exit;
+   end;
+   if aStr = 'jewel9' then begin
+      print ('sendersmeltitem2 白玉');
+      exit;
+   end;
+   if aStr = 'jewel10' then begin
+      print ('sendersmeltitem2 黑珍珠');
+      exit;
+   end;
+end;
+
+end.

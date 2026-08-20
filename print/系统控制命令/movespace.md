@@ -1,11 +1,11 @@
 # movespace
 
 ## 功能描述
-传送玩家到指定地图坐标。支持延迟执行（通过 tick 参数控制延迟毫秒数）。
+把跨地图传送加入 `Self` 的命令队列，达到指定 tick 后执行。
 
 ## 语法格式
 ```pascal
-print('movespace <玩家名> user <地图ID> <X坐标> <Y坐标> <延迟毫秒>');
+print('movespace <玩家名> user <地图ID> <X坐标> <Y坐标> <延迟tick>');
 ```
 
 ## 参数说明
@@ -16,7 +16,7 @@ print('movespace <玩家名> user <地图ID> <X坐标> <Y坐标> <延迟毫秒>'
 | 地图ID | Integer | 目标地图编号 |
 | X坐标 | Integer | 目标 X 坐标 |
 | Y坐标 | Integer | 目标 Y 坐标 |
-| 延迟毫秒 | Integer | 延迟执行的毫秒数（0 为立即执行） |
+| 延迟 tick | Integer | 相对 `mmAnsTick` 的队列间隔；正常倍率下 1 tick 约 10 ms，0 为到下一次队列处理时执行 |
 
 ## 源码实现
 基于 `uScriptManager.pas` 中的处理逻辑：
@@ -32,7 +32,7 @@ end else if cmd = 'movespace' then begin
 
 ### 基础传送
 ```pascal
-// 将玩家传送到地图49的坐标(106, 55)，延迟100毫秒
+// 正常 tick 倍率下约 1 秒后传送到地图 49 的 (106, 55)
 Name := callfunc ('getsendername');
 Str := 'movespace ' + Name;
 Str := Str + ' user 49 106 55 100';
@@ -81,9 +81,10 @@ end;
 ## 注意事项
 
 1. **玩家名必须正确**：通常通过 `getsendername` 获取当前交互玩家名称
-2. **延迟参数**：最后一个参数为延迟毫秒数，用于在对话等操作后再传送
+2. **延迟单位**：最后一项是 tick，不是毫秒；默认 100 约等于 1 秒，测试加速倍率会改变墙钟时间
 3. **地图进入控制**：传送后通常需要配合 `boMapEnter` 控制地图进入权限
 4. **坐标有效性**：目标坐标必须是地图上的可到达位置
+5. **执行对象**：当前已确认 `TLifeObject.WorkBoxCommand` 处理该队列命令；不要假定动态对象的队列也会传送
 
 ## 相关命令
 - `movespacebyname` — 按名称传送玩家

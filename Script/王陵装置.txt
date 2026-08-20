@@ -1,0 +1,77 @@
+unit 王陵装置;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnRegen (aStr : String);
+procedure OnDie (aStr : String);
+
+var
+   n : Integer = 0;
+
+implementation
+
+procedure OnRegen (aStr : String);
+begin
+   n := 0;   
+end;
+
+procedure OnDie (aStr : String);
+begin
+   if n < 8 then begin
+      inc (n);
+   end;
+   if n = 1 then begin
+      print ('sendnoticemsgformapuser 70 <雨中客>_有人侵入王陵 15');
+      print ('sendnoticemsgformapuser 70 <雨中客>_启动机关装置! 15');      
+      print ('mapaddobjbyname dynamicobject 滚动桥A 248 138');
+      print ('mapaddobjbyname dynamicobject 滚动桥B 230 116');
+      print ('mapaddobjbyname dynamicobject 滚动狮子A 255 141 101');
+      print ('mapaddobjbyname dynamicobject 滚动狮子A 247 132 101');      
+      print ('mapaddobjbyname dynamicobject 滚动狮子B 228 111 102');
+      print ('mapaddobjbyname dynamicobject 滚动狮子B 237 119 102');      
+      exit;
+   end;
+   if n = 3 then begin
+      print ('sendnoticemsgformapuser 70 <雨中客>_损失比预计的要惨重 15');
+      print ('sendnoticemsgformapuser 70 <雨中客>_封锁秘密通道 15');      
+      print ('mapaddobjbyname dynamicobject 迷宫门 281 83');
+      exit;
+   end;
+   if n = 5 then begin
+      print ('sendnoticemsgformapuser 70 <雨中客>_再也支撑不住了 15');
+      print ('sendnoticemsgformapuser 70 <雨中客>_封锁所有的出入口 15');      
+      print ('mapaddobjbyname dynamicobject 石门右1 118 192');
+      print ('mapaddobjbyname dynamicobject 石门右1 129 287');
+      print ('mapaddobjbyname dynamicobject 石门右1 192 297');
+      print ('mapaddobjbyname dynamicobject 石门右1 240 313');
+      print ('mapaddobjbyname dynamicobject 石门右1 66 160');
+      print ('mapaddobjbyname dynamicobject 石门右1 96 115');
+      print ('mapaddobjbyname dynamicobject 石门右1 98 113');
+      print ('mapaddobjbyname dynamicobject 石门左1 143 301');
+      print ('mapaddobjbyname dynamicobject 石门左1 146 114');
+      print ('mapaddobjbyname dynamicobject 石门左1 148 116');
+      print ('mapaddobjbyname dynamicobject 石门左1 184 295');
+      print ('mapaddobjbyname dynamicobject 石门左1 249 291');
+      print ('mapaddobjbyname dynamicobject 石门左1 278 233');
+      print ('mapaddobjbyname dynamicobject 石门左1 275 230');
+      print ('mapaddobjbyname dynamicobject 石门左1 61 173');
+      print ('mapaddobjbyname dynamicobject 石门左1 73 139');
+      print ('mapaddobjbyname dynamicobject 石门左1 75 141');
+      print ('mapaddobjbyname dynamicobject 石门左1 78 158');
+      exit;
+   end;
+end;
+
+end.

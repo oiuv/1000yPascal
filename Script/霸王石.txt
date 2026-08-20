@@ -1,0 +1,58 @@
+unit 霸王石;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDie (aStr : String);
+procedure OnRegen (aStr : String);
+procedure OnHit (aStr : String);
+
+var
+   n : Integer = 0;
+
+implementation
+
+procedure OnDie (aStr : String);
+begin
+   print ('mapaddobjbyname monster 石大王 80 40 10 38 false');
+   print ('bopickbymapname 地下采石场2层 true');
+end;
+
+procedure OnRegen (aStr : String);
+begin
+   print ('boiceallbyname 地下石巨人 monster true');
+   print ('bohitallbyname 地下石巨人 monster false');
+   n := 0;
+end;
+
+procedure OnHit (aStr : String);
+var
+   Str : String;
+   Life : Integer;
+begin
+   if n = 1 then exit;
+
+   Str := callfunc ('getlife');
+   Life := StrToInt (Str);
+
+   if Life <= 50000 then begin
+      print ('boiceallbyname 地下石巨人 monster false');
+      print ('bohitallbyname 地下石巨人 monster true');
+      n := 1;
+      exit;
+   end;
+end;
+
+end.
+

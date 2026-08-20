@@ -38,10 +38,10 @@ end;
 
 1. **返回值格式**：返回字符串类型的整数，需要 `StrToInt` 转换
 2. **FSender 对象**：此函数获取的是触发者（玩家）的完成任务状态
-3. **与 getcompletequest 的区别**：`getsendercompletequest` 获取玩家的，`getcompletequest` 获取 NPC 自身的
+3. **与 getcompletequest 的区别**：本函数固定作用于 `FSender`；`getcompletequest` 作用于 `FSelf`。只有对应对象实际为 `TUser` 时才会读取玩家任务字段
 4. **无参数**：不需要传入任何参数
 
 ## 相关函数
-- `getcompletequest` - 获取自身完成任务
+- `getcompletequest` - 获取 `FSelf` 的完成任务值（基础对象固定返回 0）
 - `getsendercurrentquest` - 获取触发者当前任务
 - `getsenderfirstquest` - 获取触发者第一任务

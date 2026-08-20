@@ -1,0 +1,156 @@
+unit 帝王石谷阴阳师;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+   CompleteQuest : Integer;
+   CurrentQuest : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race <> 1 then begin
+      exit;
+   end;
+
+   Str := callfunc ('getsendercompletequest');
+   CompleteQuest := StrToInt (Str);
+
+   Str := callfunc ('getsendercurrentquest');
+   CurrentQuest := StrToInt (Str);
+   
+
+   //家券何利阑 父靛绰 过阑 拱阑 荐 乐绊 父甸 荐 乐促.
+   if CompleteQuest = 1100 then begin
+      Str := 'showwindow .\help\帝王石谷阴阳师1.txt 1';
+      print (Str);
+      exit;
+   end;
+
+   //亲付何利阑 父靛绰 过阑 拱阑 荐 乐绊 父甸绢临 荐 乐促.
+   if CurrentQuest = 1450 then begin
+      Str := 'showwindow .\help\帝王石谷阴阳师5.txt 1';
+      print (Str);
+      exit;
+   end;
+   
+   Str := 'showwindow .\help\帝王石谷阴阳师.txt 1';
+   print (Str);
+   exit;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+begin
+   if aStr = 'aboutticket' then begin
+      print ('showwindow .\help\帝王石谷阴阳师2.txt 0');
+      exit;
+   end;
+
+   if aStr = 'maketicket' then begin
+      Str := callfunc ('getsenderitemexistence 小佛:1');
+      if Str = 'true' then begin
+         print ('getsenderitem 小佛:1');
+         print ('putsendermagicitem 召唤符:2 @帝王石谷阴阳师 4');
+         print ('say 这就当辛苦费了……一路小心');
+         exit;   
+      end;
+      print ('say 拿小佛来~');
+      exit;
+   end;
+
+   if aStr = 'before' then begin
+      print ('showwindow .\help\帝王石谷阴阳师1.txt 1');
+      exit;
+   end;
+
+   if aStr = 'wherebaby' then begin
+      print ('showwindow .\help\帝王石谷阴阳师4.txt 0');
+      exit;
+   end;
+
+
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'sell' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 0';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'make' then begin
+      Str := callfunc ('getsenderitemexistence 潜行术:1');
+      if Str = 'false' then begin
+         Str := 'say 连潜行术都没有_还想_';
+         print (Str);
+         exit;
+      end;
+      if Str = 'true' then begin
+         Str := callfunc ('checkenoughspace');
+         if Str = 'false' then begin
+            print ('say 物品栏已满~');
+            exit;
+         end;
+
+         Str := 'getsenderitem 潜行术:1';
+         print (Str);
+         Str := 'putsendermagicitem 透视符:1 @帝王石谷阴阳师 4';
+         print (Str);
+         Str := 'say 拿好透视符，妥善保管';
+         print (Str);
+         exit;
+      end;
+      exit;
+   end;
+
+   if aStr = 'beforeprotect' then begin
+      print ('showwindow .\help\帝王石谷阴阳师5.txt 1');
+      exit;
+   end;
+   
+   if aStr = 'aboutprotect' then begin
+      print ('showwindow .\help\帝王石谷阴阳师6.txt 1');
+      exit;
+   end;
+
+   if aStr = 'protectticket' then begin
+      Str := callfunc ('getsenderitemexistence 白桦树桩:1');
+      if Str = 'false' then begin
+         print ('say 材料都没拿_靠边站_忙着呢');
+         exit;
+      end;
+      print ('getsenderitem 白桦树桩:1');
+      print ('putsendermagicitem 降魔符:1 @帝王石谷阴阳师 4');
+      print ('say 手持降魔符……你就大胆地往前走');
+      
+      Str := callfunc ('getsenderitemexistence 石谷钥匙:1');
+      if Str = 'true' then begin
+         print ('changesendercompletequest 1450');
+         print ('changesendercurrentquest 1500');
+      end;
+   end;
+end;
+
+end.

@@ -1,0 +1,343 @@
+unit 帝王石谷药材商;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+   nCount : Integer;
+   nCount2 : Integer;
+   CompleteQuest : Integer;
+   CurrentQuest : Integer;
+   FirstQuest : Integer;
+   nVirtue : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+
+   if Race <> 1 then begin
+      exit;
+   end;
+
+   Str := callfunc ('getsendervirtue');
+   nVirtue := StrToInt (Str);
+   if nVirtue < 2000 then begin
+      print ('say 算了_我看你自身难保.' );
+      exit;
+   end;
+   
+   Str := callfunc ('getsendercompletequest');
+   CompleteQuest := StrToInt (Str);
+   Str := callfunc ('getsendercurrentquest');
+   CurrentQuest := StrToInt (Str);
+
+   if CompleteQuest < 1000 then begin
+      //Str := callfunc ('getsenderitemexistence 门人推荐书:1');
+      //if Str = 'true' then begin
+      //   print ('getsenderitem 门人推荐书:1');
+      //end;
+      if CompleteQuest < CurrentQuest then begin
+         exit;
+      end;
+      Str := callfunc ('getsenderfirstquest');
+      FirstQuest := StrToInt (Str);
+      if FirstQuest < 2 then begin
+         Str := callfunc ('getsenderitemexistence 金元:100');
+         if Str = 'false' then begin
+            print ('say 未进行新手村挑战，需交纳100金元证明你的实力。');
+            exit;
+         end;
+         print ('getsenderitem 金元:100');
+      end;
+      if FirstQuest = 2 then begin
+         Str := callfunc ('getsenderitemexistence 金元:80');
+         if Str = 'false' then begin
+            print ('say 新手村挑战仅过一关，需交纳80金元证明你的实力。');
+            exit;
+         end;
+         print ('getsenderitem 金元:80');
+      end;
+      if FirstQuest = 3 then begin
+         Str := callfunc ('getsenderitemexistence 金元:60');
+         if Str = 'false' then begin
+            print ('say 新手村挑战仅过二关，需交纳60金元证明你的实力。');
+            exit;
+         end;
+         print ('getsenderitem 金元:60');
+      end;
+      if FirstQuest = 4 then begin
+         Str := callfunc ('getsenderitemexistence 金元:40');
+         if Str = 'false' then begin
+            print ('say 新手村挑战仅过三关，需交纳40金元证明你的实力。');
+            exit;
+         end;
+         print ('getsenderitem 金元:40');
+      end;
+      if FirstQuest = 5 then begin
+         Str := callfunc ('getsenderitemexistence 金元:20');
+         if Str = 'false' then begin
+            print ('say 新手村挑战未通关，需交纳20金元证明你的实力。');
+            exit;
+         end;
+         print ('getsenderitem 金元:20');
+      end;
+
+      //任务临时标记
+      print ('changesenderqueststr 1');
+      Str := 'showwindow .\help\帝王石谷药材商1.txt 0';
+      print (Str);
+      exit;
+   end;
+
+   if CompleteQuest = 1000 then begin
+      Str := 'showwindow .\help\帝王石谷药材商1.txt 0';
+      print (Str);
+      exit;
+   end;
+
+   if CompleteQuest = 1050 then begin
+      // 在对话1进行后，如果完成了中间任务
+      Str := callfunc ('getsenderitemexistence 装雪参的筐:1');
+      if Str = 'true' then begin
+         Str := callfunc ('checkenoughspace 1');
+         if Str = 'false' then begin
+            print ('say 物品栏已满');
+            exit;
+         end;
+
+         print ('changesendercompletequest 1100');
+         print ('changesendercurrentquest 1150');
+
+         Str := 'getsenderitem 装雪参的筐:1';
+         print (Str);
+
+         Str := 'putsendermagicitem 葫芦1:1 @帝王石谷药材商 4';
+         print (Str);
+
+         Str := 'putsendermagicitem 葫芦2:1 @帝王石谷药材商 4';
+         print (Str);
+         
+         Str := 'showwindow .\help\帝王石谷药材商2_1.txt 0';
+         print (Str);
+         exit;
+      end;
+
+      // 在对话1进行后，如果没有完成就返回
+      Str := 'say 老母病危_求您快帮我弄些雪参来';
+      print (Str);
+      exit;
+   end;
+   if CompleteQuest = 1100 then begin
+      // 检查是否带来了二种任务物品
+      nCount := 0;
+      Str := callfunc ('getsenderitemexistence 收了魂的葫芦1:1');
+      if Str = 'false' then begin
+         Inc(nCount);
+      end;
+
+      Str := callfunc ('getsenderitemexistence 收了魂的葫芦2:1');
+      if Str = 'false' then begin
+         Inc(nCount);
+      end;
+
+      if nCount = 1 then begin
+         print ('say 连南帝王的灵也帮我收了吧');
+         exit;
+      end;
+
+      if nCount = 2 then begin
+         print ('say 至今谁的魂也没收着_抓紧喽');
+         exit;
+      end;
+
+      if nCount = 0 then begin
+         nCount2 := 0;
+         print ('changesendercompletequest 1150');
+         print ('changesendercurrentquest 1200');
+         print ('getsenderitem 收了魂的葫芦1:1');
+         print ('getsenderitem 收了魂的葫芦2:1');
+         Str := callfunc ('getsenderitemexistence 竹筒:1');
+         if Str = 'false' then begin
+            Inc (nCount2);
+         end;
+         Str := callfunc ('getsenderitemexistence 大型竹筒:1');
+         if Str = 'false' then begin
+            Inc (nCount2);
+         end;
+         if nCount2 = 2 then begin
+            print ('putsendermagicitem 竹筒:1 @帝王石谷药材商 4');
+         end;
+
+         print ('putsendermagicitem 抽屉钥匙:1 @帝王石谷药材商 4');
+         print ('showwindow .\help\帝王石谷药材商3_1.txt 0');
+         exit;
+      end;
+   end;
+   if CurrentQuest > 1150 then begin
+      if CurrentQuest < 1550 then begin
+         print ('say 壮士，你的雪参救了老母的病');
+
+         if CurrentQuest = 1250 then begin
+            Str := callfunc ('getsenderitemexistence 侠客指环:1');
+            if Str = 'false' then begin
+               print ('changesendercompletequest 1000');
+               print ('changesendercurrentquest 1000');
+               CurrentQuest := 1000;
+               CompleteQuest := 1000;
+            end;
+         end;
+         exit;
+      end;
+   end;
+
+   if CurrentQuest = 1550 then begin
+      print ('say 你也听说大人的死讯了吗?');
+   end;
+   
+   if CurrentQuest = 1550 then begin
+      Str := callfunc ('getsenderitemexistence 牌王:1');
+      if Str = 'false' then begin
+         print ('changesendercompletequest 1200');
+         print ('changesendercurrentquest 1250');
+         CurrentQuest := 1250;
+         CompleteQuest := 1200;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 侠客指环:1');
+      if Str = 'false' then begin
+         print ('changesendercompletequest 1000');
+         print ('changesendercurrentquest 1000');
+         CurrentQuest := 1000;
+         CompleteQuest := 1000;
+      end;
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+begin
+   if aStr = 'q1050_close' then begin
+      print ('say 慢走_改变主意了再来');
+      exit;
+   end;
+
+   if aStr = 'getok' then begin
+      Str := callfunc ('checkenoughspace 2');
+      if Str = 'false' then begin
+         print ('say 物品栏已满');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 书函:1');
+      if Str = 'false' then begin
+         Str := 'putsendermagicitem 书函:1 @帝王石谷药材商 4';
+         print (Str);
+      end;
+      Str := callfunc ('getsenderitemexistence 竹筐:1');
+      if Str = 'false' then begin
+         Str := 'putsendermagicitem 竹筐:1 @帝王石谷药材商 4';
+         print (Str);
+      end;
+
+      //QuestNum Upgrade
+      print ('changesendercompletequest 1050');
+      print ('changesendercurrentquest 1100');
+      
+      Str := 'showwindow .\help\帝王石谷药材商1_2.txt 0';
+      print (Str);
+      exit;
+   end;
+
+   if aStr = 'howto' then begin
+      Str := 'showwindow .\help\帝王石谷药材商1_3.txt 0';
+      print (Str);
+      exit;
+   end;
+
+   if aStr = 'howtofight' then begin
+      Str := 'showwindow .\help\帝王石谷药材商2_2.txt 0';
+      print (Str);
+      exit;
+   end;
+
+   if aStr = 'howtogetCallticket' then begin
+      Str := 'showwindow .\help\帝王石谷药材商2_4.txt 0';
+      print (Str);
+      exit;
+   end;
+
+   if aStr = 'wheretheyare' then begin
+      Str := 'showwindow .\help\帝王石谷药材商2_3.txt 0';
+      print (Str);
+      exit;
+   end;
+
+   if aStr = 'usewatercase' then begin
+      Str := 'showwindow .\help\帝王石谷药材商3_2.txt 0';
+      print (Str);
+      exit;
+   end;
+
+   if aStr = '2_1' then begin
+      Str := 'showwindow .\help\帝王石谷药材商2_1.txt 0';
+      print (Str);
+      exit;
+   end;
+   
+
+   if aStr = '1_close' then begin
+      exit;
+   end;
+
+   if aStr = '2_close' then begin
+      exit;
+   end;
+
+   
+   if aStr = 'close' then begin
+      exit;
+   end;
+   
+   if aStr = 'sell' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 0';
+      print (Str);
+      exit;
+   end;
+   
+   if aStr = 'buy' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 1';
+      print (Str);
+      exit;
+   end;
+   
+   if aStr = 'log' then begin
+      Str := 'logitemwindow';
+      print (Str);
+      exit;
+   end;
+end;
+
+end.

@@ -1,0 +1,69 @@
+unit Ô¿³×¾ÆÌ³;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnTurnOn (aStr : String);
+procedure OnRegen (aStr : String);
+
+var
+   n : Integer = 0;
+
+implementation
+
+procedure OnRegen (aStr : String);
+begin
+   if n > 0 then begin
+      Dec (n);
+   end;
+end;
+
+procedure OnTurnOn (aStr : String);
+begin
+   inc (n);
+
+   if n = 1 then begin
+      print ('changedynobjstate ÌúÕ¢ÃÅ1 true');
+      print ('changedynobjstate ÌúÕ¢ÃÅ2 true');
+      print ('changedynobjstate ÌúÕ¢ÃÅ3 true');
+      exit;
+   end;
+   if n = 2 then begin
+      print ('changedynobjstate ÌúÕ¢ÃÅ1 true');
+      print ('changedynobjstate ÌúÕ¢ÃÅ2 true');
+      print ('changedynobjstate ÌúÕ¢ÃÅ3 true');
+      exit;
+   end;
+   if n = 3 then begin
+      print ('changedynobjstate ÌúÕ¢ÃÅ1 true');
+      print ('changedynobjstate ÌúÕ¢ÃÅ2 true');
+      print ('changedynobjstate ÌúÕ¢ÃÅ3 true');
+      exit;
+   end;
+   if n = 4 then begin
+      print ('changedynobjstate ÌúÕ¢ÃÅ1 true');
+      print ('changedynobjstate ÌúÕ¢ÃÅ2 true');
+      print ('changedynobjstate ÌúÕ¢ÃÅ3 true');
+      exit;
+   end;
+   if n = 5 then begin
+      print ('changedynobjstate ÌúÕ¢ÃÅ1 true');
+      print ('changedynobjstate ÌúÕ¢ÃÅ2 true');
+      print ('changedynobjstate ÌúÕ¢ÃÅ3 true');
+      n = 0;
+      exit;      
+   end;
+end;
+
+end.

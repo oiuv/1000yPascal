@@ -1,84 +1,39 @@
 # getquestitem
 
-## 功能描述
-从随机事件物品列表中按编号获取任务物品名称。
+## 功能
 
-## 语法格式
+从 `QuestNotice/` 中指定的任务奖励池随机抽取一项。
+
 ```pascal
-Str := callfunc('getquestitem 编号');
+Item := callfunc('getquestitem 1');
 ```
 
-## 参数说明
-- **编号**：Integer - 任务物品编号
-  - 1：第一类任务物品
-  - 2：第二类任务物品
-  - 3：第三类任务物品
-  - 5：第五类任务物品
-  - 6：第六类任务物品
-  - 7：第七类任务物品
+## 参数对应
 
-## 返回值
-- **成功**：String - 任务物品的名称（可用于后续给予玩家）
-- **失败**：空字符串
+| 编号 | 当前加载文件 |
+|---|---|
+| 1 | `QuestItem_1stBeginnerPrize.sdb` |
+| 2 | `QuestItem_1stPrize.sdb` |
+| 3 | `QuestItem_2ndPrize.sdb` |
+| 4 | `QuestItem_GoldCoin.sdb` |
+| 5 | `QuestItem_PickAx.sdb` |
+| 6 | `QuestItem_AttributePiece.sdb` |
+| 7 | `QuestItem_Weapon.sdb` |
 
-## 源码实现
+该映射同时由炎黄源码常量、加载分支和随包 `QuestNotice/ReadMe.txt` 证明。
+
+## 返回值与随机规则
+
+成功时返回 `物品名:数量`，不是单独的物品名。各表读取 `ItemName`、`ItemCount`、`TotalRandom` 和 `MaxValue`；抽取以首行 `MaxValue` 为上限，再按累计阈值 `TotalRandom` 命中。
+
 ```pascal
-// uScriptManager.pas 第639行
-end else if cmd = 'getquestitem' then begin
-   Result := RandomEventItemList.GetQuestItembyRandom (_StrToInt (Params [0]));
+Item := callfunc('getquestitem 4');
+if Item <> '' then begin
+   Cmd := 'putsendermagicitem ' + Item + ' @任务奖励 4';
+   print(Cmd);
+end;
 ```
 
-调用 `RandomEventItemList.GetQuestItembyRandom`，从随机事件物品列表中按编号获取任务物品名称。
+非法编号会走空分支，但有效编号对应的列表为空时源码仍会直接访问第 1 项；随机阈值未覆盖完整范围时也没有可靠保护。部署前应确认文件存在、列表非空、物品名存在于 `Init/Item.SDB`，且累计阈值覆盖 `0..MaxValue-1`。
 
-## 使用示例
-
-### 梅花夫人任务物品
-```pascal
-// 获取1号任务物品
-Name := callfunc ('getquestitem 1');
-```
-> 来源：`quest梅花夫人.txt`
-
-### 捕盗大将任务奖励
-```pascal
-// 根据条件获取不同编号的任务物品
-Name := callfunc ('getquestitem 3');
-// ...
-Name := callfunc ('getquestitem 6');
-// ...
-Name := callfunc ('getquestitem 7');
-```
-> 来源：`quest捕盗大将.txt`
-
-### 铁匠任务
-```pascal
-// 1号任务物品
-Name := callfunc ('getquestitem 1');
-// 2号任务物品
-Name := callfunc ('getquestitem 2');
-// 5号任务物品
-Name := callfunc ('getquestitem 5');
-```
-> 来源：`quest铁匠.txt`
-
-### 阴阳师任务
-```pascal
-Name := callfunc ('getquestitem 3');
-// ...
-Name := callfunc ('getquestitem 6');
-// ...
-Name := callfunc ('getquestitem 7');
-```
-> 来源：`阴阳师.txt`
-
-## 注意事项
-
-1. **返回值格式**：返回物品名称字符串，可直接用于 `putsendermagicitem` 命令
-2. **编号含义**：不同编号对应不同的任务物品，具体物品由游戏数据定义
-3. **与 getrandomitem 的区别**：`getquestitem` 获取的是确定的任务物品，`getrandomitem` 获取的是随机物品
-4. **配合使用**：通常与 `putsendermagicitem` 配合，将任务物品给予玩家
-
-## 相关函数
-- `getrandomitem` - 获取随机物品
-- `gethavegradequestitem` - 获取等级任务物品状态
-- `putsendermagicitem` - 给予玩家物品
+完整配置说明见 [QuestNotice 任务公告与奖励](../../help/QuestNotice.md)。源码依据：`uScriptManager.pas` 的 `getquestitem` 分派及 `svClass.pas` 的 `TRandomEventItemList.GetQuestItembyRandom`。

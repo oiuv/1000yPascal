@@ -1,104 +1,29 @@
 # logitemwindow
 
-## 功能描述
-打开物品日志窗口（福袋窗口），允许玩家查看物品获取/消耗的记录。窗口会关联到触发此命令的 NPC 对象。
+## 功能与语法
 
-## 语法格式
+为触发脚本的玩家打开个人福袋/储物空间，而不是“物品获取日志”查询窗口。
+
 ```pascal
 print('logitemwindow');
 ```
 
-## 参数说明
-无参数。
+命令无参数。分派器在 `aSender` 上调用 `SLogItemWindow(FSelf)`：玩家是窗口使用者，脚本自身对象保存为后续交互的 `Commander`。基类实现为空，因此必须有有效玩家 `Sender`。
 
-## 源码实现
-基于 `uScriptManager.pas` 第257-258行：
+## 实际数据行为
 
-```pascal
-end else if cmd = 'logitemwindow' then begin
-   TBasicObject (aSender).SLogItemWindow (FSelf);
-```
+`ShowItemLogWindow` 从 `ITEMLOG/ItemLog.BIN` 按角色名读取储物房间，每间 10 格，客户端最多显示 4 间。打开前还会检查：
 
-基于 `UUser.pas` 第10335-10338行的实现：
+- ITEMLOG 主库是否启用；
+- 玩家是否已有其他窗口打开；
+- 角色是否分配了储物房间；
+- 福袋密码锁是否已解除；
+- 每间记录的 CRC 是否有效。
 
-```pascal
-procedure TUser.SLogItemWindow (aCommander : TBasicObject);
-begin
-   ShowWindowClass.Commander := aCommander;
-   ShowWindowClass.ShowItemLogWindow;
-end;
-```
+成功后服务器锁定普通背包交互，向客户端发送 `WINDOW_SSAMZIEITEM` 储物窗口及已有物品。窗口中的拖放/确认会继续通过保存的 `Commander` 和物品窗口处理路径执行。
 
-**实现细节：**
-- `aSender` 是玩家对象（`TUser`），`FSelf` 是触发命令的 NPC 对象
-- 先将 NPC 设置为窗口的 `Commander`（命令者），用于后续窗口交互
-- 调用 `ShowItemLogWindow` 显示物品日志窗口
-- `FSelf` 在 `ScriptCommand` 中设置，指向当前执行脚本的 NPC
+## 随包示例
 
-## 使用示例
+炎黄 `储物袋.txt` 在 `OnDblClick` 中读取 `getsenderrace`，种族为 1 时执行本命令；`药材商.txt`、`一级药材商.txt`、`帝王石谷药材商.txt` 也有入口。示例只能证明对应脚本的开放条件，不能外推成命令自身的种族限制。
 
-### NPC 对话中打开日志窗口
-基于 `药材商.txt` 中的使用：
-
-```pascal
-if aStr = 'log' then begin
-  Str := 'logitemwindow';
-  print (Str);
-  exit;
-end;
-```
-
-### 一级药材商
-基于 `一级药材商.txt` 中的使用：
-
-```pascal
-if aStr = 'log' then begin
-  Str := 'logitemwindow';
-  print (Str);
-  exit;
-end;
-```
-
-### 帝王石谷药材商
-基于 `帝王石谷药材商.txt` 中的使用：
-
-```pascal
-if aStr = 'log' then begin
-  Str := 'logitemwindow';
-  print (Str);
-  exit;
-end;
-```
-
-### 双击物品触发
-基于 `储物袋.txt` 中的使用：
-
-```pascal
-procedure OnDblClick(aStr : String);
-var
-  Str : String;
-  Race : Integer;
-begin
-  // 检查玩家种族
-  Str := callfunc ('getsenderrace');
-  Race := StrToInt (Race);
-  if Race = 1 then begin
-    Str := 'logitemwindow';
-    print (Str);
-    exit;
-  end;
-end;
-```
-
-## 注意事项
-
-1. **无参数**：此命令不接受参数，窗口内容自动关联到当前 NPC
-2. **NPC 关联**：窗口会将触发命令的 NPC 设为 `Commander`，用于后续交互
-3. **常见用途**：药材商类 NPC 提供物品日志查询功能，玩家可查看物品获取记录
-4. **种族限制**：在 `储物袋.txt` 中，只有种族为 1 的玩家才能打开
-5. **与 guilditemwindow 的区别**：`logitemwindow` 打开个人物品日志，`guilditemwindow` 打开公会物品日志
-
-## 相关命令
-- `tradewindow` - 打开买卖窗口
-- `guilditemwindow` - 打开公会物品窗口
-- `showwindow` - 显示对话窗口
+福袋主文件、快照和备份规则见 [ITEMLOG 福袋数据](../../help/ITEMLOG.md)。源码依据：`uScriptManager.pas`、`UUser.pas` 和 `uUserSub.pas` 的 `ShowItemLogWindow`。

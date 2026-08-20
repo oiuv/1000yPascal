@@ -1,53 +1,24 @@
 # unmarry
 
-## 功能描述
-弹出离婚确认窗口。向玩家发送离婚请求界面，让玩家确认是否解除婚约。如果玩家没有配偶，则提示需要支付罚金。
+## 功能与语法
 
-## 语法格式
+为当前事件发送者启动离婚处理。
+
 ```pascal
 print('unmarry 提示文本');
 ```
 
-## 参数说明
-- **提示文本**：String - 离婚窗口中显示的提示文本
+参数只在配偶在线时传给对方的确认窗口。分派器直接把 `aSender` 转为 `TUser`，因此只能在存在玩家发送者的事件中调用。
 
-## 源码实现
-基于 `uScriptManager.pas` 中的处理逻辑：
+## 当前分支
 
-```pascal
-end else if cmd = 'unmarry' then begin
-   TUser(aSender).UnMarryWindow(Params [0]);
-```
+- 玩家 `Lover` 为空：不执行任何操作，也不会弹窗或收费。
+- 配偶在线：向申请者发送“正在转达”提示，再对配偶调用 `ShowUnMarry(提示文本)`。
+- 配偶离线：先尝试扣除 200,000 个 `钱币`；不足时退出，成功后调用 `MarryList.UnMarry(玩家名)` 提交离婚状态。
 
-`TUser.UnMarryWindow` 实现在 `UUser.pas` 中：
+源码没有“无配偶时缴费”的路径，也没有这里曾写过的“20 天”常量。当前 `TMarryClass` 的日期算法按代码会把完成时间拖到约 14 天，且正常退出保存时还会错误写回日期；运维风险见 [Event 运行数据](../../help/Event.md)。
 
-```pascal
-procedure TUser.UnMarryWindow (aHelpText:String);
-var
-   aUser :TUser;
-   ItemData : TItemData;
-begin
-   if Lover <> '' then begin
-      aUser := UserList.GetUserPointer(Lover);
-      if aUser = nil then begin
-         SSendChatMessage(Conv('对方不在线,需要交纳罚金20万,交纳后20天可重新结婚'), SAY_COLOR_SYSTEM);
-         ItemClass.GetItemData (Conv('金币'), ItemData);
-         ItemData.rCount := 200000;
-         if Not DeleteItem(@ItemData) then begin
-            SSendChatMessage(Conv('金钱不足离婚条件.'), SAY_COLOR_SYSTEM);
-            Exit;
-         end;
-         // ... 后续离婚处理
-      end;
-      // ... 在线离婚处理
-   end;
-end;
-```
-
-## 使用示例
-
-### 婚礼司仪脚本（真实示例）
-来自 `bin/Script/婚礼司仪.txt`：
+炎黄 `婚礼司仪.txt` 的入口为：
 
 ```pascal
 if aStr = 'unmarry' then begin
@@ -56,18 +27,4 @@ if aStr = 'unmarry' then begin
 end;
 ```
 
-玩家点击离婚选项后，弹出离婚确认窗口并显示提示文本"您的配偶希望跟您解除婚约"。
-
-## 注意事项
-
-1. **配偶在线/离线处理不同**：
-   - 配偶在线：直接弹出离婚确认窗口
-   - 配偶离线：需要缴纳 20 万金币罚金，且 20 天后才能重新结婚
-2. **金币检查**：离线离婚需要 20 万金币，金币不足则提示"金钱不足离婚条件"
-3. **提示文本**：参数文本显示在离婚窗口中，用于引导玩家操作
-4. **需要已婚状态**：如果玩家没有配偶（Lover 为空），命令不执行
-
-## 相关命令
-- `marry` - 结婚
-- `setmarryclothes` - 设置结婚服装
-- `getmarryinfo` - 查询结婚信息（callfunc 函数）
+源码依据：`uScriptManager.pas` 的 `unmarry` 分派、`UUser.pas` 的 `UnMarryWindow` 和 `svClass.pas` 的 `TMarryClass`。

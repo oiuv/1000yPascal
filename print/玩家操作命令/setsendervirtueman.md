@@ -32,12 +32,12 @@ end;
 ## 使用示例
 
 ### 龙师父脚本（真实示例）
-来自 `bin/Script/龙师父.txt`：
+来自神武线上与炎黄随包的 `龙师父.txt`：
 
 ```pascal
-print ('getsenderitem 세減쵱纘:1');
+print ('getsenderitem 技术密笈:1');
 print ('setsendervirtueman');
-print ('showwindow .\help\질可만4.txt 1');
+print ('showwindow .\help\龙师父4.txt 1');
 exit;
 ```
 

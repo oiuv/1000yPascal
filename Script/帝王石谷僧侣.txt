@@ -1,0 +1,103 @@
+unit 帝王石谷僧侣;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+   CompleteQuest : Integer;
+   CurrentQuest : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race <> 1 then begin
+      exit;
+   end;
+
+   Str := callfunc ('getsendercompletequest');
+   CompleteQuest := StrToInt (Str);
+
+   Str := callfunc ('getsendercurrentquest');
+   CurrentQuest := StrToInt (Str);
+
+   if CurrentQuest < 1300 then begin
+      print ('say 切记_经过沙漠时_竹筒里要装水.');
+      exit;
+   end;
+
+   if CurrentQuest = 1300 then begin
+      print ('say 日后想知道西域魔人的底细就尽管过来.');
+      exit;
+   end;
+   
+   //柳角阑 茫扁困秦 胶丛阑 茫酒吭阑 版快
+   if CurrentQuest = 1350 then begin
+      print ('showwindow .\help\帝王石谷僧侣.txt 0');
+      print ('changesendercompletequest 1350');
+      print ('changesendercurrentquest 1400');
+      exit;
+   end;
+
+   if CurrentQuest = 1400 then begin
+      print ('say 得知真相了就该知道怎么做了吧_佛祖保佑');
+      exit;
+   end;
+
+   if CurrentQuest = 1450 then begin
+      print ('say 得知真相了就该知道怎么做了吧_佛祖保佑');
+      exit;
+   end;
+
+   if CurrentQuest = 1500 then begin
+      print ('say 得知真相了就该知道怎么做了吧_佛祖保佑');
+      exit;
+   end;
+
+   //巢力空 Quest甫 辆丰茄饶 胶丛阑 茫酒吭阑版快
+   if CurrentQuest = 1550 then begin
+      print ('say 快来_我的英雄.');
+      
+      Str := callfunc ('getsenderitemexistence 大型竹筒:1');
+      if Str = 'true' then begin
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 竹筒:1');
+      if Str = 'true' then begin
+         print ('getsenderitem 竹筒:1');
+         print ('putsendermagicitem 大型竹筒:1 @帝王石谷僧侣 4');
+         print ('showwindow .\help\帝王石谷僧侣2.txt 0');
+         exit;
+      end;
+   end;
+   
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   
+end;
+
+end.

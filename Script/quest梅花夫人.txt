@@ -1,0 +1,201 @@
+unit quest梅花夫人;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\quest梅花夫人1.txt 1';
+      print (Str);
+      exit; 
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   nPower, iRandom : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'quest' then begin
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 神秘箱子:1');
+      if Str = 'false' then begin
+         print ('say 不如喝杯茶再走');
+         exit;
+      end;
+      Str := callfunc ('checksenderattribitem 9');
+      if Str = 'true' then begin
+         print ('say 不如喝杯茶再走');
+         exit;
+      end;
+
+      Str := callfunc ('getsendercurpowerlevel');
+      nPower := StrToInt (Str);
+
+      if nPower < 1 then begin
+         print ('showwindow .\help\quest梅花夫人2.txt 1');
+         exit;
+      end;
+
+      if nPower >= 1 then begin
+         print ('getsenderitem 神秘箱子:1');
+
+         iRandom := Random (3);
+         if iRandom = 0 then begin
+            print ('showwindow .\help\quest梅花夫人3.txt 0');
+            exit;
+         end;
+         if iRandom = 1 then begin
+            print ('showwindow .\help\quest梅花夫人4.txt 0');
+            exit;
+         end;
+         if iRandom = 2 then begin
+            print ('showwindow .\help\quest梅花夫人5.txt 0');
+            exit;
+         end;
+         exit;
+      end;
+      exit;
+   end;
+   if aStr = 'prize' then begin
+      Str := callfunc ('getsenderitemexistence 神秘箱子:1');
+      if Str = 'false' then begin
+         print ('say 不如喝杯茶再走');
+         exit;
+      end;
+   
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+
+      print ('getsenderitem 神秘箱子:1');
+
+      Name := callfunc ('getquestitem 6');
+      Str := 'putsendermagicitem ' + Name;
+      Str := Str + ' @quest梅花夫人 4';
+      print (Str);
+
+      exit;
+   end;
+   if aStr = 'dontprize' then begin
+      Str := callfunc ('getsenderitemexistence 神秘箱子:1');
+      if Str = 'false' then begin
+         print ('say 不如喝杯茶再走');
+         exit;
+      end;
+   
+      print ('getsenderitem 神秘箱子:1');
+
+      iRandom := Random (3);
+      if iRandom = 0 then begin
+         print ('showwindow .\help\quest梅花夫人3.txt 0');
+         exit;
+      end;
+      if iRandom = 1 then begin
+         print ('showwindow .\help\quest梅花夫人4.txt 0');
+         exit;
+      end;
+      if iRandom = 2 then begin
+         print ('showwindow .\help\quest梅花夫人5.txt 0');
+         exit;
+      end;
+      exit;
+   end;
+   if aStr = 'q1_close' then begin
+      Str := callfunc ('getsenderitemexistence 神秘箱子:1');
+      if Str = 'false' then begin
+         print ('say 不如喝杯茶再走');
+         exit;
+      end;
+   
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+
+      print ('getsenderitem 神秘箱子:1');
+
+      Name := callfunc ('getquestitem 7');
+      Str := 'putsendermagicitem ' + Name;
+      Str := Str + ' @quest梅花夫人 4';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'findhairpin' then begin
+      print ('showwindow .\help\quest梅花夫人4_1.txt 0');
+      exit;
+   end;
+   if aStr = 'rejection' then begin
+      print ('showwindow .\help\quest梅花夫人4_2.txt 0');
+      exit;
+   end;
+   if aStr = 'q2_1_close' then begin
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 梅花夫人材料书札:1');
+      if Str = 'true' then begin
+         print ('say 不如喝杯茶再走');
+         exit;
+      end;
+
+      print ('putsendermagicitem 梅花夫人材料书札:1 @quest梅花夫人 4');
+      exit;
+   end;
+   if aStr = 'q2_2_close' then begin
+      print ('putsendermagicitem 金元:1 @quest梅花夫人 4');
+      exit;
+   end;
+   if aStr = 'q3_close' then begin
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 梅花夫人书札:1');
+      if Str = 'true' then begin
+         print ('say 不如喝杯茶再走');
+         exit;
+      end;
+
+      print ('putsendermagicitem 梅花夫人书札:1 @quest梅花夫人 4');
+      exit;
+   end;
+end;
+
+end.

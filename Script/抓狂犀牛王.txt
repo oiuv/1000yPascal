@@ -1,0 +1,39 @@
+unit 抓狂犀牛王;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDie (aStr : String);
+
+implementation
+
+procedure OnDie (aStr : String);
+var
+   Str : String;
+begin
+   Str := callfunc ('getsenderitemexistence 犀牛王后角:1');
+   if Str = 'true' then begin
+      Str := callfunc ('getsenderwearitemname 9');
+      if Str = '噬月刀' then begin
+         Str := callfunc ('checkenoughspace');
+         if Str = 'true' then begin
+            print ('putsendermagicitem 抓狂犀牛王的角:1 @抓狂犀牛王 3');
+         end;
+      end;
+      print ('say 你竟然杀死了我的王后……');
+   end;
+end;
+
+end.
+

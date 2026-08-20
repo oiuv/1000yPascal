@@ -1,0 +1,28 @@
+unit ÌúÕ¢ÃÅ;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnRegen (aStr : String);
+
+implementation
+
+procedure OnRegen (aStr : String);
+begin
+   print ('regen Ô¿³×¾ÆÌ³ dynamicobject');
+   print ('regen ±¬ÆÆ¾ÆÌ³ dynamicobject');
+   print ('regen µç¾ÆÌ³ dynamicobject');
+end;
+
+end.

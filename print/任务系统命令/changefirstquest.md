@@ -1,59 +1,25 @@
 # changefirstquest
 
-## 功能描述
-改变自身的首要任务编号。用于系统级脚本（如 System.txt）中设置全局任务状态。
+调用当前脚本对象 `aSelf` 的 `SChangeFirstQuest`。
 
-## 语法格式
 ```pascal
-print('changefirstquest <任务编号>');
+print ('changefirstquest <任务编号>');
 ```
 
-## 参数说明
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| 任务编号 | Integer | 要设置的首要任务编号 |
+基础 `TBasicObject` 实现为空操作，`TUser` 覆盖实现才写入 `UserQuestClass.FirstQuestNo`。因此命令是否修改玩家取决于 `Self` 的实际类型。
 
-## 源码实现
-基于 `uScriptManager.pas` 中的处理逻辑：
+## 真实用法
+
+`System.OnUserStart` 由登录玩家作为 `Self` 调用，所以神武线上和炎黄随包脚本都可以这样初始化该玩家：
 
 ```pascal
-end else if cmd = 'changefirstquest' then begin
-   TBasicObject (aSelf).SChangeFirstQuest (_StrToInt (Params [0]));
-```
-
-作用于 `aSelf`（脚本对象自身），传入任务编号。
-
-## 使用示例
-
-### 新玩家首次登录时设置首要任务
-```pascal
-// 来自 System.txt - 新玩家首次登录时设置首要任务为1
-procedure OnUserStart (aStr : String);
-var
-   Str : String;
-   FirstQuest : Integer;
-begin
-   Str := callfunc ('getfirstquest');
-   FirstQuest := StrToInt (Str);
-   if FirstQuest < 1 then begin
-      Str := callfunc ('getname');
-      Str := 'sendsendertopmsg 欢迎新玩家[' + Str;
-      Str := Str + '],来到云端千年的武侠世界';
-      print (str);
-      Str := 'changefirstquest 1';
-      print (str);
-      exit;
-   end;
+Str := callfunc ('getfirstquest');
+FirstQuest := StrToInt (Str);
+if FirstQuest < 1 then begin
+   print ('changefirstquest 1');
 end;
 ```
 
-## 注意事项
+这里没有“系统全局任务对象”；写入的是当前登录玩家。普通 NPC 脚本中该命令只会进入基础空实现。NPC 交互要修改触发玩家，应使用 `changesenderfirstquest`。
 
-1. **作用于自身**：通过 `aSelf` 执行，在 System.txt 中代表系统对象
-2. **与 changesenderfirstquest 的区别**：`changesenderfirstquest` 修改玩家的任务，`changefirstquest` 修改自身的任务
-3. **系统级使用**：主要在 System.txt 等系统脚本中使用，用于初始化新玩家的全局状态
-
-## 相关命令
-- `changesenderfirstquest` — 修改玩家首要任务
-- `changecompletequest` — 改变自身已完成任务
-- `changecurrentquest` — 改变自身当前任务
+相关命令：`changesenderfirstquest`、`changecurrentquest`、`changecompletequest`。

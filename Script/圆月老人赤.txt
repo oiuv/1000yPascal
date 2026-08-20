@@ -1,0 +1,157 @@
+unit 圆月老人赤;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnLeftClick (aStr : String);
+procedure OnGetResult (aStr : String);
+
+implementation
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   iCount, iKind : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+
+   if aStr = 'changesilver' then begin
+      Str := callfunc ('getsenderitemexistence 月之流:1000');
+      if Str = 'false' then begin
+         print ('say 准备1000个月之流再来找我吧。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 月之华:750');
+      if Str = 'false' then begin
+         print ('say 准备750个月之华再来找我吧。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 月之环:750');
+      if Str = 'false' then begin
+         print ('say 准备750个月之环再来找我吧。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 金元:10');
+      if Str = 'false' then begin
+         print ('say 恭喜发财，请给10金元的手续费。');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+      print ('getsenderitem 月之流:1000');
+      print ('getsenderitem 月之华:750');
+      print ('getsenderitem 月之环:750');
+      print ('getsenderitem 金元:10');
+      print ('putsendermagicitem 银月魂:50 @圆月老人赤 4');
+      print ('say 好了，拿去找圆月老人(银)应该能换不少好东西。');
+   end;
+   
+   if aStr = 'changeweapon' then begin
+      Str := callfunc ('getsenderitemexistence 赤月魂:1');
+      if Str = 'false' then begin
+         print ('say 有了赤月魂才可以换到物品');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+
+      print ('getsenderitem 赤月魂:1');
+
+      iCount := Random (15);
+      if iCount = 0 then begin
+         print ('putsendermagicitem 太极药水:2 @圆月老人赤 4');
+         print ('say 不管东西好坏，都是一片心意，祝您游戏快乐。');
+         exit;
+      end;
+      iKind:= Random (50);
+      if iKind = 0 then Str := '龙虎灵符:1';
+      if iKind = 1 then Str := '龙虎灵符:1';
+      if iKind = 2 then Str := '龙虎灵符:2';
+      if iKind = 3 then Str := '龙虎灵符:2';
+      if iKind = 4 then Str := '龙虎灵符:3';
+      if iKind = 5 then Str := '龙虎灵符:4';
+      if iKind = 6 then Str := '霸王灵符:1';
+      if iKind = 7 then Str := '霸王灵符:2';
+      if iKind = 8 then Str := '霸王灵符:2';
+      if iKind = 9 then Str := '霸王灵符:3';
+      if iKind = 10 then Str := '太极药水:1';
+      if iKind = 11 then Str := '太极药水:1';
+      if iKind = 12 then Str := '狐狸内丹三';
+      if iKind = 13 then Str := '千年神石:1';
+      if iKind = 14 then Str := '千年神石:2';
+      if iKind = 15 then Str := '千年神石:3';
+      if iKind = 16 then Str := '太极药水:1';
+      if iKind = 17 then Str := '千年衔铁:1';
+      if iKind = 18 then Str := '玉露丸:10';
+      if iKind = 19 then Str := '青盐精:10';
+      if iKind = 20 then Str := '玉露丸:10';
+      if iKind = 21 then Str := '好运月饼:10';
+      if iKind = 22 then Str := '月上柳梢:20';
+      if iKind = 23 then Str := '回城卷轴:5';
+      if iKind = 24 then Str := '回城卷轴:5';
+      if iKind = 25 then Str := '吸血根:10';
+      if iKind = 26 then Str := '吸血根:20';
+      if iKind = 27 then Str := '吸血根:10';
+      if iKind = 28 then Str := '回城卷轴:2';
+      if iKind = 29 then Str := '吸血根:15';
+      if iKind = 30 then Str := '吸血根:15';
+      if iKind = 31 then Str := '回城卷轴:4';
+      if iKind = 32 then Str := '千年魔菇:5';
+      if iKind = 33 then Str := '千年魔菇:5';
+      if iKind = 34 then Str := '千年魔菇:5';
+      if iKind = 35 then Str := '千年魔菇:10';
+      if iKind = 36 then Str := '千年魔菇:10';
+      if iKind = 37 then Str := '千年魔菇:15';
+      if iKind = 38 then Str := '女子斗笠';
+      if iKind = 39 then Str := '男子斗笠';
+      if iKind = 40 then Str := '女子桂林帽';
+      if iKind = 41 then Str := '男子桂林帽';
+      if iKind = 42 then Str := '女子四角帽';
+      if iKind = 43 then Str := '男子四角帽';
+      if iKind = 44 then Str := '女子黄金头盔';
+      if iKind = 45 then Str := '男子黄金头盔';
+      if iKind = 46 then Str := '女子铁制头盔';
+      if iKind = 47 then Str := '男子铁制头盔';
+      if iKind = 48 then Str := '女子百炼斗笠';
+      if iKind = 49 then Str := '男子百炼斗笠';
+      Str := 'putsendermagicitem ' + Str;
+      Str := Str + ' @圆月老人赤 4';
+      print (Str);
+      print ('say 不管东西好坏.只是一片心意.祝您游戏快乐.');
+   end;
+end;
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\圆月老人赤.txt 1';
+      print (Str);
+      exit;
+   end;
+end;
+
+end.

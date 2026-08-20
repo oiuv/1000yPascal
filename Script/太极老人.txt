@@ -1,0 +1,213 @@
+unit 太极老人;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnLeftClick (aStr : String);
+procedure OnGetResult (aStr : String);
+
+implementation
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   iCount, iKind : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'goroom' then begin
+      Str := callfunc ('getsenderitemexistence 令牌:1');
+      if Str = 'false' then begin
+         print ('say 有令牌吗？');
+         exit;
+      end;
+      Str := callfunc ('getusercount 32');
+      iCount := StrToInt (Str);
+      if iCount > 0 then begin
+         print ('say 公子忙...稍等片刻');
+         exit;
+      end;
+      Str := callfunc ('checkalivemopcount 32 monster 太极公子');
+      iCount := StrToInt (Str);
+      if iCount = 0 then begin
+         print ('say 公子忙...稍等片刻');
+         exit;
+      end;
+      Str := callfunc ('checkentermap 32');
+      if Str = 'false' then begin
+         print ('say 稍等片刻...');
+         exit;
+      end;
+      // 防止开启凌波微步（实际有漏洞）
+      Str := callfunc ('checksendercurusemagic 5');
+      if Str = 'true' then begin
+         print ('say 见公子前禁用4大神功');
+         exit;
+      end;
+      print ('mapregen 32');
+
+      print ('getsenderitem 令牌:1');
+      Name := callfunc ('getsendername');
+      Str := 'movespace ' + Name;
+      Str := Str + ' user 32 23 18';
+      print (Str);
+
+      print ('boMapEnter 32 false');
+   end;
+
+   if aStr = 'giveticket' then begin
+      Str := callfunc ('getsenderitemexistence 太极书札:1');
+      if Str = 'true' then begin
+         Str := callfunc ('checkenoughspace');
+         if Str = 'false' then begin
+            print ('say 物品栏已满~');
+            exit;
+         end;
+
+         print ('getsenderitem 太极书札:1');
+         print ('putsendermagicitem 太极牌:1 @太极老人 4');
+
+         print ('saybyname 太极老人 npc 不胜感激... 100');
+         print ('saybyname 太极老人 npc 托你的福，我们的武功密笈 300');
+         print ('saybyname 太极老人 npc 竟安然无恙... 500');
+         print ('saybyname 太极老人 npc 如果太极公子来修炼的话, 700');
+         print ('saybyname 太极老人 npc 门主到来前 900');
+         print ('saybyname 太极老人 npc 败落的剑门 1100');
+         print ('saybyname 太极老人 npc 一定能够重建! 1300');
+         print ('saybyname 太极老人 npc 本门的象征 1500');
+         print ('saybyname 太极老人 npc 给你一个. 1700');
+         print ('saybyname 太极老人 npc 后会有期 1900');
+         print ('saybyname 太极老人 npc 需要帮助时, 2100');
+         print ('saybyname 太极老人 npc 本门弟子将助你一臂之力... 2300');
+         exit;
+      end;
+      iCount := 0;
+      Str := callfunc ('getsenderitemexistence 太极书札1:1');
+      if Str = 'true' then begin
+         Inc(iCount);
+      end;
+
+      Str := callfunc ('getsenderitemexistence 太极书札2:1');
+      if Str = 'true' then begin
+         Inc(iCount);
+      end;
+
+      Str := callfunc ('getsenderitemexistence 太极书札3:1');
+      if Str = 'true' then begin
+         Inc(iCount);
+      end;
+
+      if iCount = 3 then begin
+         Str := callfunc ('checkenoughspace');
+         if Str = 'false' then begin
+            print ('say 物品栏已满~');
+            exit;
+         end;
+         
+         print ('getsenderitem 太极书札1:1');
+         print ('getsenderitem 太极书札2:1');
+         print ('getsenderitem 太极书札3:1');
+         print ('putsendermagicitem 太极牌:1 @太极老人 4');
+         print ('saybyname 太极老人 npc 不胜感激... 100');
+         print ('saybyname 太极老人 npc 托你的福_我门的武功密笈 300');
+         print ('saybyname 太极老人 npc 竟安然无恙... 500');
+         print ('saybyname 太极老人 npc 如果太极公子来修炼的话, 700');
+         print ('saybyname 太极老人 npc 门主到来前 900');
+         print ('saybyname 太极老人 npc 败落的剑门 1100');
+         print ('saybyname 太极老人 npc 一定能够重建! 1300');
+         print ('saybyname 太极老人 npc 本门的象征 1500');
+         print ('saybyname 太极老人 npc 给你一个. 1700');
+         print ('saybyname 太极老人 npc 后会有期 1900');
+         print ('saybyname 太极老人 npc 需要帮助时, 2100');
+         print ('saybyname 太极老人 npc 本门弟子将助你一臂之力... 2300');
+         exit;
+      end;
+
+      print ('say 小子._敢愚弄老夫?');
+      exit;
+      
+   end;
+   
+   if aStr = 'changeweapon' then begin
+      Str := callfunc ('getsenderitemexistence 太极明珠三:1');
+      if Str = 'false' then begin
+         print ('say 弄来太极珠子');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满~');
+         exit;
+      end;
+
+      print ('getsenderitem 太极明珠三:1');
+
+      iKind:= Random (9);
+      if iKind = 0 then begin
+         Str := 'putsendermagicitem 太极手套 @太极老人 4';
+         print (Str);
+      end;
+      if iKind = 1 then begin
+         Str := 'putsendermagicitem 太极日剑 @太极老人 4';
+         print (Str);
+      end;
+      if iKind = 2 then begin
+         Str := 'putsendermagicitem 太极月刀 @太极老人 4';
+         print (Str);
+      end;
+      if iKind = 3 then begin
+         Str := 'putsendermagicitem 太极神枪 @太极老人 4';
+         print (Str);
+      end;
+      if iKind = 4 then begin
+         Str := 'putsendermagicitem 太极斧 @太极老人 4';
+         print (Str);
+      end;
+      if iKind = 5 then begin
+         Str := 'putsendermagicitem 男子太极道袍 @太极老人 4';
+         print (Str);
+      end;
+      if iKind = 6 then begin
+         Str := 'putsendermagicitem 女子太极道袍 @太极老人 4';
+         print (Str);
+      end;
+      if iKind = 7 then begin
+         Str := 'putsendermagicitem 男子太极护腕 @太极老人 4';
+         print (Str);
+      end;
+      if iKind = 8 then begin
+         Str := 'putsendermagicitem 女子太极护腕 @太极老人 4';
+         print (Str);
+      end;
+
+      print ('say 非常贵重……要妥善保管');
+   end;
+end;
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\太极老人.txt 1';
+      print (Str);
+      exit;
+   end;
+end;
+
+end.

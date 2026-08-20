@@ -1,0 +1,87 @@
+unit 铜人室火炉;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnTurnOn (aStr : String);
+procedure OnTurnOff (aStr : String);
+procedure OnRegen (aStr : String);
+procedure OnDie (aStr : String);
+
+var
+   LightCount : Integer = 0;
+
+implementation
+
+procedure OnRegen (aStr : String);
+begin
+   LightCount := 0;   
+end;
+
+procedure OnTurnOn (aStr : String);
+begin
+   Inc (LightCount);
+   if LightCount = 4 then begin
+      print ('boiceallbyname 禁地护卫武士 monster false');
+      print ('bohitallbyname 禁地护卫武士 monster true');
+      exit;
+   end;
+   if LightCount < 4 then begin
+      print ('bohitallbyname 禁地护卫武士 monster false');
+      exit;
+   end;
+end;
+
+procedure OnTurnOff (aStr : String);
+begin
+   Dec (LightCount);
+   if LightCount < 4 then begin
+      print ('bohitallbyname 禁地护卫武士 monster false');
+      exit;
+   end;
+end;
+
+procedure OnDie (aStr : String);
+var
+   Str, Name : String;
+begin
+   Str := callfunc ('checksendercurusemagic 2');
+   if Str = 'true' then begin
+      print ('sendsenderchatmessage 不能使用辅助武功');
+      
+      Name := callfunc ('getsendername');
+      Str := 'movespace ' + Name;
+      Str := Str + ' user 1 699 689 100';
+      print (Str);
+      exit;
+   end;
+
+   Str := callfunc ('checkalivemopcount 76 monster 禁地护卫武士');
+
+   if Str = '0' then begin
+      print ('sendsenderchatmessage 移至王的寝宫 2');
+
+      Name := callfunc ('getsendername');
+      Str := 'movespace ' + Name;
+      Str := Str + ' user 77 26 46 200';
+      print (Str);
+
+      print ('boMapEnter 76 true');
+      exit;
+   end;
+
+   print ('sendsenderchatmessage 解决所有怪物才能移至王的寝宫 2');
+end;
+
+end.

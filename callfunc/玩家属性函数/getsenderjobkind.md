@@ -42,7 +42,7 @@ end;
 ```pascal
 JobKind := callfunc ('getsenderjobkind');
 if JobKind = '0' then begin
-    print ('say 일琴_뻘청斡撚켱？');
+    print ('say 老兄_还没职业呢？');
     exit;
 end;
 ```

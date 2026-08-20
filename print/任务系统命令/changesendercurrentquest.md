@@ -62,4 +62,4 @@ print ('changesendercurrentquest 1350');
 ## 相关命令
 - `changesendercompletequest` — 修改玩家已完成任务
 - `changesenderfirstquest` — 修改玩家第一个任务
-- `changecurrentquest` — 改变自身当前任务
+- `changecurrentquest` — 调用 `aSelf` 的修改方法（基础对象为空操作）

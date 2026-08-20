@@ -36,7 +36,7 @@ end else if cmd = 'changedynobjstate' then begin
 procedure OnTurnOn (aStr : String);
 begin
    inc (n);
-   print ('changedynobjstate 石弓洞入口 true');
+   print ('changedynobjstate 石棺洞入口 true');
 end;
 ```
 
@@ -46,7 +46,7 @@ end;
 procedure OnTurnOff (aStr : String);
 begin
    dec (n);
-   print ('changedynobjstate 石弓洞入口 false');
+   print ('changedynobjstate 石棺洞入口 false');
 end;
 ```
 
@@ -57,7 +57,7 @@ procedure OnTurnOn (aStr : String);
 begin
    boCall := 'true';
    n := 2;
-   print ('changedynobjstate 굇게珙 true');
+   print ('changedynobjstate 被捆绑的北霸王 true');
 end;
 ```
 

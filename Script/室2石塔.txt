@@ -1,0 +1,41 @@
+unit 室2石塔;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDie (aStr : String);
+procedure OnRegen (aStr : String);
+
+implementation
+
+procedure OnDie (aStr : String);
+begin
+   print ('boiceallbyname 室2四臂金刚 monster false');
+   print ('boiceallbyname 室2护卫武士 monster false');
+   print ('bohitallbyname 室2四臂金刚 monster true');
+   print ('bohitallbyname 室2护卫武士 monster true');
+
+   print ('changedynobjstate 室2门 true');   
+end;
+
+procedure OnRegen (aStr : String);
+begin
+   print ('boiceallbyname 室2四臂金刚 monster true');
+   print ('boiceallbyname 室2护卫武士monster true');
+   print ('bohitallbyname 室2四臂金刚 monster false');
+   print ('bohitallbyname 室2护卫武士 monster false');
+end;
+
+end.
+

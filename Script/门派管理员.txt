@@ -1,0 +1,97 @@
+unit 门派管理员;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\门派管理员.txt 1';
+      print (Str);
+      exit; 
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name, Age, Power, Virtue, PowerLevel : String;
+   Lv : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'sell' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 3';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'buy' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 4';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'benefit' then begin
+      Name := callfunc ('getsendername');
+      PowerLevel := callfunc ('getsendercurpowerlevel');  //境界等级
+      Lv := StrToInt (PowerLevel);
+      if Lv < 3 then begin
+         print ('say 你的境界太差了，先回新手村练练吧。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 不灭:1');
+      if Str = 'true' then begin
+         print ('say 对不起，本门福利是为新手服务的。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 永恒:1');
+      if Str = 'true' then begin
+         print ('say 大侠，以您的实力就不用来领这点福利了吧。');
+         exit;
+      end;
+      print ('say 本门福利体系还在完善中，我先送你一块门派护身符吧。');
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满，放不了护身符啦~');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 门派令牌:1');
+      if Str = 'true' then begin
+         Str := 'say 哎呀……' + Name;
+         Str := Str + '，你已经有护身符啦！ 200';
+         print (Str);
+         exit;
+      end;
+      print ('putsendermagicitem 门派令牌:1 @门派管理员 4');
+      //print ('say 节日期间直接去外面领节日礼物吧。');
+      exit;
+   end;
+
+end;
+
+end.

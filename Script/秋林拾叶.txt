@@ -1,0 +1,113 @@
+unit 秋林拾叶;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnLeftClick (aStr : String);
+procedure OnGetResult (aStr : String);
+procedure OnApproach (aStr : String);
+procedure OnHear (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      //Str := 'showwindow .\help\start.txt 0';
+      Str := 'showwindow .\help\天下第一门.txt';
+      print(Str);
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name, PowerLevel : String;
+   Lv : Integer;
+begin
+   if aStr = 'join' then begin
+      Name := callfunc ('getsendername');
+      Str := 'say 将' + Name;
+      Str := Str + '加入了';
+      Print(str);
+   end;
+   if aStr = 'Cancel' then begin
+      // 判断是否正在进行任务
+      Str := callfunc ('getsendercurrentquest');
+      Lv := StrToInt (Str);
+      if Lv > 0 then begin
+         Str := callfunc ('getsenderitemexistence 书函:1');
+         if Str = 'true' then begin
+            print ('getsenderitem 书函:1');
+            print ('changesendercurrentquest 0');
+            print ('say 好了，你的任务书函已回收。');
+            exit;
+         end;
+         print ('say 你当前任务没有书函，无法处理。');
+         exit;
+      end;
+      print ('say 你没有任务呢。');
+   end;
+   if aStr = 'close' then begin
+      exit;
+   end;
+
+   if aStr <> '' then begin
+      str := 'showwindow .\help\' + aStr;
+      Str := Str + '.txt';
+      print (str);
+   end;
+end;
+
+procedure OnApproach (aStr : String);
+var
+   Str : String;
+begin
+   Str := callfunc ('getsenderrace');
+   if Str = '1' then begin
+      print ('say 快快加入天下第一门吧~~~');
+   end;
+end;
+
+procedure OnHear (aStr : String);
+var
+   Str, Name, Title : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race <> 1 then exit;
+
+   Title := GetToken (aStr, Str, '_');
+
+   if Str = '门派职称' then begin
+      Str := callfunc ('getsenderitemexistence 金元:100');
+      if Str = 'false' then begin
+         print ('say 自定义职位需要为门派贡献100金元~');
+         exit;
+      end;
+      print ('getsenderitem 金元:100');
+      Name := callfunc ('getsendername');
+      Str := 'say ' + Name;
+      Str := Str + '的职称是';
+      Str := Str + Title;
+      print (Str);
+   end;
+end;
+
+end.

@@ -1,0 +1,204 @@
+unit 老侠客;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\老侠客.txt 1';
+      print (Str);
+      exit;
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'sell' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 0';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'buy' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 1';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'getquest' then begin
+      Str := 'showwindow .\help\老侠客2.txt 1';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'grade2' then begin
+      Str := callfunc ('gethavegradequestitem');
+      if Str = 'true' then begin
+         print ('say 你已经在做升级任务 50');
+         exit;
+      end;
+      
+      Str := callfunc ('getpossiblegrade 0 0');
+      if Str = 'false' then begin
+         print ('say 要有一个满1级的神功 50');
+         exit;
+      end;
+
+      Str := callfunc ('checkenoughspace 1');
+      if Str = 'false' then begin
+         print ('say 要空出一个物品栏栏位');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 金元:60');
+      if Str = 'false' then begin
+         print ('say 要接2级任务,需支付60个金元 50');
+         exit;
+      end;
+
+      print ('getsenderitem 金元:60');
+      print ('putsendermagicitem 侠客任务卷轴:1 @老侠客 4');
+      print ('say 等你的好消息 0');
+      
+      exit;
+   end;
+   if aStr = 'grade3' then begin
+      Str := callfunc ('gethavegradequestitem');
+      if Str = 'true' then begin
+         print ('say 你已经在做升级任务 50');
+         exit;
+      end;
+
+      Str := callfunc ('getpossiblegrade 0 1');
+      if Str = 'false' then begin
+         print ('say 要有满2级神功 50');
+         exit;
+      end;
+
+      Str := callfunc ('checkenoughspace 1');
+      if Str = 'false' then begin
+         print ('say 要空出一个物品栏栏位');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 金元:80');
+      if Str = 'false' then begin
+         print ('say 要接3级任务,需支付80个金元 50');
+         exit;
+      end;
+
+      print ('getsenderitem 金元:80');
+      print ('putsendermagicitem 仙人卷轴:1 @老侠客 4');
+      print ('say 等你的好消息 0');
+
+      exit;
+   end;
+
+   if aStr = 'giveitem2' then begin
+      Str := callfunc ('getsenderitemexistence 侠客任务卷轴:1');
+      if Str = 'false' then begin
+         print ('say 你没有侠客任务卷轴 0');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 火王牌:1');
+      if Str = 'false' then begin
+         print ('say 你没有火王牌 0');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 霸王牌:1');
+      if Str = 'false' then begin
+         print ('say 你没有霸王牌 0');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 妖狐牌:1');
+      if Str = 'false' then begin
+         print ('say 你没有妖狐牌 0');
+         exit;
+      end;
+
+      Str := callfunc ('checkusemagicbygrade 5 0 -1');
+      if Str = 'false' then begin
+         print ('say 要升级的武功必须要在使用状态 0');
+         exit;
+      end;
+
+      print ('usemagicgradeup 0 1');
+
+      print ('getsenderitem 侠客任务卷轴:1');
+      print ('getsenderitem 火王牌:1');
+      print ('getsenderitem 霸王牌:1');
+      print ('getsenderitem 妖狐牌:1');
+      print ('say 阁下对武功很痴迷吗? 0');
+      exit;
+   end;
+   
+   if aStr = 'giveitem3' then begin
+      Str := callfunc ('getsenderitemexistence 仙人卷轴:1');
+      if Str = 'false' then begin
+         print ('say 阁下没有仙人卷轴 0');
+         exit;
+      end;
+      
+      Str := callfunc ('getsenderitemexistence 术士牌:1');
+      if Str = 'false' then begin
+         print ('say 阁下没有术士牌 0');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 公子牌:1');
+      if Str = 'false' then begin
+         print ('say 阁下没有公子牌 0');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 守护牌:1');
+      if Str = 'false' then begin
+         print ('say 没有守护牌 0');
+         exit;
+      end;
+
+      Str := callfunc ('checkusemagicbygrade 5 1 -1');
+      if Str = 'false' then begin
+         print ('say 要升级的武功必须要在使用状态 0');
+         exit;
+      end;
+
+      print ('usemagicgradeup 0 2');
+
+      print ('getsenderitem 仙人卷轴:1');
+      print ('getsenderitem 术士牌:1');
+      print ('getsenderitem 公子牌:1');
+      print ('getsenderitem 守护牌:1');
+      print ('say 阁下对武功很痴迷吗? 0');
+   end;
+
+end;
+
+end.

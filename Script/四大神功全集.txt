@@ -1,0 +1,221 @@
+unit 四大神功全集;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDblClick(aStr : String);
+procedure OnGetResult (aStr : String);
+
+implementation
+
+procedure OnDblClick(aStr : String);
+begin
+   print ('showwindow .\help\四大神功.txt 0');
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str : String;
+begin
+   if aStr = 'protect1' then begin
+      Str := callfunc ('checkmagic 3 9 血天魔功');
+      if Str = 'true' then begin
+         print ('sendsenderchatmessage 已修炼了此武功 2');
+         exit;
+      end;
+
+      print ('showwindow .\help\四大神功1.txt 0');
+      exit;      
+   end;
+   if aStr = 'protect2' then begin
+      Str := callfunc ('checkmagic 3 9 日月神功');
+      if Str = 'true' then begin
+         print ('sendsenderchatmessage 已修炼了此武功 2');
+         exit;
+      end;
+
+      print ('showwindow .\help\四大神功2.txt 0');
+      exit;      
+   end;
+   if aStr = 'protect3' then begin
+      Str := callfunc ('checkmagic 3 9 北冥神功');
+      if Str = 'true' then begin
+         print ('sendsenderchatmessage 已修炼了此武功 2');
+         exit;
+      end;
+
+      print ('showwindow .\help\四大神功3.txt 0');
+      exit;
+   end;
+   if aStr = 'protect4' then begin
+      Str := callfunc ('checkmagic 3 9 紫霞神功');
+      if Str = 'true' then begin
+         print ('sendsenderchatmessage 已修炼了此武功 2');
+         exit;
+      end;
+
+      print ('showwindow .\help\四大神功4.txt 0');
+      exit;      
+   end;
+   if aStr = 'material1_1' then begin
+      print ('showwindow .\help\四大神功1_1.txt 0');
+      exit;      
+   end;
+   if aStr = 'material1_2' then begin
+      print ('showwindow .\help\四大神功1_2.txt 0');
+      exit;
+   end;
+   if aStr = 'material1_3' then begin
+      print ('showwindow .\help\四大神功1_3.txt 0');
+      exit;
+   end;
+   if aStr = 'material2_1' then begin
+      print ('showwindow .\help\四大神功2_1.txt 0');
+      exit;      
+   end;
+   if aStr = 'material2_2' then begin
+      print ('showwindow .\help\四大神功2_2.txt 0');
+      exit;      
+   end;
+   if aStr = 'material2_3' then begin
+      print ('showwindow .\help\四大神功2_3.txt 0');
+      exit;      
+   end;
+   if aStr = 'material3_1' then begin
+      print ('showwindow .\help\四大神功3_1.txt 0');
+      exit;
+   end;
+   if aStr = 'material3_2' then begin
+      print ('showwindow .\help\四大神功3_2.txt 0');
+      exit;
+   end;
+   if aStr = 'material3_3' then begin
+      print ('showwindow .\help\四大神功3_3.txt 0');
+      exit;
+   end;
+   if aStr = 'material4_1' then begin
+      print ('showwindow .\help\四大神功4_1.txt 0');
+      exit;
+   end;
+   if aStr = 'material4_2' then begin
+      print ('showwindow .\help\四大神功4_2.txt 0');
+      exit;
+   end;
+   if aStr = 'material4_3' then begin
+      print ('showwindow .\help\四大神功4_3.txt 0');
+      exit;
+   end;
+   if aStr = 'material1_1_1' then begin
+      print ('showwindow .\help\四大神功1_1_1.txt 0');
+      exit;
+   end;
+   if aStr = 'material1_1_2' then begin
+      print ('showwindow .\help\四大神功1_1_2.txt 0');
+      exit;
+   end;
+   if aStr = 'material1_1_3' then begin
+      print ('showwindow .\help\四大神功1_1_3.txt 0');
+      exit;
+   end;
+   if aStr = 'material1_1_4' then begin
+      print ('showwindow .\help\四大神功1_1_4.txt 0');
+      exit;
+   end;
+   if aStr = 'material2_1_1' then begin
+      print ('showwindow .\help\四大神功2_1_1.txt 0');
+      exit;
+   end;
+   if aStr = 'material2_1_2' then begin
+      print ('showwindow .\help\四大神功2_1_2.txt 0');
+      exit;
+   end;
+   if aStr = 'material2_1_3' then begin
+      print ('showwindow .\help\四大神功2_1_3.txt 0');
+      exit;
+   end;
+   if aStr = 'material2_1_4' then begin
+      print ('showwindow .\help\四大神功2_1_4.txt 0');
+      exit;
+   end;
+   if aStr = 'material3_1_1' then begin
+      print ('showwindow .\help\四大神功3_1_1.txt 0');
+      exit;
+   end;
+   if aStr = 'material3_1_2' then begin
+      print ('showwindow .\help\四大神功3_1_2.txt 0');
+      exit;
+   end;
+   if aStr = 'material3_1_3' then begin
+      print ('showwindow .\help\四大神功3_1_3.txt 0');
+      exit;
+   end;
+   if aStr = 'material3_1_4' then begin
+      print ('showwindow .\help\四大神功3_1_4.txt 0');
+      exit;
+   end;
+   if aStr = 'material4_1_1' then begin
+      print ('showwindow .\help\四大神功4_1_1.txt 0');
+      exit;
+   end;
+   if aStr = 'material4_1_2' then begin
+      print ('showwindow .\help\四大神功4_1_2.txt 0');
+      exit;
+   end;
+   if aStr = 'material4_1_3' then begin
+      print ('showwindow .\help\四大神功4_1_3.txt 0');
+      exit;
+   end;
+   if aStr = 'material4_1_4' then begin
+      print ('showwindow .\help\四大神功4_1_4.txt 0');
+      exit;
+   end;
+   if aStr = 'before' then begin
+      print ('showwindow .\help\四大神功.txt 0');
+      exit;
+   end;
+   if aStr = 'before1' then begin
+      print ('showwindow .\help\四大神功1.txt 0');
+      exit;
+   end;
+   if aStr = 'before2' then begin
+      print ('showwindow .\help\四大神功2.txt 0');
+      exit;
+   end;
+   if aStr = 'before3' then begin
+      print ('showwindow .\help\四大神功3.txt 0');
+      exit;
+   end;
+   if aStr = 'before4' then begin
+      print ('showwindow .\help\四大神功4.txt 0');
+      exit;
+   end;
+   if aStr = 'before1_1' then begin
+      print ('showwindow .\help\四大神功1_1.txt 0');
+      exit;
+   end;
+   if aStr = 'before2_1' then begin
+      print ('showwindow .\help\四大神功2_1.txt 0');
+      exit;
+   end;
+   if aStr = 'before3_1' then begin
+      print ('showwindow .\help\四大神功3_1.txt 0');
+      exit;
+   end;
+   if aStr = 'before4_1' then begin
+      print ('showwindow .\help\四大神功4_1.txt 0');
+      exit;
+   end;
+end;
+
+end.

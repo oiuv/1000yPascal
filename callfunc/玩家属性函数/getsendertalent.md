@@ -25,7 +25,7 @@ Result := IntToStr(TBasicObject(FSender).SGetTalent);
 ```pascal
 Str := callfunc ('getsendertalent');
 if Str < '9998' then begin
-    print ('showwindow .\help\질可만2.txt 1');
+    print ('showwindow .\help\龙师父2.txt 1');
     exit;
 end;
 ```

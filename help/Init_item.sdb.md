@@ -270,7 +270,7 @@ MaxUpgrade | int | 物品的最大升段等级，默认技能装备3，系统装
 boTalentExp| boolean | 物品制造是否可以增加天赋（职业技能）经验 | TRUE
 boDurability| boolean | 物品是否可磨损，仅限Kind为 WATERCASE、CHARM、FILL、GOLDBAG、DAGGEROFOS、DURABILITY、EIGHTANGLES、WEARITEM（限炎黄版本）、PICKAX和DURAWEAPON 有效| TRUE
 Durability | int | 物品的耐久度| 100
-DecDelay| int | 物品的耐久度减少的时间，单位为毫秒| 5000
+DecDelay| int | 物品耐久度每次减少的间隔，单位为 `mmAnsTick` tick；默认 1 tick 约 10 ms，因此 5000 约为 50 秒。背包和装备耐久检查本身每 500 tick（约 5 秒）轮询一次| 5000
 DecSize|int | 物品耐久度减少的数值| 1
 Abrasion| int | 物品的磨损值，目前只有十字镐类装备有设置，这里是维修磨损，而不是随时间磨损 | 960
 ToolConst,

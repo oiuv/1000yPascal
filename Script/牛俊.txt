@@ -1,0 +1,249 @@
+unit 牛俊;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\牛俊.txt 1';
+      print (Str);
+      exit; 
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   iCount : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'sell' then begin
+      print ('showwindow .\help\牛俊_magic1.txt 1');
+      exit;  
+   end;
+   if aStr = 'sell_best' then begin
+      print ('showwindow .\help\牛俊_magic2.txt 1');
+      exit;  
+   end;
+   if aStr = 'sell_etc' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 0';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'buy' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 1';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'best1' then begin
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 金元:60');
+      if Str = 'false' then begin
+         print ('say 需金元60');
+         exit;
+      end;
+      Str := callfunc ('conditionbestattackmagic 蓉沼抉');
+      if Str = 'false' then exit;
+
+      print ('getsenderitem 金元:60');
+      print ('putsendermagicitem 蓉沼抉:1 @牛俊 4');      
+      exit;
+   end;   
+   if aStr = 'best2' then begin
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 金元:60');
+      if Str = 'false' then begin
+         print ('say 需金元60');
+         exit;
+      end;
+      Str := callfunc ('conditionbestattackmagic 五狐断刎槌');
+      if Str = 'false' then exit;
+
+      print ('getsenderitem 金元:60');
+      print ('putsendermagicitem 五狐断刎槌:1 @牛俊 4');
+      exit;
+   end;
+
+   if aStr = 'getquest' then begin
+      Str := 'showwindow .\help\牛俊2.txt 1';
+      print (Str);
+      exit;  
+   end;
+   if aStr = 'getquest2' then begin
+      Str := callfunc ('checksenderpowerwearitem');
+      iCount := StrToInt (Str);
+      if iCount > 0 then begin
+         print ('say 为了公平起见,请脱掉将技能装备');
+         exit;
+      end;
+
+      Str := callfunc ('getsendercurpowerlevelname');
+      if Str <> '' then begin
+         print ('say 禁止开镜进入');
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 3');
+      if Str = 'true' then begin
+         print ('say 禁止使用此项武功');
+         exit;
+      end;      
+      Str := callfunc ('checksendercurusemagic 4');
+      if Str = 'true' then begin
+         print ('say 禁止使用此项武功');
+         exit;
+      end;
+      
+      //2铰鞭 缴荤
+      Str := callfunc ('checkusemagicbygrade 6 0 3');
+      if Str = 'false' then begin
+         print ('say 要升级的武功必须在使用中');
+         exit;
+      end;
+      
+      Str := callfunc ('getusercount 86');
+      iCount := StrToInt (Str);
+      if iCount > 0 then begin
+         print ('say 考官忙_请稍后...');
+         exit;
+      end;
+      Str := callfunc ('checkalivemopcount 86 NPC 2级牛俊');
+      iCount := StrToInt (Str);
+      if iCount = 0 then begin
+         print ('say 考官忙_请稍后...');
+         exit;
+      end;
+
+      Str := callfunc ('checkentermap 86');
+      if Str = 'false' then begin
+         print ('say 请稍后...');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 金元:60');
+      if Str = 'false' then begin
+         print ('say 考费,60金元');
+         exit;
+      end;
+
+      print ('mapregen 86');
+
+
+      print ('getsenderitem 金元:60');
+
+      Name := callfunc ('getsendername');
+      Str := 'movespace ' + Name;
+      Str := Str + ' user 86 15 21';
+      print (Str);
+      print ('boMapEnter 86 false');
+      exit;
+   end;
+   
+   if aStr = 'getquest3' then begin
+      Str := callfunc ('checksenderpowerwearitem');
+      iCount := StrToInt (Str);
+      if iCount > 0 then begin
+         print ('say 为了公平起见,请脱掉将技能装备');
+         exit;
+      end;
+
+      Str := callfunc ('getsendercurpowerlevelname');
+      if Str <> '' then begin
+         print ('say 禁止开镜进入');
+         exit;
+      end;
+      Str := callfunc ('checksendercurusemagic 3');
+      if Str = 'true' then begin
+         print ('say 禁止使用此项武功');
+         exit;
+      end;      
+      Str := callfunc ('checksendercurusemagic 4');
+      if Str = 'true' then begin
+         print ('say 禁止使用此项武功');
+         exit;
+      end;
+
+      //3铰鞭缴荤
+      Str := callfunc ('checkusemagicbygrade 6 1 3');
+      if Str = 'false' then begin
+         print ('say 要升级的武功必须在使用中');
+         exit;
+      end;
+      
+      Str := callfunc ('getusercount 87');
+      iCount := StrToInt (Str);
+      if iCount > 0 then begin
+         print ('say 考官忙_请稍后...');
+         exit;
+      end;
+      Str := callfunc ('checkalivemopcount 87 NPC 3级牛俊');
+      iCount := StrToInt (Str);
+      if iCount = 0 then begin
+         print ('say 考官忙_请稍后...');
+         exit;
+      end;
+
+      Str := callfunc ('checkentermap 87');
+      if Str = 'false' then begin
+         print ('say 请稍后...');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 金元:80');
+      if Str = 'false' then begin
+         print ('say 考费,80金元');
+         exit;
+      end;
+
+      print ('mapregen 87');
+
+
+      print ('getsenderitem 金元:80');
+
+      Name := callfunc ('getsendername');
+      Str := 'movespace ' + Name;
+      Str := Str + ' user 87 15 21';
+      print (Str);
+      print ('boMapEnter 87 false');
+      exit;
+   end;
+end;
+
+end.

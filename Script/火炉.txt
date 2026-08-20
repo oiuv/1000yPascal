@@ -1,0 +1,51 @@
+unit 火炉;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnBow (aStr : String);
+procedure OnTurnOn (aStr : String);
+procedure OnTurnOff (aStr : String);
+function OnDanger (aStr : String) : String;
+
+var
+   n : Integer = 0;
+
+implementation
+
+function OnDanger (aStr : String) : String;
+begin
+   if aStr = '火箭' then begin
+      Result := 'true';
+      exit;
+   end;
+
+   Result := 'false';
+end;
+
+procedure OnTurnOn (aStr : String);
+begin
+   inc (n);
+
+   print ('changedynobjstate 石棺洞入口 true');
+end;
+
+procedure OnTurnOff (aStr : String);
+begin
+   dec (n);
+
+   print ('changedynobjstate 石棺洞入口 false');
+end;
+
+end.

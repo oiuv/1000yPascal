@@ -27,9 +27,9 @@ Script\Script.sdb|脚本索引
 Script\杂货商.txt|交易脚本代码
 Setting\CreateNpc88.sdb|在编号88的地图上生成NPC
 
-本教程重点针对Script目录下的编程相关做说明，所有行为控制代码都在这里。
+本教程重点说明 `Script` 目录中的脚本开发。对象属性、地图生成、事件参数和运行资源还分别由 `Init`、`Setting`、`Event`、`NpcSetting`、`Help` 等目录控制，不能只修改脚本。
 
-游戏中每一个互动单位（比如一个NPC）都是一个单元unit，对应Script目录下一个文件，在pascal语言中，unit的基本结构如下：
+可绑定脚本的互动对象通过 `Script.SDB` 关联脚本文件；未配置脚本编号的对象不要求有对应文件。脚本使用类似 Pascal `unit` 的结构：
 
 ```pascal
 unit Unit1;  
@@ -45,9 +45,9 @@ implementation
 end.
 ```
 
-在千年中，以游戏中的福袋为列:
+以下结构取自神武奇章线上脚本 [`Script/储物袋.txt`](Script/储物袋.txt)。该文件名为“储物袋”，脚本内的单元名为“储物箱”，服务器按 `Script.SDB` 的文件映射加载，不要求二者同名：
 ```pascal
-unit 福袋;
+unit 储物箱;
 
 interface
 
@@ -84,22 +84,20 @@ end;
 end.
 ```
 
-以上代码中，OnDblClick这个procedure（过程）为福袋功能，其它部分为所有单元都有的基本结构。
+以上代码中，`OnDblClick` 是物品双击入口，其余声明构成这批线上脚本的常用基础结构。实际只需声明当前脚本使用的内置函数和事件。
 
-从以上代码可见，基础语法和pascal一至，而游戏特定功能可分为procedure过程和function函数，具体介绍见[Script.md](Script.md)。
+这套语言只是服务端自定义的 Pascal 子集，并非完整 Delphi/Pascal。游戏特定功能分为 `procedure` 事件/命令和 `function` 事件/查询，具体见 [Script.md](Script.md)。
 
 ## pascal游戏开发基础说明
 
-* pascal除字符串变量外，**不区分大小写**
-* pascal函数分`function`（有返回值）和`procedure`（无返回值）
-* pascal变量声明方法为：`var Str:String;`
-* pascal赋值为`:=`，而`=`为逻辑运算符
-* 在Pascal语言中，`+` 是用于字符串拼接的运算符，**在千年中一条语句仅可使用一次拼接，且不可以拼接字符串和函数**。 
-* 游戏主要要使用的数据类型：`integer`、`string`、`boolean`
-* 游戏中部分方法中字符串使用`_`代表空格`,`代表换行
-* System.txt中当前游戏单位为触发事件的玩家，其它脚本中当前游戏单位为绑定脚本的NPC、Monster、DynamicObject
+* 脚本标识符和关键字**不区分大小写**；单引号内的字符串内容保持原样
+* `function` 有返回值，`procedure` 无返回值
+* 变量声明示例：`var Str: String;`
+* 赋值使用 `:=`，相等比较使用 `=`
+* 当前解释器支持 `Integer`、`String`、`Boolean` 三类变量；复杂表达式能力有限
+* `_` 转空格、`,` 转换行只出现在部分命令的参数处理，不能视为所有字符串的全局规则
+* `System.txt` 的 `OnUserStart` 由登录玩家作为 `Self` 调用；其它事件中的 `Self` 是绑定脚本的对象，`Sender` 是否为玩家取决于实际触发路径
 
-更多Pascal内容请见[help\Pascal.md](help/Pascal.md)
+更多语法限制请见 [help/Pascal.md](help/Pascal.md)。
 
-* 千年游戏QQ群：2887111（可下载服务端）
-* 云端千年网站：https://1000y.gameivy.com/
+脚本示例有两个版本来源：`gameserver-tgs1000/bin/Script` 是当前炎黄新章随包脚本，[`docs/Script`](Script/README.md) 是神武奇章线上脚本归档。线上脚本可证明旧版本的实际用法，但移植前仍须以当前 Pascal 分派器确认接口兼容性。

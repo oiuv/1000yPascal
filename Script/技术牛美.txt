@@ -1,0 +1,157 @@
+unit 技术牛美;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\技术牛美.txt 0';
+      print (Str);
+      exit;
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   nValue : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'sell' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 0';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'salesell' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 3';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'salebuy' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 4';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'alchemist' then begin
+      Name := callfunc ('getsenderjobkind');
+      if Name = '1' then begin
+         print ('say 您已经是铸造师了');
+         exit;
+      end;
+      if Name <> '0' then begin
+         print ('say 不能学习其他技能。');
+         exit;
+      end;
+      Name := callfunc ('getsenderitemexistence 钱币:30000');
+      if Name = 'false' then begin
+         print ('say 持有的金额不足，需钱币30000。');
+         exit;
+      end;
+
+      print ('getsenderitem 钱币:30000');
+      print ('setsenderjobkind 1');
+      print ('say 成为铸造师 100');
+      print ('say 恭喜！恭喜！成为铸造师 100');
+
+      Name := callfunc ('getsendername');
+      Str := 'senditemmoveinfo ' + Name;
+      Str := Str + ',选择职业,铸造师,0,0,0,0,,';
+      print (Str);
+
+      exit;
+   end;
+   if aStr = 'reqchange' then begin
+      print ('showwindow .\help\技术牛美转职.txt 1');
+      exit;
+   end;
+   if aStr = 'change' then begin
+      Name := callfunc ('getsenderjobkind');
+      if Name = '1' then begin
+         print ('say 您已经是铸造师了');
+         exit;
+      end;
+
+      Name := callfunc ('getsendertalent');
+      nValue := StrToInt (Name);
+      if nValue < 2000 then begin
+         print ('say 想转职技能值要在20。00～40。00');
+         exit;
+      end;
+
+      if nValue > 4000 then begin
+         print ('say 想转职技能值要在20。00～40。00');
+         exit;
+      end;
+
+      Name := callfunc ('getsenderitemexistence 钱币:50000');
+      if Name = 'false' then begin
+         print ('say 转职费用为钱币50000。');
+         exit;
+      end;
+
+      print ('getsenderitem 钱币:50000');
+      print ('setsenderjobkind 1');
+      print ('say 转为铸造师 100');
+      print ('say 恭喜你有了新的职业 200');
+
+      Name := callfunc ('getsendername');
+      Str := 'senditemmoveinfo ' + Name;
+      Str := Str + ',职业转职,铸造师,0,0,0,0,,';
+      print (Str);
+
+      exit;
+   end;
+   if aStr = 'virtueman' then begin
+      Name := callfunc ('getsenderjobgrade');
+      if Name = '6' then begin
+         print ('say 您不已经是神工了吗？');
+         exit;
+      end;
+      if Name <> '5' then begin
+         print ('say 还不具备资格~');
+         exit;
+      end;
+
+      print ('say 去找龙师傅问问 100');
+      print ('say 得到顶级技能书 200');
+      print ('say 也许知晓升为神工的秘诀 300');
+      exit;
+   end;
+   if aStr = 'jobhelp' then begin
+      Str := 'showwindow .\help\铸造术.txt 0';
+      print (Str);
+      exit;
+   end;
+end;
+
+end.

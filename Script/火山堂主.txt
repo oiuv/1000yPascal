@@ -1,0 +1,181 @@
+unit 火山堂主;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnLeftClick (aStr : String);
+procedure OnGetResult (aStr : String);
+
+implementation
+
+procedure OnGetResult (aStr : String);
+var
+   Str, QuestStr : String;
+   iCount, CurrentQuest, CompleteQuest : Integer
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+
+   // 黄龙峡谷任务
+   QuestStr := callfunc ('getsenderqueststr');
+   iCount := StrToInt (QuestStr);
+   Str := callfunc ('getsendercompletequest');
+   CompleteQuest := StrToInt (Str);
+   Str := callfunc ('getsendercurrentquest');
+   CurrentQuest := StrToInt (Str);
+   // 接受任务
+   if aStr = 'Quest' then begin
+      // 已开始任务
+      if CurrentQuest > 2000 then begin
+         print ('say 嗯？辛苦辛苦~');
+         exit;
+      end;
+      // 已完成任务
+      if CompleteQuest >= 2007 then begin
+         print ('say 加油吧，少侠。');
+         exit;
+      end;
+
+      Str := callfunc ('checkenoughspace 1');
+      if Str = 'false' then begin
+         print ('say 物品栏已满，无法领取任务书函');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 书函:1');
+      if Str = 'false' then begin
+         print ('putsendermagicitem 书函:1 @火山堂主 4');
+      end;
+      // 初始化当前任务
+      CurrentQuest := 2001;
+      // 针对取消任务后重新开始的玩家
+      if CompleteQuest > 2000 then begin
+         CurrentQuest := CompleteQuest + 1;
+      end;
+      Str := IntToStr(CurrentQuest);
+      Str := 'changesendercurrentquest ' + Str;
+      print (Str);
+      print ('say 很好，请双击书函查看任务详细内容吧。');
+   end;
+   //放弃任务
+   if aStr = 'Cancel' then begin
+      if CurrentQuest < 2001 then begin
+         print ('say 嗯？你又没在我这接过任务~');
+         exit;
+      end;
+      // 未进一步判断，意味着后续其它任务也可在此取消
+      // 清除记录
+      print ('changesenderqueststr 0');
+      print ('changesendercurrentquest 0');
+      print ('getsenderitem 书函:1');
+      print ('say 好了，已取消你的任务。');
+   end;
+   // 完成任务
+   if aStr = 'Complete' then begin
+      if CurrentQuest = 0 then begin
+         print ('say 您还没有接任何任务呢。');
+         exit;
+      end;
+      if CurrentQuest < 2001 then begin
+         print ('say 你找错人了吧~');
+         exit;
+      end;
+      if CurrentQuest > 2007 then begin
+         print ('say 你找错人了呀~');
+         exit;
+      end;
+      // Str := callfunc ('getsenderitemexistence 书函:1');
+      // if Str = 'false' then begin
+      //    print ('say 你的任务书函呢？');
+      //    exit;
+      // end;
+      Str := 'say 当前消灭魔物数量：' + QuestStr;
+      print (Str);
+      if iCount < 100 then begin
+         print ('say 你消灭的魔物数量不足呀 200');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace 1');
+      if Str = 'false' then begin
+         print ('say 物品栏已满，无法领取任务奖励 100');
+         exit;
+      end;
+      // 给于奖励
+      print ('putsendermagicitem 英雄宝牌:1 @火山堂主 4');
+      // 清除记录
+      print ('changesenderqueststr 0');
+      // 更新任务进展
+      if CurrentQuest = 2001 then begin
+         print ('changesendercompletequest 2001');
+         print ('changesendercurrentquest 2002');
+         print ('say 很好，请继续查看任务书函，完成新任务吧。 100');
+         exit;
+      end;
+      if CurrentQuest = 2002 then begin
+         print ('changesendercompletequest 2002');
+         print ('changesendercurrentquest 2003');
+         print ('say 很好，请继续查看任务书函，完成新任务吧。 100');
+         exit;
+      end;
+      if CurrentQuest = 2003 then begin
+         print ('changesendercompletequest 2003');
+         print ('changesendercurrentquest 2004');
+         print ('say 很好，请继续查看任务书函，完成新任务吧。 100');
+         exit;
+      end;
+      if CurrentQuest = 2004 then begin
+         print ('changesendercompletequest 2004');
+         print ('changesendercurrentquest 2005');
+         print ('say 很好，请继续查看任务书函，完成新任务吧。 100');
+         exit;
+      end;
+      if CurrentQuest = 2005 then begin
+         print ('changesendercompletequest 2005');
+         print ('changesendercurrentquest 2006');
+         print ('say 很好，请继续查看任务书函，完成新任务吧。 100');
+         exit;
+      end;
+      if CurrentQuest = 2006 then begin
+         print ('changesendercompletequest 2006');
+         print ('changesendercurrentquest 2007');
+         print ('say 很好，请继续查看任务书函，完成新任务吧。 100');
+         print ('say 这是最后一个挑战了哦 200');
+         exit;
+      end;
+      if CurrentQuest = 2007 then begin
+         print ('changesendercompletequest 2007');
+         print ('changesendercurrentquest 0');
+         print ('getsenderitem 书函:1');
+         print ('say 很好，你已证明了自己的实力。 100');
+         print ('say 现在去找万花楼主吧，她可以帮你 200');
+         exit;
+      end;
+   end;
+end;
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      str := 'showwindow .\help\火山堂主.txt 1';
+      print (str);
+   end;
+end;
+
+
+end.

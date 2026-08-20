@@ -34,14 +34,14 @@ procedure OnTurnOff (aStr : String);
 var
    Str : String;
 begin
-   Str := callfunc ('checkobjectalive 굇베汽覩 monster 굇게珙산1');
+   Str := callfunc ('checkobjectalive 北海雪原 monster 北霸王魂1');
    if Str = 'true' then begin
-      print ('mapdelobjbyname monster 굇게珙산1');
+      print ('mapdelobjbyname monster 北霸王魂1');
    end;
 
-   Str := callfunc ('checkobjectalive 굇베汽覩 monster 陶약잼柰准3');
+   Str := callfunc ('checkobjectalive 北海雪原 monster 远距离野神族3');
    if Str = 'true' then begin
-      print ('mapdelobjbyname monster 陶약잼柰准3');
+      print ('mapdelobjbyname monster 远距离野神族3');
    end;
    exit;
 end;
@@ -51,7 +51,8 @@ end;
 
 1. **先检查后删除**：建议先用 `checkobjectalive` 确认对象存在再删除
 2. **对象类型匹配**：类型必须与创建时一致（`monster` 或 `dynamicobject`）
-3. **配合 setallowdelete**：某些对象需要先通过 `setallowdelete` 设置允许删除后才能被删除
+3. **实际行为**：Monster 分支会把所有同名怪物标记为可删除；DynamicObject 分支只标记找到的首个同名对象。命令不是立刻从列表释放对象，而是设置其删除标志。
+4. **无需预调用**：`mapdelobjbyname` 自己会设置删除标志，不要求先调用 `setallowdelete`。
 
 ## 相关命令
 - `mapaddobjbyname` — 在地图中添加对象

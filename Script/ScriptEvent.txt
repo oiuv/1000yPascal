@@ -1,0 +1,137 @@
+// EventParam中支持的脚本理论上所有NPC和Monster脚本方法都适用
+// 现用于节日活动专属脚本
+unit ScriptEvent;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnApproach (aStr : String);
+procedure OnTimer (aStr : String);
+procedure OnEventTimer (aStr : String);
+
+var
+   n : integer = 0;
+
+implementation
+
+// OnTimer每秒触发一次
+procedure OnTimer (aStr : String);
+var
+   Str : String;
+   i, iKind : Integer;
+begin
+   Inc(n);
+   // print ('say 节日快乐~~~');
+   if n = 300 then begin
+      n := 0;
+      // print ('sendsendertopmsg 节日快乐');
+      // 根据节日类型生成对应节日怪物，要和ScriptMonster脚本配合使用
+      iKind := 12; // 节日类型：1春节 5端午节 8中秋节 12圣诞节
+
+      // 节日活动：春节年兽
+      if iKind = 1 then begin
+         // 判断服务器ID，只在指定地图触发
+         Str :=  callfunc ('getserverid');
+         if Str <> '144' then exit;
+         // 判断场上是否已有年兽
+         Str := callfunc ('checkalivemopcount 144 monster 年兽');
+         if Str <> '0' then begin
+            Str := 'sendnoticemsgformapuser 144 <活动>塞北雪原上还有' + Str;
+            Str := Str + '只年兽 3';
+            print (Str);
+            exit;
+         end;
+         // 生成年兽
+         for i := 1 to 10 do begin
+            print ('mapaddobjbyname monster 年兽 102 88 10 154 false');
+            print ('mapaddobjbyname monster 年兽 118 100 10 154 false');
+            print ('mapaddobjbyname monster 年兽 138 120 10 154 false');
+            print ('mapaddobjbyname monster 年兽 160 145 10 154 false');
+         end;
+         print ('sendnoticemsgformapuser 144 <春节>塞北雪原上出现了一群年兽 1');
+         exit;
+      end;
+
+      // 节日活动：中秋玉兔(关闭侠客岛中秋活动)
+      if iKind = 8 then begin
+         // 判断服务器ID，只在指定地图触发
+         Str :=  callfunc ('getserverid');
+         if Str <> '0' then exit;
+         // 判断场上是否已有玉兔
+         Str := callfunc ('checkalivemopcount 0 monster 兔子');
+         if Str <> '0' then begin
+            Str := 'sendnoticemsgformapuser 0 <活动>侠客岛上还有' + Str;
+            Str := Str + '只玉兔 3';
+            print (Str);
+            exit;
+         end;
+         // 生成玉兔
+         for i := 0 to 4 do begin
+            print ('mapaddobjbyname monster 兔子 55 123 10 154 false');
+            print ('mapaddobjbyname monster 兔子 55 180 10 154 false');
+            print ('mapaddobjbyname monster 兔子 55 250 10 154 false');
+            print ('mapaddobjbyname monster 兔子 145 80 10 154 false');
+            print ('mapaddobjbyname monster 兔子 145 175 10 154 false');
+            print ('mapaddobjbyname monster 兔子 145 280 10 154 false');
+            print ('mapaddobjbyname monster 兔子 190 125 10 154 false');
+            print ('mapaddobjbyname monster 兔子 190 250 10 154 false');
+            print ('mapaddobjbyname monster 兔子 190 300 10 154 false');
+            print ('mapaddobjbyname monster 兔子 260 130 10 154 false');
+            print ('mapaddobjbyname monster 兔子 260 235 10 154 false');
+            print ('mapaddobjbyname monster 兔子 260 315 10 154 false');
+         end;
+         print ('sendnoticemsgformapuser 0 <中秋>侠客岛上出现了一群玉兔 1');
+         exit;
+      end;
+
+      // 节日活动：圣诞驯鹿
+      if iKind = 12 then begin
+         // 判断服务器ID，只在指定地图触发
+         Str :=  callfunc ('getserverid');
+         if Str <> '144' then exit;
+         // 判断场上是否已有驯鹿
+         Str := callfunc ('checkalivemopcount 144 monster 鹿');
+         if Str <> '0' then begin
+            Str := 'sendnoticemsgformapuser 144 <活动>塞北雪原上还有' + Str;
+            Str := Str + '只驯鹿 3';
+            print (Str);
+            exit;
+         end;
+         // 生成驯鹿
+         for i := 1 to 10 do begin
+            print ('mapaddobjbyname monster 鹿 102 88 10 154 false');
+            print ('mapaddobjbyname monster 鹿 118 100 10 154 false');
+            print ('mapaddobjbyname monster 鹿 138 120 10 154 false');
+            print ('mapaddobjbyname monster 鹿 160 145 10 154 false');
+         end;
+         print ('sendnoticemsgformapuser 144 <圣诞>塞北雪原上出现了一群驯鹿 1');
+         exit;
+      end;
+   end;
+end;
+
+procedure OnApproach (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      print ('say 不要打我，我很重要的');
+      exit;
+   end;
+end;
+
+end.

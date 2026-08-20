@@ -1,0 +1,59 @@
+unit gateD_B;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+function OnMove (aStr : String) : String;
+
+implementation
+
+function OnMove (aStr : String) : String;
+var
+   Str : String;
+begin
+   Result := 'false';
+
+   Str := callfunc ('checkalivemopcount 96 monster 分身忍者B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 九法僧B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 忍王B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 隐忍者B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 双女B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 花郎B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 亡灵童子B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 赦龙组B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 青龙刺客B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 护卫武士B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 扶桑忍者B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 红色极乐僧B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 蓝色极乐僧B');
+   if Str <> '0' then exit;
+   Str := callfunc ('checkalivemopcount 96 monster 四臂金刚B1');
+   if Str <> '0' then exit;
+
+   Result := 'true';
+end;
+
+end.

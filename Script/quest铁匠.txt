@@ -1,0 +1,312 @@
+unit quest铁匠;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+begin
+   Str := callfunc ('getsenderrace');
+   if Str = '1' then begin
+      Str := 'showwindow .\help\quest铁匠1.txt 1';
+      print (Str);
+      exit;
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   nPower, iRandom : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'fix' then begin
+      Str := callfunc ('getsenderrepairitem 0 59');
+      if Str = '0' then begin
+         print ('say 物品栏里没有八卦牌.');
+         exit;
+      end;
+      if Str = '1' then begin
+         exit;
+      end;
+      if Str = '2' then begin
+         print ('say 这位侠士,八卦牌还很结实啊');
+         exit;
+      end;
+      if Str = '3' then begin
+         exit;
+      end;
+      exit;
+   end;
+   if aStr = 'fixweapon' then begin
+      Str := callfunc ('getsenderrepairitem 9 60');
+      if Str = '-1' then begin
+         print ('say ……！');
+         exit;
+      end;
+      if Str = '0' then begin
+         print ('say 手里怎么什么也没有啊');
+         exit;
+      end;
+      if Str = '1' then begin
+         print ('say 不是告诉你要带上要修理的武器了吗!');
+         exit;
+      end;
+      if Str = '2' then begin
+         print ('say 你看,这还能用呢!');
+         exit;
+      end;
+      if Str = '4' then begin
+         print ('say 修好了~');
+         exit;
+      end;
+      exit;
+   end;
+   if aStr = 'quest' then begin
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 神秘箱子:1');
+      if Str = 'false' then begin
+         print ('say 没看见我正忙着吗?!');
+         exit;
+      end;
+      Str := callfunc ('checksenderattribitem 9');
+      if Str = 'true' then begin
+         print ('say 没看见我正忙着吗?!');
+         exit;
+      end;
+
+      Str := callfunc ('getsendercurpowerlevel');
+      nPower := StrToInt (Str);
+
+      if nPower < 1 then begin
+         print ('showwindow .\help\quest铁匠2.txt 1');
+         exit;
+      end;
+
+      if nPower >= 1 then begin
+         print ('getsenderitem 神秘箱子:1');
+
+         iRandom := Random (3);
+         if iRandom = 0 then begin
+            print ('showwindow .\help\quest铁匠3.txt 0');
+            exit;
+         end;
+         if iRandom = 1 then begin
+            Str := callfunc ('getsenderitemexistence 高级象牙十字镐:1');
+            if Str = 'true' then begin
+               print ('showwindow .\help\quest铁匠3.txt 0');
+               exit;
+            end;
+
+            print ('showwindow .\help\quest铁匠4_1.txt 0');
+            exit;
+         end;
+         if iRandom = 2 then begin
+            print ('showwindow .\help\quest铁匠5.txt 0');
+            exit;
+         end;
+         exit;
+      end;
+      exit;
+   end;
+   if aStr = 'prize' then begin
+      Str := callfunc ('getsenderitemexistence 神秘箱子:1');
+      if Str = 'false' then begin
+         print ('say 没看见我正忙着吗?!');
+         exit;
+      end;
+   
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+
+      print ('getsenderitem 神秘箱子:1');
+
+      Name := callfunc ('getquestitem 6');
+      Str := 'putsendermagicitem ' + Name;
+      Str := Str + ' @quest铁匠 4';
+      print (Str);
+
+      exit;
+   end;
+   if aStr = 'dontprize' then begin
+      Str := callfunc ('getsenderitemexistence 神秘箱子:1');
+      if Str = 'false' then begin
+         print ('say 没看见我正忙着吗?!');
+         exit;
+      end;
+   
+      print ('getsenderitem 神秘箱子:1');
+
+      iRandom := Random (3);
+      if iRandom = 0 then begin
+         print ('showwindow .\help\quest铁匠3.txt 0');
+         exit;
+      end;
+      if iRandom = 1 then begin
+         print ('showwindow .\help\quest铁匠4_1.txt 0');
+         exit;
+      end;
+      if iRandom = 2 then begin
+         print ('showwindow .\help\quest铁匠5.txt 0');
+         exit;
+      end;
+      exit;
+   end;
+   if aStr = 'q1_close' then begin
+      Str := callfunc ('getsenderitemexistence 神秘箱子:1');
+      if Str = 'false' then begin
+         print ('say 没看见我正忙着吗?!');
+         exit;
+      end;
+   
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+
+      print ('getsenderitem 神秘箱子:1');
+
+      Name := callfunc ('getquestitem 7');
+      Str := 'putsendermagicitem ' + Name;
+      Str := Str + ' @quest铁匠 4';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'q2_next1' then begin
+      print ('showwindow .\help\quest铁匠4_2.txt 0');
+      exit;
+   end;
+   if aStr = 'q2_next2' then begin
+      print ('showwindow .\help\quest铁匠4_3.txt 1');
+      exit;
+   end;
+   if aStr = 'needmaterial' then begin
+      print ('showwindow .\help\quest铁匠4_4.txt 0');
+      exit;
+   end;
+   if aStr = 'cancel' then begin
+      print ('showwindow .\help\quest铁匠4_5.txt 0');      
+      exit;
+   end;   
+   if aStr = 'q2_1_close' then begin
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 铁匠材料书札:1');
+      if Str = 'true' then begin
+         print ('say 没看见我正忙着吗?!');
+         exit;
+      end;
+
+      print ('putsendermagicitem 铁匠材料书札:1 @quest铁匠 4');
+      exit;
+   end;
+   if aStr = 'q2_2_close' then begin
+      exit;
+   end;
+   if aStr = 'q2_3_close' then begin
+      exit;
+   end;
+   if aStr = 'givematerial' then begin
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 铁匠材料书札:1');
+      if Str = 'false' then begin
+         print ('say 没看见我正忙着吗?!');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 骨头一:20');
+      if Str = 'false' then begin
+         print ('showwindow .\help\quest铁匠4_7.txt 1');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 碳酸水石:20');
+      if Str = 'false' then begin
+         print ('showwindow .\help\quest铁匠4_7.txt 1');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 钢铁:5');
+      if Str = 'false' then begin
+         print ('showwindow .\help\quest铁匠4_7.txt 1');      
+         exit;
+      end;
+
+      print ('getsenderitem 骨头一:20');
+      print ('getsenderitem 碳酸水石:20');
+      print ('getsenderitem 钢铁:5');      
+      print ('getsenderitem 铁匠材料书札:1');
+      
+      print ('showwindow .\help\quest铁匠4_6.txt 0');
+
+      Name := callfunc ('getquestitem 5');
+      Str := 'putsendermagicitem ' + Name;
+      Str := Str + ' @quest铁匠 4';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'continue' then begin
+      exit;
+   end;
+   if aStr = 'giveup' then begin
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 铁匠材料书札:1');
+      if Str = 'false' then begin
+         print ('say 没看见我正忙着吗?!');
+         exit;
+      end;
+
+      print ('getsenderitem 铁匠材料书札:1');
+      exit;
+   end;
+   if aStr = 'q3_close' then begin
+      Str := callfunc ('getsenderitemexistence 铁匠书札:1');
+      if Str = 'true' then begin
+         print ('say 没看见我正忙着吗?!');
+         exit;
+      end;
+
+      print ('putsendermagicitem 铁匠书札:1 @quest铁匠 4');      
+      exit;
+   end;   
+end;
+
+end.

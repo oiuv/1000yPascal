@@ -1,0 +1,86 @@
+unit ¾ÅÎ²ºü¾ÆÄ¸;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\¾ÅÎ²ºü¾ÆÄ¸.txt 1';
+      print (Str);
+      exit; 
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'sell' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 0';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'make' then begin
+      Str := callfunc ('getsenderitemexistence °×Ãµ¹åÒ»:99');
+      if Str = 'false' then begin
+         Str := 'say °×Ãµ¹å²»×ã99¶ä¡£';
+         print (Str);
+         exit;
+      end;
+      if Str = 'true' then begin
+         Str := callfunc ('getsenderitemexistence Ñý»ªÎ²°Í:1');
+         if Str = 'false' then begin
+            Str := 'say Ã»ÓÐÑý»ªÎ²°Í¡£';
+            print (Str);
+            exit;
+         end;
+         if Str = 'true' then begin
+            Str := callfunc ('checkenoughspace');
+            if Str = 'false' then begin
+               print ('say ÎïÆ·À¸ÒÑÂú~');
+               exit;
+            end;
+
+            Str := 'getsenderitem °×Ãµ¹åÒ»:99';
+            print (Str);
+            Str := 'getsenderitem Ñý»ªÎ²°Í:1';
+            print (Str);
+            Str := 'putsendermagicitem ºüÀêÄÚµ¤Èý:1 @¾ÅÎ²ºü¾ÆÄ¸ 4';
+            print (Str);
+            Str := 'say »»×ßºüÀêÄÚµ¤';
+            print (Str);
+            exit;
+         end;
+      end;
+      exit;
+   end;
+end;
+
+end.

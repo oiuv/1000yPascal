@@ -1,22 +1,33 @@
-## ITEMLOG
+# ITEMLOG 福袋数据
 
-服务端ITEMLOG为福袋数据库，记录了玩家福袋物品，文件名为ItemLog.BIN，文件格式为二进制。
+`ITEMLOG/ItemLog.BIN` 是玩家福袋的主数据库。它是固定结构二进制文件，不是日志文本，也不是普通 SDB。`TItemLog` 启动时以读写方式打开并在整个进程生命周期保持文件流；当前随包文件约 88.8 MB。
 
-使用GM指令 `@保存福袋库` 保存到文件ITEMLOG.SDB，文件格式为文本。
+## 主文件与快照
 
-如果存在目录Backup，则每日会自动备份福袋数据到目录Backup中。
+主文件不存在时，源码会创建 `ITEMLOG` 头并预分配 200,000 条记录。服务运行期间会在二进制文件中随机定位读写房间和物品记录，因此：
 
-ITEMLOG.SDB和Backup目录下的文件格式相关代码如下：
+- 不要用文本编辑器打开后保存；
+- 不要在线替换、压缩或复制为恢复文件；
+- 完整备份应在停服并确认进程退出后进行。
 
-```pascal
-    rdstr := StrPas (@LogData.ItemData[j].Name) + ':' +
-        IntToStr (LogData.ItemData[j].Color) + ':' +
-        IntToStr (LogData.ItemData[j].Count) + ':' +
-        IntToStr (LogData.ItemData[j].CurDurability) + ':' +
-        IntToStr (LogData.ItemData[j].Durability) + ':' +
-        IntToStr (LogData.ItemData[j].UpGrade) + ':' +
-        IntToStr (LogData.ItemData[j].AddType) + ':' +
-        IntToStr (LogData.ItemData[j].rLockState) + ':' +
-        IntToStr (LogData.ItemData[j].runLockTime);
-    if rdstr = ':0:0:0:0:0:0:0:0' then rdstr := '';
+`SaveToSDB` 只导出可读快照，不改变主文件格式。中国版本的表头为 `Name,PassWord,ITEM0,...,ITEM9,`，其他版本可能没有 `PassWord`。快照包含福袋密码及物品状态，必须按敏感数据保护。
+
+每个物品字段格式为：
+
+```text
+名称:颜色:数量:当前耐久:耐久上限:升级:附加属性类型:锁定状态:解锁时间
 ```
+
+## 自动与手工导出
+
+中国版本在服务器时间 03:00 调用：
+
+```text
+./ItemLog/Backup/ItemLogYYYY-MM-DD.SDB
+```
+
+目录必须事先存在。当前 GM 分支 `@储存保管窗` 会导出 `./ITEMLOG/ITEMLOG.SDB`；命令文本还经过 `Conv()`，实际客户端输入应以当前 ACS 本地化结果为准。
+
+SDB 是检查/迁移快照，源码没有把它作为启动主库载入。恢复主库不能简单把 `.SDB` 改名为 `.BIN`。
+
+源码依据：`uItemLog.pas` 的 `TItemLog.LoadFromFile`、`SaveToSDB`，`SVMain.pas` 的每日备份分支，以及 `UUser.pas` 的 GM 命令。

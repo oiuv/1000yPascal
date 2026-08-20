@@ -1,0 +1,107 @@
+unit 彼岸花;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+    Str : String;
+    Race : Integer;
+    rInt : integer;
+begin
+    Str := callfunc ('getsenderrace');
+    Race := StrToInt (Str);
+    if Race = 1 then begin
+        Str := callfunc ('getsendersex');
+        if Str = '1' then begin 
+            Str := callfunc ('checkenoughspace');
+            if Str = 'false' then begin
+                print ('say 物品栏已满');
+                exit;
+            end;
+            Str := callfunc ('getsenderitemexistence 蓝彼岸花:1');
+            if Str <> 'false' then begin
+                print ('say 无法再采集');
+                exit;
+            end;
+            print ('putsendermagicitem 蓝彼岸花:1 @彼岸花 4');
+            rInt := Random(6);
+            if rInt = 0 then begin
+                print ('movespacebyname 彼岸花 NPC 98 30 191 彼岸花 NPC 100');
+            end;
+            if rInt = 1 then begin
+                print ('movespacebyname 彼岸花 NPC 98 93 266 彼岸花 NPC 100');
+            end;
+            if rInt = 2 then begin
+                print ('movespacebyname 彼岸花 NPC 98 133 207 彼岸花 NPC 100');
+            end;
+            if rInt = 3 then begin
+                print ('movespacebyname 彼岸花 NPC 98 101 195 彼岸花 NPC 100');
+            end;
+            if rInt = 4 then begin
+                print ('movespacebyname 彼岸花 NPC 98 103 259 彼岸花 NPC 100');
+            end;
+            if rInt = 5 then begin
+                print ('movespacebyname 彼岸花 NPC 98 99 133 彼岸花 NPC 100');
+            end;
+        exit;
+        end;
+        if Str = '2' then begin 
+            Str := callfunc ('checkenoughspace');
+            if Str = 'false' then begin
+                print ('say 物品栏已满');
+                exit;
+            end;
+            Str := callfunc ('getsenderitemexistence 红彼岸花:1');
+            if Str <> 'false' then begin
+                print ('say 无法再采集');
+                exit;
+            end;
+            print ('putsendermagicitem 红彼岸花:1 @彼岸花 4');
+            rInt := Random(6);
+            if rInt = 0 then begin
+                print ('movespacebyname 彼岸花 NPC 98 30 191 彼岸花 NPC 100');
+            end;
+            if rInt = 1 then begin
+                print ('movespacebyname 彼岸花 NPC 98 93 266 彼岸花 NPC 100');
+            end;
+            if rInt = 2 then begin
+                print ('movespacebyname 彼岸花 NPC 98 133 207 彼岸花 NPC 100');
+            end;
+            if rInt = 3 then begin
+                print ('movespacebyname 彼岸花 NPC 98 101 195 彼岸花 NPC 100');
+            end;
+            if rInt = 4 then begin
+                print ('movespacebyname 彼岸花 NPC 98 103 259 彼岸花 NPC 100');
+            end;
+            if rInt = 5 then begin
+                print ('movespacebyname 彼岸花 NPC 98 99 133 彼岸花 NPC 100');
+            end;
+            exit;
+        end;
+    end;
+end;
+
+procedure OnGetResult (aStr : String);
+
+begin
+
+end;
+
+end.

@@ -1,0 +1,86 @@
+unit 书生村药材商;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\quest药材商6.txt 1';
+      print (Str);
+      exit; 
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   // 急厚锰
+   if aStr = 'sendmaterial' then begin
+      Str := callfunc ('getsenderitemexistence 药材商材料书札:1');
+      if Str = 'false' then begin
+         print ('say 给衣服染上色吧..');
+         exit;
+      end;
+   
+      Str := callfunc ('getsenderitemexistence 药材商材料1:1');
+      if Str = 'false' then begin
+         print ('showwindow .\help\quest药材商4_6.txt 1');
+         exit;
+      end;
+      print ('showwindow .\help\quest药材商4_3.txt 0');
+      exit;
+   end;
+   if aStr = 'q2_1_close' then begin
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 药材商材料1:1');
+      if Str = 'false' then begin
+         print ('say 给衣服染上色吧..');
+         exit;
+      end;
+
+      print ('getsenderitem 药材商材料1:1');   
+      exit;
+   end;
+   if aStr = 'continue' then begin
+      exit;
+   end;
+   if aStr = 'giveup' then begin
+      print ('getsenderitem 药材商材料书札:1');
+      print ('getsenderitem 药材商材料1:1');
+      print ('getsenderitem 药材商材料2:1');
+      print ('getsenderitem 药材商材料3:1');                  
+      exit;
+   end;
+end;
+
+end.

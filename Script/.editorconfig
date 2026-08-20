@@ -1,0 +1,10 @@
+# 通用设置，适用于所有文件
+root = true
+
+[*.txt]
+indent_style = space
+indent_size = 3
+end_of_line = crlf
+charset = gbk
+trim_trailing_whitespace = true
+insert_final_newline = true

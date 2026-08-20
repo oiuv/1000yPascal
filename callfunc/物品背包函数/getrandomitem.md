@@ -1,92 +1,35 @@
 # getrandomitem
 
-## 功能描述
-从随机事件物品列表中按等级获取一个随机物品名称。
+## 功能
 
-## 语法格式
+从 `Event/RandomEventItemN.sdb` 对应的随机池抽取一项。
+
 ```pascal
-Str := callfunc('getrandomitem 等级');
+Item := callfunc('getrandomitem 0');
 ```
 
-## 参数说明
-- **等级**：Integer - 随机物品的等级/品质
-  - 0：初级
-  - 1：高级
-  - 3：特殊级
+参数是池编号，不是由源码定义的“品质等级”。当前随包说明把 0、1、2、3 分别用于新手村比武、中央比武、活动和犀牛猎人奖励。
 
 ## 返回值
-- **成功**：String - 随机物品的名称（可用于后续给予玩家）
-- **失败**：空字符串
 
-## 源码实现
+成功时返回 `物品名:数量`，可直接拼入 `putsendermagicitem`：
+
 ```pascal
-// uScriptManager.pas 第637行
-end else if cmd = 'getrandomitem' then begin
-   Result := RandomEventItemList.GetItemNamebyRandom (_StrToInt (Params [0]));
-```
-
-调用 `RandomEventItemList.GetItemNamebyRandom`，从随机事件物品列表中按等级抽取物品名称。
-
-## 使用示例
-
-### 初级英雄牌兑换
-```pascal
-// 消耗初级英雄牌，获得随机物品
-Str := callfunc ('getsenderitemexistence 初级英雄牌:1');
-if Str = 'false' then begin
-    print ('say 需要有初级英雄牌');
-    exit;
+Item := callfunc('getrandomitem 0');
+if Item <> '' then begin
+   Cmd := 'putsendermagicitem ' + Item + ' @一级比武老人 4';
+   print(Cmd);
 end;
-
-print ('getsenderitem 初级英雄牌');
-
-Name := callfunc ('getrandomitem 0');
-Str := 'putsendermagicitem ' + Name;
-Str := Str + ' @event龙师父 4';
-print (Str);
 ```
-> 来源：`event龙师父.txt`
 
-### 高级英雄牌兑换
-```pascal
-// 消耗高级英雄牌，获得更好的随机物品
-Str := callfunc ('getsenderitemexistence 高级英雄牌:1');
-if Str = 'false' then begin
-    print ('say 需要有高级英雄牌');
-    exit;
-end;
+源码没有为非法编号、空列表或未覆盖的随机区间提供可靠失败保护，不能依赖其稳定返回空串。
 
-print ('getsenderitem 高级英雄牌');
-Name := callfunc ('getrandomitem 1');
-Str := 'putsendermagicitem ' + Name;
-Str := Str + ' @event龙师父 4';
-print (Str);
-```
-> 来源：`event龙师父.txt`
+## 随机表规则
 
-### 比武奖励
-```pascal
-Name := callfunc ('getrandomitem 0');
-Str := 'putsendermagicitem ' + Name;
-Str := Str + ' @比武老人 4';
-print (Str);
-```
-> 来源：`一级比武老人.txt`、`比武老人.txt`
+加载器读取 `ItemName`、`Kind`、`ItemCount`、`TotalRandom` 和 `MaxValue`，忽略 `randomrate`。它以首行 `MaxValue` 为随机上限，并按 `TotalRandom` 累计阈值选择记录。列表必须非空，阈值应递增并覆盖完整随机范围。
 
-### 猎人奖励
-```pascal
-Item := callfunc ('getrandomitem 3');
-```
-> 来源：`犀牛猎人.txt`
+## 当前版本风险
 
-## 注意事项
+当前 `DataList` 仅声明 0～2，但加载循环和随包数据包含编号 3，`犀牛猎人.txt` 也调用 3；这是确认的源码/随包越界矛盾。神武线上脚本还使用 4、5，那是旧版程序行为，不能迁移到当前炎黄接口。
 
-1. **返回值格式**：返回物品名称字符串，可直接用于 `putsendermagicitem` 命令
-2. **等级区分**：不同等级参数对应不同品质的随机物品池
-3. **配合使用**：通常与 `getsenderitemexistence`（检查兑换物品）和 `putsendermagicitem`（给予随机物品）配合使用
-4. **随机性**：每次调用结果可能不同
-
-## 相关函数
-- `getquestitem` - 获取任务物品
-- `getsenderitemexistence` - 检查物品是否存在
-- `putsendermagicitem` - 给予玩家物品
+详细文件对应关系见 [Event 运行数据](../../help/Event.md)。源码依据：`uScriptManager.pas` 的 `getrandomitem` 分派及 `svClass.pas` 的 `TRandomEventItemList`。

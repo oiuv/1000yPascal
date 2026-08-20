@@ -1,0 +1,43 @@
+unit 神龟石像;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDie (aStr : String);
+procedure OnDieBefore (aStr : String);
+
+implementation
+
+procedure OnDieBefore (aStr : String);
+begin
+   //芭合捞籍惑 柄瘤绰 家府
+   print ('sendsound 9416.wav 49');
+   exit;
+end;
+
+procedure OnDie (aStr : String);
+var
+   Str : String;
+   iCount : Integer;
+begin
+   Str := callfunc ('checkalivemopcount 49 monster 大力兽魔王');
+   iCount := StrToInt (Str);
+   if iCount = 0 then begin
+      print ('mapaddobjbyname monster 大力兽魔王 103 55 10 0 false');
+      exit;
+   end;
+end;
+
+end.
+

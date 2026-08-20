@@ -1,0 +1,52 @@
+unit 宝箱初级;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDblClick(aStr : String);
+
+implementation
+
+procedure OnDblClick(aStr : String);
+var
+   Str, Name, Item : String;
+   // iCount : Integer;
+begin
+   // 原则上不需要判断，但防其它物品调用脚本BUG
+   Str := callfunc ('getsenderitemexistence 初级宝箱:1');
+   if Str = 'false' then begin
+      exit;
+   end;
+   Str := callfunc ('checkenoughspace');
+   if Str = 'false' then begin
+      print('sendsenderchatmessage 物品栏没有空间放物品啦 1');
+      exit;
+   end;
+   // 打开回收
+   print ('getsenderitem 初级宝箱:1');
+   // 获取奖励
+   Item := callfunc ('getrandomitem 2');
+   Str := 'putsendermagicitem '+ Item;
+   Str := Str + ' @初级宝箱 2';
+   print (Str);
+   // 全服嘚瑟
+   Name := callfunc ('getsendername');
+   Str := 'sendsendertopmsg 玩家_' + Name;
+   Str := Str + '_打开宝箱,获得_';
+   Str := Str + Item;
+   print (Str);
+   end;
+end;
+
+end.

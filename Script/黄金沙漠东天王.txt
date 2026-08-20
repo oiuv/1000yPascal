@@ -1,0 +1,76 @@
+unit 黄金沙漠东天王;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race <> 1 then begin
+      exit;
+   end;
+
+   Str := callfunc ('getsenderitemexistence 不灭:1');
+   if Str = 'false' then begin
+      print ('say 请打败西域魔人完成南帝王任务并获得不灭戒指后再来找我吧。');
+      exit;
+   end;
+   
+   print ('showwindow .\help\黄金沙漠东天王.txt 0');
+   exit;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+
+   if aStr = 'more' then begin
+      print ('showwindow .\help\黄金沙漠东天王2.txt 0');
+      exit;
+   end;
+
+   if aStr = 'before' then begin
+      print ('showwindow .\help\黄金沙漠东天王.txt 0');
+      exit;
+   end;
+
+   if aStr = 'enter' then begin
+      Str := callfunc ('getsenderitemexistence 血石:1');
+      if Str = 'false' then begin
+         print ('say 进黄龙峡谷需要通过血魔祭坛，向祭坛上放8颗血石才可进入。');
+         print ('say 务必注意，如果你的血石不足，很可能会被困在祭坛。 200');
+         exit;
+      end;
+      Name := callfunc ('getsendername');
+      Str := 'movespace ' + Name;
+      Str := Str + ' user 102 13 25 100';
+      print (Str);
+      exit;
+   end;
+end;
+
+end.

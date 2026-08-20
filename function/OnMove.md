@@ -1,30 +1,27 @@
+# OnMove
+
+## 声明
+
 ```pascal
 function OnMove (aStr : String) : String;
 ```
 
+当玩家移动经过绑定对象时触发，`aStr` 当前为空字符串。事件中 `Self` 是绑定脚本的对象，`Sender` 是移动玩家。
+
+## 返回值
+
+源码存在两条调用路径：
+
+- 普通对象收到 `FM_MOVE` 时会调用事件，但不读取返回值。
+- 动态门/入口检查路径会读取返回值；仅精确返回小写字符串 `false` 才会阻止进入、把玩家移到该对象配置的弹出坐标，并提示“无法进入”。
+
+因此，门禁脚本应先把 `Result` 设为 `false`，通过所有条件后再设为 `true`。不要依赖此返回值阻止普通移动事件。
+
 ## 示例
 
+以下结构来自神武线上与炎黄随包均存在的 `gateB_C.txt`，省略了重复的怪物检查：
+
 ```pascal
-unit gateB_C;
-
-interface
-
-function  GetToken (aStr, aToken, aSep : String) : String;
-function  CompareStr (aStr1, aStr2 : String) : Boolean;
-function  callfunc (aText: string): string;
-procedure print (aText: string);
-function  Random (aScope: integer): integer;
-function  Length (aText: string): integer;
-procedure Inc (aInt: integer);
-procedure Dec (aInt: integer);
-function  StrToInt (astr: string): integer;
-function  IntToStr (aInt: integer): string;
-procedure exit;
-
-function OnMove (aStr : String) : String;
-
-implementation
-
 function OnMove (aStr : String) : String;
 var
    Str : String;
@@ -33,25 +30,9 @@ begin
 
    Str := callfunc ('checkalivemopcount 94 monster 近距离野神族B');
    if Str <> '0' then exit;
-   Str := callfunc ('checkalivemopcount 94 monster 石谷野神族B');
-   if Str <> '0' then exit;
-   Str := callfunc ('checkalivemopcount 94 monster 野兽族B');
-   if Str <> '0' then exit;
-   Str := callfunc ('checkalivemopcount 94 monster 首领级野兽族B1');
-   if Str <> '0' then exit;
-   Str := callfunc ('checkalivemopcount 94 monster 首领级雪巨人B1');
-   if Str <> '0' then exit;
-   Str := callfunc ('checkalivemopcount 94 monster 雪巨人B');
-   if Str <> '0' then exit;
-   Str := callfunc ('checkalivemopcount 94 monster 蜘蛛女王B');
-   if Str <> '0' then exit;
-   Str := callfunc ('checkalivemopcount 94 monster 金毛狮王B');
-   if Str <> '0' then exit;
-   Str := callfunc ('checkalivemopcount 94 monster 蝎子女王B');
-   if Str <> '0' then exit;
 
    Result := 'true';
 end;
-
-end.
 ```
+
+源码依据：`BasicObj.pas` 的 `TBasicObject.FieldProc` 与动态门移动检查路径。

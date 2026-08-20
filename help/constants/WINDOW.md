@@ -41,7 +41,7 @@
 | `WINDOW_SHORTCUT` | 29 | 快捷栏 | 快捷技能栏窗口 |
 | `WINDOW_CONFIRM` | 30 | 确认 | 确认对话框（2004-12-12） |
 | `WINDOW_TEAMMEMBERLIST` | 31 | 队伍列表 | 队伍成员列表窗口 |
-| `WINDOW_GUILDITEMLOG` | 32 | 门派物品日志 | 门派物品流通记录窗口 |
+| `WINDOW_GUILDITEMLOG` | 32 | 门派仓库 | 历史常量名含 `ITEMLOG`；实际用于门派共享物品窗口 |
 
 ---
 

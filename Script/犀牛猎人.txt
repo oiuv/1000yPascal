@@ -1,0 +1,182 @@
+unit 犀牛猎人;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+procedure OnAway (aStr : String);
+
+implementation
+
+procedure OnAway (aStr : String);
+var
+   Str, PowerLevel, Name : String;
+   Race, Lv : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Name := callfunc ('getsendername');
+      PowerLevel := callfunc ('getsendercurpowerlevel');  //境界等级
+      Lv := StrToInt (PowerLevel);
+      if Lv >= 4 then begin
+         Str := 'say ' + Name;
+         Str := Str + '，你的境界太高了，我还是送您出谷吧。';
+         print (Str);
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 0 180 240 300';
+         print (Str);
+         exit;
+      end;
+      Str := callfunc ('getsenderage');
+      Lv := StrToInt(Str);
+      if Lv > 4000 then begin
+         Str := 'say ' + Name;
+         Str := Str + '，你这么大了怎么还在这里，我送您出谷吧。';
+         print (Str);
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 0 180 240 300';
+         print (Str);
+         exit;
+      end;
+      exit;
+   end;
+end;
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\犀牛猎人.txt 1';
+      print (Str);
+      exit;
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Item, Name, Name1 : String;
+   nValue : Integer;
+   FirstQuest : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+
+   if aStr = 'ok' then begin
+      Str := callfunc ('getsendercompletequest');
+      FirstQuest := StrToInt (Str);
+      if FirstQuest < 11 then begin
+         print ('say 你还太嫩了，先去做做其它任务吧！');
+         exit;
+      end;
+      if FirstQuest > 99 then begin
+         print ('say 你看起来很沧桑啊，一定经历过很多故事！');
+         exit;
+      end;
+      // 判断是否正在进行某任务
+      Str := callfunc ('getsendercurrentquest');
+      FirstQuest := StrToInt (Str);
+      if FirstQuest <> 0 then begin
+         print ('say 你不是有任务在身吗？加油呀，少侠！');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace 1');
+      if Str = 'false' then begin
+         print ('say 物品栏已满，无法领取任务书函');
+         exit;
+      end;
+      // 新手应该无需判断是否存在此道具，但为了安全增加判断
+      Str := callfunc ('getsenderitemexistence 书函:1');
+      if Str = 'false' then begin
+         print ('putsendermagicitem 书函:1 @犀牛猎人 4');
+      end;
+      print ('say 它就在这条路的尽头，但是凭你现在的能力 ');
+      print ('say 还不能够打败它，所以你要先去新手村 100');
+      print ('say 杀死犀牛王后，拿着犀牛王后的角 200');
+      print ('say 去找它，如此激怒它，杀起来也就容易多了！ 300');
+      print ('changesendercurrentquest 12');
+      exit;
+   end;
+   if aStr = 'give' then begin
+      Str := callfunc ('getsendercurrentquest');
+      FirstQuest := StrToInt (Str);
+      if FirstQuest <> 12 then begin
+         print ('say 你又没接我的委托，来凑什么热闹！');
+         exit;
+      end;
+
+      Name := callfunc ('getsenderitemexistence 犀牛王后角:1');
+      if Name = 'false' then begin
+         print ('say 先搞到犀牛王后角再说！');
+         exit;
+      end;
+
+      Name1 := callfunc ('getsenderitemexistence 抓狂犀牛王的角:1');
+      if Name1 = 'false' then begin
+         print ('say 如此你已经成功了一半了，现在拿着这个角');
+         print ('say 去抓狂犀牛王的老巢吧，装备噬月刀杀掉它！ 100');
+         print ('say 带着它的角来见我！ 200');
+         exit;
+      end;
+      print ('getsenderitem 犀牛王后角:1');
+      print ('getsenderitem 抓狂犀牛王的角:1');
+      print ('getsenderitem 书函:1');
+      print ('changesendercurrentquest 0');
+      Str := callfunc ('getsendercompletequest');
+      FirstQuest := StrToInt (Str);
+      if FirstQuest < 12 then begin
+         print ('changesendercompletequest 12');
+      end;
+      print ('say 哈哈！我才不管难不难，我就是名副其实的犀牛猎人了');
+      Name1 := callfunc ('getsenderitemexistence 九转金丹:1');
+      if Name1 = 'false' then begin
+         print ('say 虽然我利用了你……但我不会白利用的 100');
+         print ('putsendermagicitem 九转金丹:1 @犀牛猎人 4');
+         print ('say 这是我祖传的九转金丹，可以强身健体 200');
+         print ('say 可惜对我已经没什么用了，你拿去吧，哈哈哈哈！ 300');
+         exit;
+      end;
+      exit;
+   end;
+
+   if aStr = 'change' then begin
+      Name := callfunc ('getsenderitemexistence 九转金丹:1');
+      if Name = 'true' then begin
+         print ('getsenderitem 九转金丹:1');
+         Item := callfunc ('getrandomitem 1');
+
+         Str := 'putsendermagicitem '+ Item;
+         Str := Str + ' @犀牛猎人 4';
+         print (Str);
+         Str := 'say 恭喜恭喜！';
+         print (Str);
+         exit;
+      end;
+      print ('say 拿九转金丹来换吧，哈哈哈');
+   end;
+
+   if aStr = 'no' then begin
+      print ('say 你简直是个懦夫…');
+      exit;
+   end;
+
+end;
+
+end.

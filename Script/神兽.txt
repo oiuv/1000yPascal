@@ -1,0 +1,104 @@
+unit 神兽;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnApproach (aStr : String);
+procedure OnAway (aStr : String);
+
+implementation
+
+procedure OnApproach (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := callfunc ('getname');
+
+      if Str = '山贼' then begin
+         print ('say 此山是我开,此树是我栽！');
+         print ('say 要想过此路,留下买路财。 300');
+         exit;
+      end;
+      if Str = '鸡XP' then begin
+         print ('say 我是一只小鸭子，咿呀咿呀哟~');
+         exit;
+      end;
+      if Str = '猫XP' then begin
+         print ('say 喵~~');
+         exit;
+      end;
+      if Str = '兔子XP' then begin
+         exit;
+      end;
+      if Str = '老鼠XP' then begin
+         exit;
+      end;
+      if Str = '赦龙组XP' then begin
+         print ('say 哼哼，我也是龙的传人~');
+         exit;
+      end;
+      print ('say 嘿，你能感受到我的强大吗？这都是千年山参的功效！');
+   end;
+end;
+
+procedure OnAway (aStr : String);
+var
+   Str, PowerLevel, Name : String;
+   Race, Lv : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      // 只巡查新手村
+      Str := callfunc ('getsenderserverid');
+      if Str <> '49' then exit;
+
+      Name := callfunc ('getsendername');
+      if Name = '秋林拾叶' then begin
+         print ('say ^_^');
+         print ('senderrefill');
+         exit;
+      end;
+      // 境界
+      PowerLevel := callfunc ('getsendercurpowerlevel');
+      Lv := StrToInt (PowerLevel);
+      if Lv >= 4 then begin
+         Str := 'say ' + Name;
+         Str := Str + '，你的境界太高了，我还是送您去侠客岛吧。';
+         print (Str);
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 0 180 240 300';
+         print (Str);
+         exit;
+      end;
+      // 年龄
+      Str := callfunc ('getsenderage');
+      Lv := StrToInt(Str);
+      if Lv > 4000 then begin
+         Str := 'say ' + Name;
+         Str := Str + '，你这么大了怎么还在这里，我送您去侠客岛吧。';
+         print (Str);
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 0 180 240 300';
+         print (Str);
+         exit;
+      end; 
+   end;
+end;
+
+end.

@@ -1,0 +1,275 @@
+unit Script;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+procedure OnHear (aStr : String);
+procedure OnShow (aStr : String);
+procedure OnDie (aStr : String);
+procedure OnHit (aStr : String);
+procedure OnRegen (aStr : String);
+
+// 测试专用脚本
+// OnHear
+// OnShow
+// OnCreate
+// OnDestroy
+// OnDanger
+// OnHit
+// OnBow
+// OnStructed
+// OnHide
+// OnDie
+// OnDieBefore
+// OnLeftClick
+// OnRightClick
+// OnDblClick
+// OnDropItem
+// OnChangeState
+// OnMove
+// OnTimer
+// OnApproach
+// OnAway
+// OnUserStart
+// OnUserEnd
+// OnArrival
+// OnGetResult
+// OnTurnOn
+// OnTurnOff
+// OnRegen
+// OnGetChangeStep
+
+implementation
+
+// 测试OnShow和循环语句
+// procedure OnShow(aStr : String);
+// var
+//    Str : String;
+//    i , Delay : Integer;
+// begin
+//    for i := 1 to 3 do
+//    begin
+//       Delay := i * 100;
+//       Str := IntToStr(Delay);
+//       Str := 'say 啊呀，我看到了什么呀？ ' + Str;
+//       print (Str);
+//    end;
+// end;
+
+procedure OnHit (aStr : String);
+var
+   Str : String;
+begin
+   Str := callfunc ('getsenderrace');
+   if Str <> '1' then exit;
+
+   print ('reposition');
+
+   Str := 'returndamage ' + aStr;
+   Str := Str + ' 50';
+   print (Str);
+end;
+
+procedure OnDie (aStr : String);
+begin
+   print ('changedynobjstate 铜人室火炉1 false');
+end;
+
+procedure OnRegen (aStr : String);
+begin
+   print ('changedynobjstate 铜人室火炉1 true');
+end;
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getrace');
+   if Str <> '4' then begin
+      print ('say 你碰到我啦~');
+      exit;
+   end;
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\Script.txt 1';
+      print (Str);
+      exit;
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name, Age, Power, Virtue, PowerLevel : String;
+   Lv : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'sell0' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 0';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'buy1' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 1';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'sell3' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 3';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'buy4' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 4';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'benefit' then begin
+      Name := callfunc ('getsendername');
+      Str := callfunc ('getsenderitemexistence 门派令牌:1');
+      if Str = 'true' then begin
+         Str := 'say 哎呀……' + Name;
+         Str := Str + '，你已经有礼物啦！';
+         print (Str);
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace 3');
+      if Str = 'false' then begin
+         print ('say 物品栏空间不足，请再清理几个空位吧~');
+         exit;
+      end;
+      Str := 'say ' + Name;
+      Str := Str + '，节日快乐。';
+      print (Str);
+      print ('putsendermagicitem 门派令牌:1 @门派管理员 4');
+   end;
+
+end;
+
+// NPC和动态对象有效，Monster无效（这里演示负值BUG）
+procedure OnHear (aStr : String);
+var
+   Str, Str1, Str2, Str3, num : String; // 声明字符串变量
+   Race, n, p : Integer; // 声明整数变量
+begin
+   // 调用函数获取发送者的种族
+   Str := callfunc ('getsenderrace');
+   // 将获取到的种族转换为整数
+   Race := StrToInt (Str);
+   // 如果种族不等于1，直接结束过程
+   if Race <> 1 then exit;
+   Str := aStr; // 将传入的参数赋值给 Str 变量
+   // 使用 GetToken 函数将 Str 以 空格'_' 分隔为 Str1, Str2, Str3 三部分，并将 Str3 转换为整数 n
+   Str := GetToken (Str, Str1, '_');
+   Str := GetToken (Str, Str2, '_');
+   Str := GetToken (Str, Str3, '_');
+   n := StrToInt (Str3);
+   Str3 := IntToStr (n);
+   // 如果 n 为 0，直接结束过程，BUG说明：这里应该判断 n <= 0 ，否则对负数 getsenderitem 变成增加玩家物品。
+   if n = 0 then exit;
+   // 如果 Str 不为空，直接结束过程
+   if Str <> '' then exit;
+   // 处理卖的情况
+   if Str1 = '卖' then begin
+      // 根据 Str2 的值给 p 赋不同的值（单价）
+      p := 0;
+      if Str2 = '银元' then p := 100;
+      if Str2 = '金元' then p := 10000;
+      // 计算总价
+      p := n * p;
+      // 如果 p 为 0，直接结束过程
+      if p = 0 then exit;
+      // 构造要执行的命令并执行（注意：不能连续的用+构造字符串！）
+      Str := 'getsenderitemexistence ' + Str2;
+      Str := Str + ':';
+      Str := Str + Str3;
+      Str := callfunc (Str);
+      // 如果执行结果为 'false'，输出提示信息并结束过程
+      if Str = 'false' then begin
+         Str := 'say 你没有这么多';
+         Str := Str + Str2;
+         print (Str);
+         exit;
+      end;
+      // 获取玩家交易的物品
+      Str := 'getsenderitem ' + Str2;
+      Str := Str + ':';
+      Str := Str + Str3;
+      print (Str);
+      // 计算总金额并交易给玩家
+      num := IntToStr (p);
+      Str := 'putsendermagicitem 钱币:';
+      Str := Str + num;
+      Str := Str + ' @老板娘 4';
+      print (Str);
+      print ('say 交易完毕，欢迎再来。');
+      exit;
+   end;
+   // 处理买的情况
+   if Str1 = '买' then begin
+      // 根据 Str2 的值给 p 赋不同的值（单价）
+      p := 0;
+      if Str2 = '银钞' then p := 1000;
+      if Str2 = '金钞' then p := 5000;
+      // 计算总价
+      p := n * p;
+      // 如果 p 为 0，直接结束过程
+      if p = 0 then exit;
+      // 将总价转换为字符串，并判断玩家物品栏中钱币余额是否充足
+      num := IntToStr (p);
+      Str := 'getsenderitemexistence 钱币:' + num;
+      Str := callfunc (Str);
+      // 如果执行结果为 'false'，输出提示信息并结束过程
+      if Str = 'false' then begin
+         Str := 'say 你没有这么多钱币买';
+         Str := Str + Str2;
+         print (Str);
+         exit;
+      end;
+      // 检查物品栏是否有空位
+      Str := callfunc ('checkenoughspace');
+      // 如果执行结果为 'false'，输出提示信息并结束过程
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+      // 回收玩家指定数量的钱币
+      Str := 'getsenderitem 钱币:' + num;
+      print (Str);
+      // 给予玩家购买的指定数量的物品
+      Str := 'putsendermagicitem ' + Str2;
+      Str := Str + ':';
+      Str := Str + Str3;
+      Str := Str + ' @杂货商 4';
+      print (Str);
+      print ('say 交易完毕，请问还要买什么吗？');
+      exit;
+   end;
+end;
+
+end.
+

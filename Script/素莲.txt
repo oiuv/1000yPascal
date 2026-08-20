@@ -1,0 +1,110 @@
+unit 素莲;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+procedure OnAway (aStr : String);
+
+implementation
+
+procedure OnAway (aStr : String);
+var
+   Str, PowerLevel, Name : String;
+   Race, Lv : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Name := callfunc ('getsendername');
+      PowerLevel := callfunc ('getsendercurpowerlevel');  //境界等级
+      Lv := StrToInt (PowerLevel);
+      if Lv >= 4 then begin
+         Str := 'say ' + Name;
+         Str := Str + '，你的境界太高了，我还是送您出谷吧。';
+         print (Str);
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 0 180 240 300';
+         print (Str);
+         exit;
+      end;
+      Str := callfunc ('getsenderage');
+      Lv := StrToInt(Str);
+      if Lv > 4000 then begin
+         Str := 'say ' + Name;
+         Str := Str + '，你这么大了怎么还在这里，我送您出谷吧。';
+         print (Str);
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 0 180 240 300';
+         print (Str);
+         exit;
+      end; 
+      exit;
+   end;
+end;
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\素莲.txt 1';
+      print (Str);
+      exit;
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   nValue : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'ok' then begin
+      Name := callfunc ('getsenderitemexistence 血红色的玛瑙石:1');
+      if Name = 'false' then begin
+         Str := 'say 看到萧郎了么？他现在怎么样了？';
+         print (Str);
+         exit;
+      end;
+
+      Name := callfunc('getsenderitemexistence 血石:30');
+      if Name = 'false' then begin
+         Str := 'say 这真的是萧郎让你交给我的玛瑙石么？怎么颜色这么暗淡？';
+         print (Str);
+         exit;
+      end;     
+
+      Name := callfunc ('checkenoughspace');
+      if Name = 'false' then begin
+         print ('say 物品栏已满');
+         exit;
+      end;
+
+      print ('getsenderitem 血红色的玛瑙石:1');
+      print ('getsenderitem 血石:30');
+      print ('putsendermagicitem 素莲的手信:1 @素莲 4');
+      print ('say 这是萧郎托你带给我的么？真是太美了！');
+      print ('say 这里有我的手信，你一定要帮我带给他！ 200');
+      exit;
+   end;
+end;
+
+end.

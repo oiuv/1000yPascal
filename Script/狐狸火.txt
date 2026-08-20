@@ -1,0 +1,67 @@
+unit ºüÀê»ð;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnTurnOn (aStr : String);
+procedure OnTurnOff (aStr : String);
+procedure OnRegen (aStr : String);
+
+var
+   LightCount : Integer = 0;
+
+implementation
+
+procedure OnRegen (aStr : String);
+begin
+   LightCount := 0;   
+end;
+
+procedure OnTurnOn (aStr : String);
+var
+   Str : String;
+begin
+   Inc (LightCount);
+
+   if LightCount = 2 then begin
+      Str := callfunc ('checkobjectalive ÐÞÁ¶¶´ monster ËÀÀÇÅ®ÊµÏñ');
+      if Str = 'false' then begin
+         print ('mapaddobjbyname monster ËÀÀÇÅ®ÊµÏñ 24 34 4 0 false');
+      end;
+      exit;
+   end;
+   if LightCount = 4 then begin
+      Str := callfunc ('checkobjectalive ÐÞÁ¶¶´ dynamicobject Ñý»ª');
+      if Str = 'false' then begin
+         print ('mapaddobjbyname dynamicobject Ñý»ª 37 50 4 0 false');
+      end;
+      exit;
+   end;
+end;
+
+procedure OnTurnOff (aStr : String);
+begin
+   Dec (LightCount);
+
+   if LightCount = 3 then begin
+      print ('setallowdelete dynamicobject Ñý»ª');
+      exit;
+   end;
+   if LightCount = 1 then begin
+      print ('setallowdelete monster ËÀÀÇÅ®ÊµÏñ');
+      exit;
+   end;
+end;
+
+end.

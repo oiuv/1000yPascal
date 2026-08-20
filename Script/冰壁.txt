@@ -1,0 +1,30 @@
+unit ±ù±Ú;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDieBefore (aStr : String);
+
+implementation
+
+procedure OnDieBefore (aStr : String);
+begin
+   //ÃµÀá µÑ·¯½Ñ ¾óÀ½º® ±úÁö´Â ¼Ò¸®
+   print ('sendsound 9422.wav 45');
+   exit;
+end;
+
+
+
+end.

@@ -1,0 +1,120 @@
+unit 太极公子;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDie (aStr : String);
+procedure OnChangeState (aStr : String);
+
+implementation
+
+procedure OnDie (aStr : String);
+var
+   Name, Str : String;
+   nCount : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   if Str <> '1' then exit;
+
+   nCount := 0;
+   Str := callfunc ('getsenderitemexistence 太极书札1:1');
+   if Str = 'true' then begin
+      inc (nCount);
+   end;
+   Str := callfunc ('getsenderitemexistence 太极书札2:1');
+   if Str = 'true' then begin
+      inc (nCount);
+   end;
+   Str := callfunc ('getsenderitemexistence 太极书札3:1');
+   if Str = 'true' then begin
+      inc (nCount);
+   end;
+
+   if nCount < 3 then begin
+      print ('saybyname 密室太极老人 npc 请帮我们找回 100');
+      print ('saybyname 密室太极老人 npc 门主留下的太极书札 300');
+      print ('saybyname 密室太极老人 npc 从<黄金沙漠> 500');
+      print ('saybyname 密室太极老人 npc 拿到书函后 700');
+      print ('saybyname 密室太极老人 npc 毫无音信~ 900');
+      print ('saybyname 密室太极老人 npc 担心<青龙帮> 1100');
+      print ('saybyname 密室太极老人 npc 会威胁到本门, 1300');
+      print ('saybyname 密室太极老人 npc 所以太极公子必须修炼 1500');
+      print ('saybyname 密室太极老人 npc 书札上的 1700');
+      print ('saybyname 密室太极老人 npc 武功密笈. 1900');
+      print ('saybyname 密室太极老人 npc 门主 2100');
+      print ('saybyname 密室太极老人 npc 怎么也不会被小人 2300');
+      print ('saybyname 密室太极老人 npc 打败... 2500');
+      print ('saybyname 密室太极老人 npc 总之找到_[太极书札] 2700');
+      print ('saybyname 密室太极老人 npc 之后, 2900');
+      print ('saybyname 密室太极老人 npc 拿给我好吗? 3100');
+      print ('saybyname 密室太极老人 npc 必有重谢. 3300');
+   end;
+   if nCount = 3 then begin
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满~');
+         exit;
+      end;
+
+      print ('getsenderitem 太极书札1:1');
+      print ('getsenderitem 太极书札2:1');
+      print ('getsenderitem 太极书札3:1');
+
+      print ('putsendermagicitem 太极牌:1 @太极公子 3');
+
+      print ('saybyname 密室太极老人 npc 万分感谢... 100');
+      print ('saybyname 密室太极老人 npc 托你的福，我门的武功密笈 300');
+      print ('saybyname 密室太极老人 npc 终于物归原主了... 500');
+      print ('saybyname 密室太极老人 npc 只要公子掌握了此项武功, 700');
+      print ('saybyname 密室太极老人 npc 在门主他老人家回来之前 900');
+      print ('saybyname 密室太极老人 npc 定能重振我们已经败落的 1100');
+      print ('saybyname 密室太极老人 npc 太极剑门! 1300');
+      print ('saybyname 密室太极老人 npc 这里本门的象征 1500');
+      print ('saybyname 密室太极老人 npc 给你一个. 1700');
+      print ('saybyname 密室太极老人 npc 后会有期 1900');
+      print ('saybyname 密室太极老人 npc 需要援助时, 2100');
+      print ('saybyname 密室太极老人 npc 本门弟子定会助你一臂之力... 2300');
+   end;
+
+   Name := callfunc ('getsendername');
+   Str := 'movespacebyname ' + Name;
+   Str := Str + ' user 1 165 775 密室太极老人 npc 300';
+   print (Str);
+end;
+
+procedure OnChangeState (aStr : String);
+var
+   Str, Name : String;
+begin
+   if aStr <> 'die' then exit;
+
+   Str := callfunc ('getsenderrace');
+   if Str <> '1' then exit;
+
+   print ('say 武功这么弱...自不量力的小子');
+
+   Name := callfunc ('getsendername');
+   Str := 'movespace ' + Name;
+   Str := Str + ' user 1 165 775 1000';
+   print (Str);
+
+   print ('boMapEnter 32 true');
+end;
+
+end.
+
+
+
+
+

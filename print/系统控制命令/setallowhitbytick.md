@@ -1,18 +1,18 @@
 # setallowhitbytick
 
 ## 功能描述
-定时设置当前对象是否允许被攻击。通过命令队列延迟指定毫秒数后执行。常用于考试/比武场景中延迟开放攻击。
+通过命令队列延迟设置当前生命对象是否允许被攻击，常用于考试/比武场景。
 
 ## 语法格式
 ```pascal
-print('setallowhitbytick <允许> <延迟毫秒>');
+print('setallowhitbytick <允许> <延迟tick>');
 ```
 
 ## 参数说明
 | 参数 | 类型 | 说明 |
 |------|------|------|
 | 允许 | String | `true` 表示允许被攻击，`false` 表示不允许 |
-| 延迟毫秒 | Integer | 延迟执行的毫秒数 |
+| 延迟 tick | Integer | 相对 `mmAnsTick` 的间隔；正常倍率下 1 tick 约 10 ms |
 
 ## 源码实现
 基于 `uScriptManager.pas` 中的处理逻辑：
@@ -28,7 +28,7 @@ end else if cmd = 'setallowhitbytick' then begin
 
 ### 考试开始后延迟开放攻击
 ```pascal
-// 来自 2级牛俊.txt - 设置考官500毫秒后可被攻击
+// 来自 2级牛俊.txt - 正常倍率下约 5 秒后允许受击
 print ('directmovespace 晋级2牛俊 npc 86 20 21');
 print ('commandicebyname 晋级2牛俊 npc 500');
 print ('setallowhitbytick true 500');
@@ -46,7 +46,8 @@ print ('setallowhitbytick true 1000');
 
 1. **延迟执行**：通过命令队列延迟执行，确保在对话/动画播放完成后才开放攻击
 2. **配合冻结使用**：通常与 `commandicebyname` 配合，先冻结对象，延迟后同时解冻和开放攻击
-3. **时间同步**：延迟毫秒数通常与 `commandicebyname` 的冻结时间一致
+3. **时间同步**：脚本通常让该值与 `commandicebyname` 的冻结 tick 一致
+4. **适用对象**：当前执行分支在 `TLifeObject.WorkBoxCommand`；动态对象的 WorkBox 不处理 `CMD_ALLOWHIT`
 
 ## 相关命令
 - `setallowhit` — 立即设置是否允许被攻击

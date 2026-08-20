@@ -1,0 +1,60 @@
+unit 物品回收商;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\物品回收商.txt 1';
+      print (Str);
+      exit; 
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'changeweapon' then begin
+      Str := callfunc ('getsenderitemexistence 三叉剑:1 1');
+      if Str = 'false' then begin
+         Str := 'say 想欺瞒老娘～！！哪里有三叉剑？';
+         print (Str);
+         exit;
+      end;
+      if Str = 'true' then begin
+         print ('getsenderitem2 三叉剑:1');
+         print ('putsendermagicitem 三叉戟:1 @物品回收商 4');
+         print ('say 接住了!!_请妥善保管!!');
+         exit;
+      end;
+      exit;
+   end;
+end;
+
+end.

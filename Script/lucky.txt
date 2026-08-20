@@ -1,0 +1,38 @@
+unit lucky;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDblClick(aStr : String);
+
+implementation
+
+procedure OnDblClick(aStr : String);
+var
+   Str, Item : String;
+   nValue : Integer;
+begin
+   // 原则上不需要判断，但防其它物品调用脚本BUG
+   Str := callfunc ('getsenderitemexistence 红包:1');
+   if Str = 'false' then begin
+      exit;
+   end;
+   print ('getsenderitem 红包:1');
+   Item := callfunc ('getrandomitem 5');
+   Str := 'putsendermagicitem '+ Item;
+   Str := Str + ' @红包 2';
+   print (Str);
+end;
+
+end.

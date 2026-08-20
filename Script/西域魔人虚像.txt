@@ -1,0 +1,134 @@
+unit 西域魔人虚像;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+   nVirtue : Integer;
+   CompleteQuest : Integer;
+   CurrentQuest : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race <> 1 then begin
+      exit;
+   end;
+   //力茄等 荤亲甸 眉农.
+   //1.龋楷瘤扁眉农
+   //2.QuestNum 眉农
+   //3.酒捞袍 眉农
+   Str := callfunc ('getsendervirtue');
+   nVirtue := StrToInt (Str);
+   if nVirtue < 4000 then begin
+      print ('say 浩然不足，完成不了任务' );
+      exit;
+   end;
+   
+   Str := callfunc ('getsendercompletequest');
+   CompleteQuest := StrToInt (Str);
+
+   Str := callfunc ('getsendercurrentquest');
+   CurrentQuest := StrToInt (Str);
+
+   if CurrentQuest < 1250 then begin
+      print ('say 每天都有好心情');
+      exit;
+   end;
+   
+   if CurrentQuest = 1250 then begin
+      Str := callfunc ('getsenderitemexistence 侠客指环:1');
+      if Str = 'false' then begin
+         print ('changesendercompletequest 1000');
+         print ('changesendercurrentquest 1000');
+         CurrentQuest := 1000;
+         CompleteQuest := 1000;
+      end;
+   end;
+
+   if CurrentQuest = 1250 then begin
+      Str := callfunc ('getsenderitemexistence 牌王:1');
+      if Str = 'true' then begin
+         print ('say 胆敢在我面前卖弄武功，不服就来吧~~~');
+         exit;
+      end;
+      
+      Str := 'showwindow .\help\西域魔人虚像1.txt 0';
+      print (Str);
+      exit;
+   end;
+
+   if CurrentQuest > 1250 then begin
+      if CurrentQuest < 1550 then begin
+         print ('say 还没擒住？加把劲儿啦.');
+         exit;
+      end;
+   end;
+   
+   if CurrentQuest = 1550 then begin
+      Str := callfunc ('getsenderitemexistence 牌王:1');
+      if Str = 'false' then begin
+         print ('changesendercompletequest 1200');
+         print ('changesendercurrentquest 1250');
+         CurrentQuest := 1250;
+         CompleteQuest := 1200;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 侠客指环:1');
+      if Str = 'false' then begin
+         print ('changesendercompletequest 1000');
+         print ('changesendercurrentquest 1000');
+         CurrentQuest := 1000;
+         CompleteQuest := 1000;
+      end;
+
+      print ('say 胆敢在我面前卖弄武功，不服就来吧……');
+      exit;
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+begin
+   if aStr = 'killok' then begin
+      Str := callfunc ('checkenoughspace 2');
+      if Str = 'false' then begin
+         print ('say 物品栏已满');
+         exit;   
+      end;
+
+      print ('changesendercompletequest 1250');
+      print ('changesendercurrentquest 1300');
+      print ('putsendermagicitem 书函:1 @西域魔人虚像 4');
+      print ('putsendermagicitem 西域牌:1 @西域魔人虚像 4');
+      print ('showwindow .\help\西域魔人虚像2.txt 0');
+      exit;
+   end;
+   
+   if aStr = 'q_close' then begin
+      print ('say 改变主意了，就回来');
+      exit;
+   end;
+
+end;
+
+end.

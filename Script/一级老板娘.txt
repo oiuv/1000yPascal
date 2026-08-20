@@ -1,0 +1,174 @@
+unit 一级老板娘;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\一级老板娘.txt 1';
+      print (Str);
+      exit; 
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   FirstQuest : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'sell' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 0';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'buy' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 1';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'make' then begin
+      Str := callfunc ('getsenderitemexistence 天桃:520');
+      if Str = 'false' then begin
+         print ('say 我这里一次可换50瓶天桃汁，需要天桃520个。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 空瓶:50');
+      if Str = 'false' then begin
+         print ('say 你得有50个空瓶装天桃汁呀。');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderfirstquest');
+      FirstQuest := StrToInt (Str);
+      if FirstQuest < 7 then begin
+         Str := callfunc ('getsenderitemexistence 金元:1');
+         if Str = 'false' then begin
+            print ('say 制作天桃汁也不容易啊，给老娘1金元的服务费吧。');
+            exit;
+         end;
+         print ('getsenderitem 金元:1');
+         print ('say 谢谢惠顾，手工费1金元~');
+      end;
+      if FirstQuest >=7 then print ('say 这不是帮我找来彼岸花的大侠嘛，我就免收服务费了^_^');
+
+      print ('getsenderitem 天桃:520');
+      print ('getsenderitem 空瓶:50');
+      print ('say 制作完成，请收好。 100');
+      print ('putsendermagicitem 天桃汁儿:50 @一级老板娘 4');
+      exit;
+   end;
+   if aStr = 'history' then begin
+      // Str := callfunc ('getsenderage');
+      // FirstQuest := StrToInt(Str);
+      // if FirstQuest  > 4000 then begin
+      //    Str := 'say 你看起来很沧桑，谢谢你的好意...';
+      //    print (Str);
+      //    exit;	
+      // end;
+      // 判断是否完成过任务
+      Str := callfunc ('getsendercompletequest');
+      FirstQuest := StrToInt (Str);
+      if FirstQuest >= 10 then begin
+         print ('say 那个……在很久很久以前……嗯嗯嗯……再见');
+         exit;
+      end;
+      // 判断是否完成前置任务
+      if FirstQuest <> 9 then begin
+         print ('say 对不起，我的事情不和无名之辈分享');
+         exit;
+      end;
+      print ('showwindow .\help\一级老板娘2.txt 1');
+      exit;
+   end;
+   if aStr = 'ok' then begin
+      // 判断是否正在进行任务
+      Str := callfunc ('getsendercurrentquest');
+      FirstQuest := StrToInt (Str);
+      if FirstQuest = 10 then begin
+         print ('say 你不是有任务在身吗？加油呀，少侠！');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace 1');
+      if Str = 'false' then begin
+         print ('say 物品栏已满，无法领取任务书函');
+         exit;
+      end;
+      // 新手应该无需判断是否存在此道具，但为了安全增加判断
+      Str := callfunc ('getsenderitemexistence 书函:1');
+      if Str = 'false' then begin
+         print ('putsendermagicitem 书函:1 @一级老板娘 4');
+      end;
+      Str := 'say 好感动！年轻人你真善良，祝你好运';
+      print (Str);
+      Str := 'say 绿林峡谷的入口在（97，44） 100';
+      print (Str);
+      Str := 'say 如果成功，我会好好报答你的。 200';
+      print (Str);
+      print ('changesendercurrentquest 10');
+   end;
+   if aStr = 'no' then begin
+      Str := 'say 还想什么？你不相信爱情吗？';
+      print (Str);
+      Str := 'say 你太让我失望了 100';
+      print (Str);
+   end;
+   if aStr = 'give' then begin
+      Name := callfunc ('getsenderitemexistence 红彼岸花:1');
+      if Name = 'false' then begin
+         print ('say 少侠,你还没出发么?');
+         exit;
+      end;
+      Name := callfunc ('getsenderitemexistence 蓝彼岸花:1');
+      if Name = 'false' then begin
+         print ('say 少侠,你还没出发么?');
+         exit;
+      end;
+      print ('getsenderitem 红彼岸花:1');
+      print ('getsenderitem 蓝彼岸花:1');
+      // 增加关键标志
+      print ('changesenderfirstquest 7');
+      // 完成任务
+      Name := callfunc ('getsendername');
+      Str := 'questcomplete ' + Name;
+      Str := Str + ' 新手村老板娘';
+      print (Str);
+      print ('changesendercompletequest 10');
+      print ('changesendercurrentquest 0');
+      print ('getsenderitem 书函:1');
+      print ('putsendermagicitem 疾速靴:1 @老板娘 4');
+      print ('say 你的勇敢和真诚让我感动和钦佩!');
+      print ('say 这双靴子虽然不能让你跑的更快，但能加快攻击速度。 100');
+      exit;
+   end;
+end;
+
+end.

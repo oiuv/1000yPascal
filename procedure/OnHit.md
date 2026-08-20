@@ -1,104 +1,41 @@
 # OnHit
 
-动态对象被玩家近战/远程攻击命中时触发的事件回调。
-
 ## 声明
+
 ```pascal
 procedure OnHit (aStr : String);
 ```
 
-## 参数
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| aStr | String | 空字符串，无附加信息。伤害值等攻击信息需通过 `callfunc` 获取 |
+对象被有效命中时触发，`Self` 是受击对象，`Sender` 是攻击者。参数不是所有对象都相同：
 
-## 触发条件
-当玩家对 DynamicObject、Monster 等动态对象发起近战或远程攻击并命中时触发。每次命中都会触发一次。适合用于：
-- 实现反伤机制
-- 根据生命值触发阶段变化
-- 命中时召唤援军
-- 累计攻击次数触发特殊效果
+- `TDynamicObject` 的掌风和普通命中路径传入空字符串。
+- 使用 `uSkills.pas` 战斗处理的生命对象会传入十进制字符串 `damageExp`；`石大王.txt` 的反伤逻辑依赖这个值。
 
-**源码位置**: `BasicObj.pas` 第 6562-6600 行
-
-## 适用对象
-- Monster
-- DynamicObject
-- NPC（可被攻击的情况）
+因此，只有确认目标对象走生命对象调用路径时，才能把 `aStr` 当作伤害数值。事件返回值不参与命中判定；需要阻止攻击应使用 [OnDanger](../function/OnDanger.md)。
 
 ## 示例
 
-### 示例 1：反弹伤害给攻击者
-> 来源：`bin/Script/石大王.txt`
+神武线上与炎黄随包的 `东海名所2.txt` 都在首次命中时召唤四只怪物：
 
 ```pascal
 procedure OnHit (aStr : String);
-var
-   Str : String;
-   Damage, n : Integer;
-begin
-   Str := callfunc ('getsenderrace');
-   if Str <> '1' then exit;
-
-   print ('reposition');
-
-   Str := 'returndamage ' + aStr;
-   Str := Str + ' 20';
-   print (Str);
-end;
-```
-
-此示例先检查攻击者是否为玩家（Race=1），然后执行重新定位并将 20% 的伤害反弹给攻击者。
-
-### 示例 2：根据生命值触发阶段变化
-> 来源：`bin/Script/霸王石.txt`
-
-```pascal
-procedure OnHit (aStr : String);
-var
-   Str : String;
-   Life : Integer;
-begin
-   if n = 1 then exit;
-
-   Str := callfunc ('getlife');
-   Life := StrToInt (Str);
-
-   if Life <= 50000 then begin
-      print ('boiceallbyname 地下石巨人 monster false');
-      print ('bohitallbyname 地下石巨人 monster true');
-      n := 1;
-      exit;
-   end;
-end;
-```
-
-此示例在霸王石生命值降到 50000 以下时，停止地下石巨人的冻结状态并允许它们攻击。
-
-### 示例 3：首次命中时召唤援军
-> 来源：`bin/Script/东海名所2.txt`
-
-```pascal
-procedure OnHit (aStr : String);
-var
-   Str : String;
 begin
    Inc (n);
-   if n > 1 then begin
-      exit;
-   end;
+   if n > 1 then exit;
 
-   print ('mapaddobjbyname monster 陶약잼柰准2 129 317 2 0 false');
-   print ('mapaddobjbyname monster 陶약잼柰准2 132 322 2 0 false');
-   print ('mapaddobjbyname monster 陶약잼柰准2 137 323 2 0 false');
-   print ('mapaddobjbyname monster 陶약잼柰准2 142 321 2 0 false');
-   exit;
+   print ('mapaddobjbyname monster 远距离野神族2 129 317 2 0 false');
+   print ('mapaddobjbyname monster 远距离野神族2 132 322 2 0 false');
+   print ('mapaddobjbyname monster 远距离野神族2 137 323 2 0 false');
+   print ('mapaddobjbyname monster 远距离野神族2 142 321 2 0 false');
 end;
 ```
 
-此示例使用计数器确保只在首次命中时在地图指定位置召唤 4 只怪物援军。
+另见 `霸王石.txt` 的生命值阶段切换和 `石大王.txt` 的反伤逻辑。
+
+源码依据：`BasicObj.pas` 的动态对象命中分支、`uSkills.pas` 的生命对象命中分支。
 
 ## 相关事件
-- [OnDie](OnDie.md) — 对象死亡后触发
-- [OnDieBefore](OnDieBefore.md) — 对象死亡前触发
-- [OnRegen](OnRegen.md) — 对象重生时触发
+
+- [OnDanger](../function/OnDanger.md)
+- [OnDieBefore](OnDieBefore.md)
+- [OnRegen](OnRegen.md)

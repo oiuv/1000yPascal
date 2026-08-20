@@ -1,0 +1,55 @@
+unit 沙漠名所1;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnHit (aStr : String);
+procedure OnRegen (aStr : String);
+procedure OnDieBefore (aStr : String);
+
+var
+   n : integer = 0;
+   
+implementation
+
+procedure OnDieBefore (aStr : String);
+begin
+   //疙家 何辑瘤绰 家府
+   print ('sendsound 9329.wav 44');
+   exit;
+end;
+
+procedure OnRegen (aStr : String);
+begin
+   n := 0;
+   exit;
+end;
+
+procedure OnHit (aStr : String);
+var
+   Str : String;
+begin
+   Inc (n);
+   if n > 1 then begin
+      exit;
+   end;
+
+   print ('mapaddobjbyname monster 远距离野神族2 396 129 2 0 false');
+   print ('mapaddobjbyname monster 远距离野神族2 384 129 2 0 false');
+   print ('mapaddobjbyname monster 远距离野神族2 390 125 2 0 false');
+   print ('mapaddobjbyname monster 远距离野神族2 390 133 2 0 false');
+   exit;
+end;
+
+end.

@@ -1,0 +1,44 @@
+unit 石大王;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDie (aStr : String);
+procedure OnHit (aStr : String);
+
+implementation
+
+procedure OnHit (aStr : String);
+var
+   Str : String;
+   Damage, n : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   if Str <> '1' then exit;
+
+   print ('reposition');
+
+   Str := 'returndamage ' + aStr;
+   Str := Str + ' 20';
+   print (Str);
+end;
+
+procedure OnDie (aStr : String);
+begin
+   print ('regen 霸王石 dynamicobject');
+   print ('bopickbymapname 地下采石场2层 false');
+   print ('regen 地下石巨人 monster');
+end;
+
+end.

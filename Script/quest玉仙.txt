@@ -1,0 +1,91 @@
+unit quest玉仙;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+   CompleteQuest : Integer;
+   CurrentQuest : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race <> 1 then begin
+      exit;
+   end;
+
+   print ('showwindow .\help\quest玉仙.txt 1');   
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str : String;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'initial' then begin
+      print ('getsenderitem 神秘箱子:1');
+      print ('getsenderitem 老板娘材料书札:1');
+      print ('getsenderitem 铁匠材料书札:1');
+      print ('getsenderitem 梅花夫人材料书札:1');
+      print ('getsenderitem 药材商材料书札:1');
+      print ('getsenderitem 风兄材料书札:1');
+      print ('getsenderitem 老板娘书札:1');
+      print ('getsenderitem 铁匠书札:1');
+      print ('getsenderitem 梅花夫人书札:1');
+      print ('getsenderitem 药材商书札:1');
+      print ('getsenderitem 风兄书札:1');
+      print ('getsenderitem 阴阳师书札:1');
+      print ('getsenderitem 捕盗大将书札:1');
+      print ('getsenderitem 神医书札:1');
+      print ('getsenderitem 老侠客书札:1'); 
+      print ('getsenderitem 牛俊书札:1');                  
+      print ('getsenderitem 千年冰玉2:1');
+      print ('getsenderitem 凋谢的花:1');                        
+      print ('getsenderitem 雪花:1');      
+      print ('getsenderitem 脚镣:1');            
+      print ('getsenderallitem 布条');        
+      print ('getsenderitem 药材商材料1:1');
+      print ('getsenderitem 药材商材料2:1');
+      print ('getsenderitem 药材商材料3:1');                  
+      print ('getsenderitem 玉簪:1');
+      print ('getsenderitem 封印符:1');
+      print ('getsenderitem 封符:1');
+      print ('getsenderallitem 男尸的魂魄');
+      print ('getsenderitem 帐本:1');
+      print ('getsenderallitem 东海野兽王内丹');
+      print ('getsenderallitem 死者灵魂');
+      print ('getsenderallitem 石大王内丹');
+      print ('getsenderallitem 石巨人心脏');
+      print ('getsenderallitem 四臂金刚内丹');
+      print ('getsenderallitem 千年冰玉1');
+      print ('getsenderallitem 北方魔人内丹');
+      print ('getsenderallitem 蜘蛛血');
+      print ('getsenderallitem 北方魔人魂');
+      print ('getsenderallitem 石大王魂');
+      print ('getsenderallitem 四臂金刚魂');
+      print ('getsenderallitem 东海野兽王魂');
+      exit;
+   end;
+end;
+
+end.

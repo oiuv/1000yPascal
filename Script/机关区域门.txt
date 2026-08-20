@@ -1,0 +1,36 @@
+unit 机关区域门;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnRegen (aStr : String);
+
+implementation
+
+procedure OnRegen (aStr : String);
+begin
+   print ('changedynobjstate 火蜡台 false');
+   print ('regen 石棺赦龙组 monster');
+   print ('regen 石棺青龙刺客 monster');
+   print ('regen 放火装置1 monster');
+   print ('regen 放火装置2 monster');
+   print ('regen 放火装置3 monster');
+   print ('regen 放火装置4 monster');
+   print ('regen 放火装置5 monster');
+   print ('regen 放火装置6 monster');
+   print ('regen 放火装置7 monster');
+   print ('regen 放火装置8 monster');
+end;
+
+end.

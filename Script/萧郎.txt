@@ -1,0 +1,168 @@
+unit 萧郎;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\萧郎.txt 1';
+      print (Str);
+      exit;
+   end;
+end;
+
+// startmissiontime getevent getpassmissiontime getsetevent 为神武不支持的方法
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   Age, FirstQuest : Integer;
+   nValue : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+
+   if aStr = 'ok' then begin
+      Str := callfunc ('getsenderage');
+      Age := StrToInt(Str);
+
+      if Age > 4000 then begin
+         Name := callfunc ('getsendername');
+         Str := 'say ' + Name;
+         Str := Str + '，你这么大了怎么还在这里，我送您出谷吧。';
+         print (Str);
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 0 180 240 300';
+         print (Str);
+         exit;
+      end; 
+      // 要求通过新手村云桥挑战
+      Str := callfunc ('getsenderfirstquest');
+      FirstQuest := StrToInt (Str);
+      if FirstQuest < 6 then begin
+         print ('say 阁下江湖威望不足，还是算了吧。');
+         Exit; 
+      end;
+      // 任务失败过
+      Str := callfunc ('getsenderqueststr');
+      FirstQuest := StrToInt (Str);
+      if FirstQuest = 11 then begin
+         print ('say 你走开...');
+         Exit; 
+      end;
+      Str := callfunc ('getsendercompletequest');
+      FirstQuest := StrToInt (Str);
+      if FirstQuest >= 11 then begin
+         print ('say 我们似乎在哪儿见过...');
+         Exit; 
+      end;
+
+      Str := callfunc ('getsenderitemexistence 素莲的手信:1');
+      if Str <> 'false' then begin
+         print ('say 恩？你是不是有什么东西要交给我？');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 血红色的玛瑙石:1');
+      if Str <> 'false' then begin
+         print ('say 你怎么还没把玛瑙石送过去啊？要抓紧时间啊！ 100');
+         exit;
+      end;
+
+      // 判断是否正在进行某任务
+      Str := callfunc ('getsendercurrentquest');
+      FirstQuest := StrToInt (Str);
+      if FirstQuest <> 0 then begin
+         print ('say 你不是有任务在身吗？加油呀，少侠！');
+         exit;
+      end;
+
+      Str := callfunc ('checkenoughspace 2');
+      if Str = 'false' then begin
+         print ('say 物品栏空间不足');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 书函:1');
+      if Str = 'false' then begin
+         print ('putsendermagicitem 书函:1 @萧郎 4');
+      end;
+      print ('putsendermagicitem 血红色的玛瑙石:1 @萧郎 4');
+      print ('say 这是一颗珍贵的“血红色的玛瑙石” 100');
+      print ('say 我想拜托你把它交给我的素莲手中，你不要辜负我的希望！ 200');
+      print ('say 你需要准备足够多的血石来保养这块玛瑙石！ 300');
+      print ('changesendercurrentquest 11');
+      exit;
+   end;
+
+   if aStr = 'no' then begin
+      // 判断是否正在进行萧郎任务
+      Str := callfunc ('getsendercurrentquest');
+      FirstQuest := StrToInt (Str);
+      if FirstQuest = 11 then begin
+         Str := callfunc ('getsenderitemexistence 血红色的玛瑙石:1');
+         if Str = 'false' then begin
+            print ('say 你把我的玛瑙石弄哪儿去了？');
+            print ('say 你需要赔偿我10金元 100');
+            Str := callfunc ('getsenderitemexistence 金元:10');
+            if Str = 'false' then exit;
+            print ('getsenderitem 金元:10');
+            print ('getsenderitem 书函:1');
+            print ('changesendercurrentquest 0');
+            // 失败标记
+            print ('changesenderqueststr 11');
+            exit;
+         end;
+         print ('say 你怎么还没把玛瑙石送过去啊？要抓紧时间啊！');
+         exit;
+      end;
+      print ('say 难道你不想帮助我么？看来我只好再等别人了……');
+      exit;
+   end;
+
+   if aStr = 'give' then begin
+      Str := callfunc ('getsenderitemexistence 素莲的手信:1');
+      if Str = 'false' then begin
+         print ('say ……！');
+         exit;
+      end;
+
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满');
+         exit;
+      end;
+      print ('changesendercompletequest 11');
+      print ('changesendercurrentquest 0');
+      print ('getsenderitem 书函:1');
+      print ('getsenderitem 素莲的手信:1');
+      print ('putsendermagicitem 噬月刀:1 @萧郎 4');
+      print ('say 你真的交给她了？太感谢你了！');
+      print ('say 这是噬月刀，送给你做礼物了！');
+      exit;
+   end;
+
+end;
+
+end.

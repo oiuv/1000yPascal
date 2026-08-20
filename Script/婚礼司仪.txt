@@ -1,0 +1,175 @@
+unit 婚礼司仪;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\婚礼司仪.txt 1';
+      print (Str);
+      exit;
+   end;
+end;
+
+// getparty setparty getmarryclothes getmarryinfo getstartarena 为神武不支持的方法
+procedure OnGetResult (aStr : String);
+var
+   Str,Sex, Name, xStr : String;
+   nValue : Integer;
+begin
+   if aStr = 'openmarry' then begin
+      Str := 'showwindow .\help\婚礼司仪结婚.txt 1';
+      print (Str);
+      exit;
+   end;
+
+   if aStr = 'join' then begin
+      Str := callfunc ('getparty');
+      xStr := callfunc ('getmarryclothes');
+      if xStr = 'true' then begin
+         if Str = 'false' then begin
+            Sex := callfunc ('getsendersex');
+            if Sex = '1' then begin
+               Str := callfunc ('getsenderwearitemname 6');
+               if Str <> '新郎套装' then begin
+                  print ('say 唉？你的新郎套装为什么不穿上呢？');
+                  exit;
+               end;
+               print ('say 请进...');
+               Name := callfunc ('setparty');
+               Name := callfunc ('getsendername');
+               Str := 'movespace ' + Name;
+               Str := Str + ' user 89 42 59 300';
+               print (Str);
+               exit;
+            end;
+            if Sex = '2' then begin
+               Str := callfunc ('getsenderwearitemname 6');
+               if Str <> '新娘套装' then begin
+                  print ('say 唉？你的新娘套装为什么不穿上呢？');
+                  exit;
+               end;
+               print ('say 请进...');
+               Name := callfunc ('setparty');
+               Name := callfunc ('getsendername');
+               Str := 'movespace ' + Name;
+               Str := Str + ' user 89 42 59 300';
+               print (Str);
+               exit;
+            end;
+         end;
+      end;
+      Str := callfunc ('getsenderitemexistence 喜帖:1');
+      if Str = 'true' then begin
+         print ('getsenderitem 喜帖:1');
+         print ('getsenderitem 新郎戒指:1');
+         print ('getsenderitem 新娘戒指:1');
+         print ('say 请进...');
+         Name := callfunc ('getsendername');
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 89 42 59 300';
+         print (Str);
+         exit;
+      end;
+      Str := callfunc ('getmarryinfo');
+      if Str = 'false' then begin
+         print ('say 你没有喜帖,不能参加婚礼？');
+         exit;
+      end;
+   end;
+
+   if aStr = 'startarena' then begin
+
+      Sex := callfunc ('getsendersex');
+      if Sex = '1' then begin
+         print ('say 抱歉，只女孩子才能申请擂台征婚哦');
+         exit;
+      end;
+      Sex := callfunc ('getmarryinfo');
+      if Sex = 'true' then begin
+         print ('say 抱歉，你已经有伴侣了，祝你们幸福');
+         exit;
+      end;
+
+      Str := callfunc ('getstartarena');
+      if Str = '-1' then begin
+         print ('say 擂台已满.');
+         exit;
+      end;
+      print ('say 你的绣球已经抛出，正在等待应擂者');
+      exit;
+   end;
+
+   if aStr = 'give' then begin
+      Str := callfunc ('getmarryclothes');
+      if Str = 'true' then begin
+         print ('say 我已经给过你婚礼套装礼服了！');
+         exit;
+      end;
+      Sex := callfunc ('getsendersex');
+      if Sex = '1' then begin
+         Str := callfunc ('getsenderitemexistence 新郎戒指:1');
+         if Str = 'false' then begin
+            print ('say 唉？你的新郎戒指呢？');
+            exit;
+         end;
+         Str := callfunc ('getmarryinfo');
+         if Str = 'false' then begin
+            print ('say 你还没有结婚，不能领取新婚套装');
+            exit;
+         end;
+         print ('getsenderitem 新郎戒指:1');
+         print ('putsendermagicitem 新郎套装:1 @婚礼司仪 4');
+         print ('setmarryclothes');      
+      end;
+      if Sex = '2' then begin
+         Str := callfunc ('getsenderitemexistence 新娘戒指:1');
+         if Str = 'false' then begin
+            print ('say 唉？你的新娘戒指呢？');
+            exit;
+         end;
+         Str := callfunc ('getmarryinfo');
+         if Str = 'false' then begin
+            print ('say 你还没有结婚，不能领取新婚套装');
+            exit;
+         end;
+         print ('getsenderitem 新娘戒指:1');
+         print ('putsendermagicitem 新娘套装:1 @婚礼司仪 4');
+         print ('setmarryclothes');      
+      end;
+   end;
+
+   if aStr = 'marry' then begin
+      print('marry 请输入您要求婚的对象');
+      exit;
+   end;
+   if aStr = 'unmarry' then begin
+      print('unmarry 您的配偶希望跟您解除婚约');
+      exit;
+   end;
+   
+end;
+
+end.

@@ -1,0 +1,99 @@
+unit 蜡台;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnTurnOn (aStr : String);
+procedure OnTurnOff (aStr : String);
+procedure OnDie (aStr : String);
+function OnDanger (aStr : String) : String;
+
+var
+   n : Integer = 0;
+
+implementation
+
+function OnDanger (aStr : String) : String;
+var
+   Str : STring;
+begin
+   Str := callfunc ('getrace');
+   if Str = '3' then begin
+      Result := true;
+      exit;
+   end;
+   
+   if aStr = '火箭' then begin
+      Result := 'true';
+      exit;
+   end;
+
+   Result := 'false';
+end;
+
+procedure OnTurnOn (aStr : String);
+var
+   iCount, nCount : Integer;
+   Str, nStr : String;
+begin
+   if n < 6 then begin
+      inc (n);
+   end;
+
+   if n = 6 then begin
+      Str := callfunc ('checkalivemopcount 31 monster 石棺赦龙组');
+      iCount := StrToInt (Str);
+
+      nStr := callfunc ('checkalivemopcount 31 monster 石棺青龙刺客');
+      nCount := StrToInt (nStr);
+
+      if iCount = 0 then begin
+         if nCount = 0 then begin
+            print ('changedynobjstate 机关区域门 true');
+            print ('sendsound 9171.wav 31');
+            exit;
+         end;
+      end;
+   end;
+end;
+
+procedure OnTurnOff (aStr : String);
+begin
+   if n > 0 then begin
+      Dec (n);
+   end;
+end;
+
+procedure OnDie (aStr : String);
+var
+   iCount, nCount : Integer;
+   Str, nStr : String;
+begin
+   Str := callfunc ('checkalivemopcount 31 monster 石棺赦龙组');
+   iCount := StrToInt (Str);
+   nStr := callfunc ('checkalivemopcount 31 monster 石棺青龙刺客');
+   nCount := StrToInt (nStr);
+
+   if iCount = 0 then begin
+      if nCount = 0 then begin
+         print ('sendsenderchatmessage 点着火_门就被开启 2');
+         print ('sendsound 9170.wav 31');
+         exit;
+      end;
+   end;
+   
+   print ('sendsenderchatmessage 歼灭怪物_点着火_门就会自动开启 2');
+end;
+
+end.

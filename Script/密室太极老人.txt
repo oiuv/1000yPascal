@@ -1,0 +1,101 @@
+unit 密室太极老人;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+function OnDanger (aStr : String) : String;
+procedure OnGetChangeStep (aStr : String);
+procedure OnCreate (aStr : String);
+procedure OnDie (aStr : String);
+
+implementation
+
+procedure OnDie (aStr : String);
+begin
+   print ('clearworkbox');
+   print ('gotoxy 20 16');
+end;
+
+function OnDanger (aStr : String) : String;
+begin
+   Result := 'false';
+end;
+
+procedure OnGetChangeStep (aSTr : String);
+var
+   Str, rdStr, xStr, yStr : String;
+   x, y, xx, yy : Integer;
+begin
+   if aStr <> '1' then begin
+      exit;
+   end;
+
+   Str := callfunc ('getsenderposition');
+   Str := GetToken (Str, xStr, '_');
+   x := StrToInt (xStr);
+   Str := GetToken (Str, yStr, '_');
+   y := StrToInt (yStr);
+
+   rdStr := 'getnearxy ' + xStr;
+   rdStr := rdStr + ' ';
+   rdStr := rdStr  + yStr;
+   Str := callfunc (rdStr);
+
+   Str := GetToken (Str, xStr, '_');
+   xx := StrToInt (xStr);
+   Str := GetToken (Str, yStr, '_');
+   yy := StrToInt (yStr);
+
+   if x = xx then begin
+      if y = yy then begin
+         exit;
+      end;
+   end;
+
+   Str := 'gotoxy ' + xStr;
+   Str := Str + ' ';
+   Str := Str + yStr;
+   print (Str);
+
+   rdStr := callfunc ('getsendername');
+   Str := 'changesenderdynobjstate ' + rdStr;
+   Str := Str + ' false';
+   print (Str);
+end;
+
+procedure OnCreate (aStr : String);
+var
+   iRace : Integer;
+   Str, Name : String;
+begin
+   Str := callfunc ('getsenderrace');
+   iRace := StrToInt (Str);
+   if iRace <> 1 then exit;
+
+   print ('directmovespace 太极公子 monster 32 17 18 0');
+
+   print ('commandicebyname 太极公子 monster 1500');
+
+   Name := callfunc ('getsendername');
+   Str := 'commandicebyname ' + Name;
+   Str := Str + ' user 1500';
+   print (Str);
+
+   print ('say 来这儿不易呀_ 果然是名副其实的侠客 200');
+   print ('say 看样子是来向太极公子挑战的？ 400');
+   print ('say 那么_比武正式开始_ 600');
+   print ('say 开始 800');
+end;
+
+end.

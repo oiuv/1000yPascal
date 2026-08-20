@@ -1,0 +1,45 @@
+unit 爆竹;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDblClick(aStr : String);
+
+implementation
+
+procedure OnDblClick(aStr : String);
+var
+   Str, Name, Cmd : String;
+   // iCount : Integer;
+begin
+   Name := callfunc ('getsendername');
+   // 燃放爆竹
+   Str := callfunc ('getsenderitemexistence 爆竹:1');
+   if Str = 'true' then begin
+      Str := callfunc ('getsenderserverid');
+      if Str <> '1' then begin
+         print ('sendsenderchatmessage ~爆竹仅限在长城以南燃放~ 2');
+         exit;
+      end;
+      print ('getsenderitem 爆竹:1');
+      // 播放爆竹音效
+      print ('sendsound 11433.wav 1');
+      Cmd := 'sendsendertopmsg ' + Name;
+      Cmd := Cmd + '_在长城以南燃放爆竹,祝大家游戏快乐，万事如意^_^';
+      print (Cmd);
+      exit;
+   end;
+end;
+
+end.

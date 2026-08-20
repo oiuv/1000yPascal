@@ -1,0 +1,139 @@
+unit ScriptDynamicObject;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDropItem (aStr : String);
+procedure OnLeftClick (aStr : String);
+procedure OnHear (aStr : String);
+procedure OnTurnOff (aStr : String);
+procedure OnTurnOn (aStr : String);
+
+implementation
+
+// 动态物品测试脚本，GM控制台，不得用于玩家场景
+procedure OnHear (aStr : String);
+var
+   Str, Eval, Cmd, Arg, Arg1, Arg2, Arg3, Arg4, Arg5, Arg6, Arg7, Res : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      // GM测试指令：call getsendersex 或 print say hi，以call和print开头
+      // 使用 GetToken 函数将 aStr 以 空格'_' 分隔为为子字符串，aToken为结果，返回值为剩余部分
+      Cmd := GetToken (aStr, Eval, '_');
+      // 函数输入参数如果有空格，必须重新组合，否则被当成一个字符串处理了
+      Arg := GetToken (Cmd, Cmd, '_');
+      if Eval = 'call' then begin
+         if Arg <> '' then begin
+            // callfunc最多只有三个参数(checkusemagicbygrade)
+            Arg := GetToken (Arg, Arg1, '_');
+            Arg := GetToken (Arg, Arg2, '_');
+            Arg := GetToken (Arg, Arg3, '_');
+            Cmd := Cmd + ' ';
+            Cmd := Cmd + Arg1;
+            Cmd := Cmd + ' ';
+            Cmd := Cmd + Arg2;
+            Cmd := Cmd + ' ';
+            Cmd := Cmd + Arg3;
+         end;
+         // 输出函数结果
+         Res := callfunc (Cmd); Res := Res + ' 1';
+         Str := 'sendsenderchatmessage ' + Res;
+         print(Str);
+         exit;
+      end;
+      if Eval = 'print' then begin
+         if Arg <> '' then begin
+            // print最多存在8个参数(mapaddobjbytick和movespacebyname)
+            // 游戏脚本不支持数组，无法用for循环简化代码
+            Arg := GetToken (Arg, Arg1, '_');
+            Arg := GetToken (Arg, Arg2, '_');
+            Arg := GetToken (Arg, Arg3, '_');
+            Arg := GetToken (Arg, Arg4, '_');
+            Arg := GetToken (Arg, Arg5, '_');
+            Arg := GetToken (Arg, Arg6, '_');
+            Arg := GetToken (Arg, Arg7, '_');
+            Cmd := Cmd + ' ';
+            Cmd := Cmd + Arg1;
+            Cmd := Cmd + ' ';
+            Cmd := Cmd + Arg2;
+            Cmd := Cmd + ' ';
+            Cmd := Cmd + Arg3;
+            Cmd := Cmd + ' ';
+            Cmd := Cmd + Arg4;
+            Cmd := Cmd + ' ';
+            Cmd := Cmd + Arg5;
+            Cmd := Cmd + ' ';
+            Cmd := Cmd + Arg6;
+            Cmd := Cmd + ' ';
+            Cmd := Cmd + Arg7;
+            Cmd := Cmd + ' ';
+            Cmd := Cmd + Arg;
+         end;
+         print(Cmd);
+         exit;
+      end;
+      exit;
+   end;
+end;
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      // 改变状态为true后OnHear失效
+      print ('selfchangedynobjstate false');
+      exit; 
+   end;
+end;
+
+procedure OnTurnOn (aStr : String);
+begin
+   print ('sendsound 8949.wav 115');
+   print ('mapdelobjbyname DYNAMICOBJECT 名所');
+end;
+
+procedure OnTurnOff (aStr : String);
+var
+   Str : String;
+begin
+   // 判断对象避免重复添加(这个函数游戏中无示例，在此演示)
+   Str := callfunc ('findobjectbyname 名所');
+   if Str = '0' then print ('mapaddobjbyname dynamicobject 名所 53 55 1 0 false');
+   // 陷阱伤害，陷阱在CreateZoneEffect.SDB中配置
+   print ('sendzoneeffectmsg 陷阱区');
+   // showeffect限动态对象有效，参数1为特效编号，参数2为特效类型（但这个函数不起作用）
+   // print ('showeffect 9001 1');
+end;
+
+// 限EventItem，会自动激活动态对象并调用此函数和OnTurnOn
+procedure OnDropItem (aStr : String);
+var
+   Str, Name : String;
+begin
+   Name := callfunc ('getsendername');
+   Str := 'commandicebyname ' + Name;
+   Str := Str + ' user 500';
+   print (Str);
+   print ('senderrefill');
+end;
+
+end.
+

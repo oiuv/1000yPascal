@@ -1,0 +1,174 @@
+unit 南帝王;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+   CompleteQuest : Integer;
+   CurrentQuest : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race <> 1 then begin
+      exit;
+   end;
+
+   Str := callfunc ('getsendercompletequest');
+   CompleteQuest := StrToInt (Str);
+
+   Str := callfunc ('getsendercurrentquest');
+   CurrentQuest := StrToInt (Str);
+
+   if CurrentQuest < 1300 then begin
+      print ('say 有何贵干?');
+      exit;
+   end;
+
+   // 收到了让你杀死南帝王的命令
+   if CurrentQuest = 1300 then begin
+      print ('showwindow .\help\南帝王1.txt 0');
+      print ('changesendercompletequest 1300');
+      print ('changesendercurrentquest 1350');
+      exit;
+   end;
+
+   if CurrentQuest = 1350 then begin
+      print ('say 为何还不去调查?');
+      exit;
+   end;
+
+   // 找到了真相后
+   if CurrentQuest = 1400 then begin
+      print ('showwindow .\help\南帝王2.txt 0');
+      //print ('changesendercompletequest 1400');
+      //print ('changesendercurrentquest 1450');
+      exit;
+   end;
+
+   if CurrentQuest = 1450 then begin
+      print ('say 所有希望都寄托在你身上了.');
+      exit;
+   end;
+
+   // 杀死了西域魔人
+   if CurrentQuest = 1500 then begin
+      Str := callfunc ('getsenderitemexistence 戒指:1');
+      if Str = 'false' then begin
+         print ('say 有杀死西域魔人的凭证吗？');
+         exit;
+      end;
+
+      print ('showwindow .\help\南帝王8.txt 0');
+      exit;
+   end;
+
+   if CurrentQuest = 1550 then begin
+      print ('say 谢谢你～如今我就算死也能瞑目了。.');
+      exit;
+   end;
+   
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+begin
+
+   if aStr = 'senddeath' then begin
+      print ('showwindow .\help\南帝王3.txt 0');
+      exit;  
+   end;
+
+   if aStr = 'sayreven' then begin
+      print ('showwindow .\help\南帝王4.txt 0');
+      exit;
+   end;
+
+   if aStr = 'howtogoin' then begin
+      print ('changesendercompletequest 1400');
+      print ('changesendercurrentquest 1450');
+      Str := callfunc ('getsenderitemexistence 西域牌:1');
+      if Str = 'true' then begin
+         print ('getsenderitem 西域牌:1');
+      end;
+
+      Str := callfunc ('getsenderitemexistence 帝王守护灵:1');
+      if Str = 'false' then begin
+         print ('putsendermagicitem 帝王守护灵:1 @南帝王 5');
+      end;
+      print ('showwindow .\help\南帝王5.txt 0');
+      exit;
+   end;
+
+   if aStr = 'howtogetkey' then begin
+      print ('showwindow .\help\南帝王6.txt 0');
+      exit;
+   end;
+
+   if aStr = 'howtogetticket' then begin
+      print ('showwindow .\help\南帝王7.txt 0');
+      exit;
+   end;
+
+   if aStr = 'openring' then begin
+
+      print ('changesendercompletequest 1500');
+      print ('changesendercurrentquest 1550');
+      
+      print ('getsenderitem 书函:1');
+      print ('getsenderitem 戒指:1');
+      print ('getsenderitem 降魔符:1');
+      print ('getsenderitem 帝王守护灵:1');
+
+      Str := callfunc ('getsenderitemexistence 牌王:1');
+      if Str = 'false' then begin
+         print ('putsendermagicitem 牌王:1 @南帝王 5');
+      end;
+
+      Str := callfunc ('getsenderqueststr');
+      if Str = '2' then begin
+         Name := callfunc ('getsendername');
+         Str := 'questcomplete ' + Name;
+         Str := Str + ' 南帝王';
+         print (Str);
+         print ('changesenderqueststr 3');
+         exit;
+      end;
+      print ('sendsenderchatmessage 南帝王任务结束了 2');
+      exit;
+   end;
+   
+   if aStr = 'close' then begin
+      exit;
+   end;
+
+   if aStr <> '' then begin
+      str := 'showwindow .\help\' + aStr;
+      Str := Str + '.txt';
+      print (str);
+      exit;
+   end;
+
+
+end;
+
+end.

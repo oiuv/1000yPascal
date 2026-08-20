@@ -1,0 +1,153 @@
+unit 老板娘;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnHear (aStr : String);
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\老板娘.txt 1';
+      print (Str);
+      exit; 
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'sell' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 0';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'buy' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 1';
+      print (Str);
+      exit;
+   end;
+end;
+
+procedure OnHear (aStr : String);
+var
+   Str, Str1, Str2, Str3, num : String;
+   Race, n, p : Integer;
+begin
+   // 因为指令交易无法监控ITEMLOG，存在安全隐患，停止支持
+   print('say 欢迎，欢迎~');
+   exit;
+
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race <> 1 then exit;
+   Str := aStr;
+   Str := GetToken (Str, Str1, '_');
+   Str := GetToken (Str, Str2, '_');
+   Str := GetToken (Str, Str3, '_');
+   n := StrToInt (Str3);
+   Str3 := IntToStr (n);
+   if n <= 0 then exit;
+   if Str <> '' then exit;
+   if Str1 = '卖' then begin
+      p := 0;
+      if Str2 = '肉' then p := 4;
+      if Str2 = '皮' then p := 7;
+      if Str2 = '肉块' then p := 12;
+      if Str2 = '银元' then p := 100;
+      p := n*p;
+      if p <= 0 then begin
+         print ('say 哎呀，现在只有以下物品可以指令交易：');
+         print ('say 肉、皮、肉块、银元 100');
+         exit;
+      end;
+      Str := 'getsenderitemexistence ' + Str2;
+      Str := Str + ':';
+      Str := Str + Str3;
+      Str := callfunc (Str);
+      if Str = 'false' then begin
+         Str := 'say 你没有这么多的';
+         Str := Str + Str2;
+         print (Str);
+         exit;
+      end;
+      Str := 'getsenderitem ' + Str2;
+      Str := Str + ':';
+      Str := Str + Str3;
+      print (Str);
+      num := IntToStr (p);
+      Str := 'putsendermagicitem 钱币:';
+      Str := Str + num;
+      Str := Str + ' @老板娘 4';
+      print (Str);
+      print ('say 交易完毕，欢迎再来。');
+      exit;
+   end;
+   if Str1 = '买' then begin
+      p := 0;
+      if Str2 = '生药' then p := 20;
+      if Str2 = '丹药' then p := 10;
+      if Str2 = '丸药' then p := 10;
+      if Str2 = '汤药' then p := 10;
+      if Str2 = '承气汤' then p := 20;
+      p := n*p;
+      if p <= 0 then begin
+         print ('say 现在只有以下物品可以指令交易：');
+         print ('say 生药、丹药、丸药、汤药、承气汤 100');
+         exit;
+      end;
+      num := IntToStr (p);
+      Str := 'getsenderitemexistence 钱币:' + num;
+      Str := callfunc (Str);
+      if Str = 'false' then begin
+         Str := 'say 你没有这么多钱币买';
+         Str := Str + Str2;
+         print (Str);
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+      Str := 'getsenderitem 钱币:' + num;
+      print (Str);
+      Str := 'putsendermagicitem ' + Str2;
+      Str := Str + ':';
+      Str := Str + Str3;
+      Str := Str + ' @老板娘 4';
+      print (Str);
+      print ('say 交易完毕，请问还要买什么吗？');
+      exit;
+   end;
+end;
+
+end.

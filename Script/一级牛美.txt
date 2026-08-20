@@ -1,0 +1,110 @@
+unit 一级牛美;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      print ('showwindow .\help\一级牛美.txt 1');
+      exit; 
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   nValue : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'sell' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 0';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'make1' then begin
+      Str := callfunc ('getsenderitemexistence 犀牛王后角:1');
+      if Str = 'false' then begin
+         print ('say 制造女子墨铁战斗服需要犀牛王后角、熊掌和白老虎指甲各1个。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 熊掌:1');
+      if Str = 'false' then begin
+         print ('say 你没有熊掌呀。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 白老虎指甲:1');
+      if Str = 'false' then begin
+         print ('say 再弄一个白老虎指甲来吧。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 金元:1');
+      if Str = 'false' then begin
+         print ('say 收费1金（裁缝职业可自己制造）');
+         exit;
+      end;
+      print ('getsenderitem 金元:1');
+      print ('getsenderitem 犀牛王后角:1');
+      print ('getsenderitem 熊掌:1');
+      print ('getsenderitem 白老虎指甲:1');
+      print ('say 制作完成，请收好。');
+      print ('putsendermagicitem 女子墨铁战斗服:1 @一级牛美 4');
+      exit;
+   end;
+   if aStr = 'make2' then begin
+      Str := callfunc ('getsenderitemexistence 女子墨铁战斗服:1');
+      if Str = 'false' then begin
+         print ('say 制作女子墨铁弓服需要女子墨铁战斗服、火心和龟甲各1个。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 火心:1');
+      if Str = 'false' then begin
+         print ('say 制作女子墨铁弓服还需要火心1个。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 龟甲:1');
+      if Str = 'false' then begin
+         print ('say 制作女子墨铁弓服还需要龟甲1个。');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 金元:5');
+      if Str = 'false' then begin
+         print ('say 收费5金（裁缝职业可自己制造）');
+         exit;
+      end;
+      print ('getsenderitem 金元:5');
+      print ('getsenderitem 女子墨铁战斗服:1');
+      print ('getsenderitem 火心:1');
+      print ('getsenderitem 龟甲:1');
+      print ('say 制作完成，请收好。');
+      print ('putsendermagicitem 女子墨铁弓服:1 @一级牛美 4');
+      exit;
+   end;
+end;
+
+end.

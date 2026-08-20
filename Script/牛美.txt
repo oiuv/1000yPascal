@@ -1,0 +1,79 @@
+unit 牛美;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\牛美.txt 1';
+      print (Str);
+      exit;
+   end;
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   nValue : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'sell' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 0';
+      print (Str);
+      exit;
+   end;
+ if aStr = 'buy' then begin
+      Name := callfunc ('getsendername');
+      Str := 'tradewindow ' + Name;
+      Str := Str + ' 1';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'make' then begin
+      Name := callfunc ('getsenderitemexistence 骨头一:2');
+      if Name = 'false' then begin
+         Str := 'say 没骨头做不了骨钥匙';
+      	print (Str);
+         exit;
+      end;
+
+      Name := callfunc ('checkenoughspace');
+      if Name = 'false' then begin
+         print ('say 物品栏已满');
+         exit;
+      end;
+
+      print ('getsenderitem 骨头一:2');
+      print ('putsendermagicitem 骨钥匙:1 @牛美 4');
+      print ('say 做好了骨钥匙给你');
+      exit;
+   end;
+end;
+
+end.

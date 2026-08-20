@@ -1,0 +1,62 @@
+unit 火坛;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnBow (aStr : String);
+procedure OnTurnOn (aStr : String);
+procedure OnTurnOff (aStr : String);
+function OnDanger (aStr : String) : String;
+
+var
+   n : Integer = 0;
+
+implementation
+
+function OnDanger (aStr : String) : String;
+begin
+   if aStr = '火箭' then begin
+      Result := 'true';
+      exit;
+   end;
+
+   Result := 'false';
+end;
+
+procedure OnTurnOn (aStr : String);
+var
+   iCount, nCount : Integer;
+   Str, nStr : String;
+begin
+   if n < 4 then begin
+      inc (n);
+   end;
+
+   if n >= 4 then begin
+      print ('setallowhitbyname 太极公子 monster true');
+   end;
+end;
+
+procedure OnTurnOff (aStr : String);
+begin
+   if n > 0 then begin
+      dec (n);
+   end;
+
+   if n < 4 then begin
+      print ('setallowhitbyname 太极公子 monster false');
+   end;
+end;
+
+end.

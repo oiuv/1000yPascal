@@ -14,4 +14,4 @@ JobGrade := callfunc('getsenderjobgrade');
 Result := IntToStr(TBasicObject(FSender).SGetJobGrade);
 ```
 
-`TUser.SGetJobGrade` 返回 `HaveJobClass.JobGrade`。仓库脚本中即使仍能找到旧名称，也不能改变当前分派器未注册它的事实。参见 [getsenderjobgrade](getsenderjobgrade.md)。
+`TUser.SGetJobGrade` 返回 `HaveJobClass.JobGrade`。神武线上和炎黄随包的 `龙师父.txt` 都仍调用旧名称 `getjobgrade`，这是已确认的脚本/分派器兼容缺口，不代表该名称在当前服务端有效。迁移或维护该脚本时，应把两处调用改为 `getsenderjobgrade`。参见 [getsenderjobgrade](getsenderjobgrade.md)。

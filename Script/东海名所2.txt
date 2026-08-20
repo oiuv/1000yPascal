@@ -1,0 +1,56 @@
+unit 东海名所2;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnHit (aStr : String);
+procedure OnRegen (aStr : String);
+procedure OnDieBefore (aStr : String);
+
+var
+   n : integer = 0;
+   
+implementation
+
+
+procedure OnRegen (aStr : String);
+begin
+   n := 0;
+   exit;
+end;
+
+procedure OnHit (aStr : String);
+var
+   Str : String;
+begin
+   Inc (n);
+   if n > 1 then begin
+      exit;
+   end;
+   
+   print ('mapaddobjbyname monster 远距离野神族2 129 317 2 0 false');
+   print ('mapaddobjbyname monster 远距离野神族2 132 322 2 0 false');
+   print ('mapaddobjbyname monster 远距离野神族2 137 323 2 0 false');
+   print ('mapaddobjbyname monster 远距离野神族2 142 321 2 0 false');
+   exit;
+end;
+
+procedure OnDieBefore (aStr : String);
+begin
+   //疙家 何辑瘤绰 家府
+   print ('sendsound 9329.wav 43');
+   exit;
+end;
+
+end.

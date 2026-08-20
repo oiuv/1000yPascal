@@ -1,0 +1,105 @@
+unit monster;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDie (aStr : String);
+procedure OnDieBefore (aStr : String);
+
+implementation
+
+procedure OnDieBefore (aStr : String);
+begin
+   exit;
+end;
+
+// 击杀魔物XX个类任务专属控制脚本
+// 击杀数量存在queststr变量中（注意在接受和完成任务时重置变量的值）
+procedure OnDie (aStr : String);
+var
+   Str, Name, Count : String;
+   iCount, Lv, CurrentQuest, Quest : Integer;
+begin
+   Quest := 0; // 初始状态
+   Name := callfunc ('getname');
+   Str := callfunc ('getsendercurrentquest');
+   CurrentQuest := StrToInt (Str);
+   // 测试
+   if CurrentQuest = 999 then begin
+      if Name = '猪' then Quest := 1;
+   end;
+   // 黄龙峡谷任务
+   if CurrentQuest = 2001 then begin
+      if Name = '回转石' then Quest := 1;
+   end;
+   if CurrentQuest = 2002 then begin
+      if Name = '黄土巨人' then Quest := 1;
+   end;
+   if CurrentQuest = 2003 then begin
+      if Name = '大蟒' then Quest := 1;
+   end;
+   if CurrentQuest = 2004 then begin
+      if Name = '黄龙魔女' then Quest := 1;
+   end;
+   if CurrentQuest = 2005 then begin
+      if Name = '火山犬' then Quest := 1;
+   end;
+   if CurrentQuest = 2006 then begin
+      if Name = '小鬼' then Quest := 1;
+   end;
+   if CurrentQuest = 2007 then begin
+      if Name = '沙焰鬼' then Quest := 1;
+   end;
+   // 任务计数
+   if Quest = 1 then begin
+      Count := callfunc ('getsenderqueststr');
+      iCount := StrToInt (Count);
+      Inc(iCount);
+      Count := IntToStr (iCount);
+      Str := 'changesenderqueststr ' + Count;
+      print (Str);
+      // 数量提示
+      Str := '已消灭_' + Name;
+      Str := Str + '_';
+      Str := Str + Count;
+      Str := Str + '_个';
+      Str := Str + ' 2';
+      Str := 'sendsenderchatmessage ' + Str;
+      print (Str);
+      // 数量累计奖励
+      Lv := iCount mod 123;
+      if Lv = 0 then begin
+         print ('putsendermagicitem 金元:5 @火山堂主 4');
+         print ('sendsenderchatmessage 你的英勇行为得到火山堂主的认可和奖励 3');
+      end;
+      Lv := iCount mod 321;
+      if Lv = 0 then begin
+         print ('putsendermagicitem 鬼魂令牌:1 @黄枫谷主 4');
+         print ('sendsenderchatmessage 你的英勇行为得到黄枫谷主的认可和奖励 3');
+      end;
+      Lv := iCount mod 666;
+      if Lv = 0 then begin
+         print ('putsendermagicitem 金元:15 @万花楼主 4');
+         print ('sendsenderchatmessage 你的英勇行为得到万花楼主的认可和奖励 3');
+      end;
+      Lv := iCount mod 999;
+      if Lv = 0 then begin
+         print ('putsendermagicitem 英雄宝牌:1 @归天阁主 4');
+         print ('sendsenderchatmessage 你的英勇行为得到归天阁主的认可和奖励 3');
+      end;
+   end;
+end;
+
+end.
+

@@ -1,0 +1,51 @@
+unit 百宝箱;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDie (aStr : String);
+
+implementation
+
+procedure OnDie (aStr : String);
+var
+   Str, Name, Cmd : String;
+   iCount : Integer;
+begin
+   Name := callfunc ('getsendername');
+   Str := callfunc ('getsenderitemexistence 宝箱钥匙:1');
+   if Str = 'true' then begin
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 您的物品栏已满~');
+         exit;
+      end;
+      iCount := Random(15);
+      if iCount = 0 then Str := '冰玉:1';
+      if iCount > 0 then Str := callfunc ('getrandomitem 4');
+      print ('getsenderitem 宝箱钥匙:1');
+      Cmd := 'putsendermagicitem ' + Str;
+      Cmd := Cmd +' @百宝箱 3';
+      print(Cmd);
+      Cmd := 'sendsendertopmsg ' + Name;
+      Cmd := Cmd + '_打开宝箱,获得_';
+      Cmd := Cmd + Str;
+      print (Cmd);
+      exit;
+   end;
+   // 没有钥匙开不出奖励
+   print ('sendsenderchatmessage …没有宝箱钥匙，无法打开宝箱… 1');
+end;
+
+end.

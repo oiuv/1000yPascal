@@ -1,0 +1,81 @@
+unit 迷宫玉仙;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+begin
+   Str := callfunc ('getsenderrace');
+   if Str <> '1' then begin
+      exit;
+   end;
+
+   print ('showwindow .\help\迷宫玉仙.txt 1');
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str : String;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'givewater' then begin
+      Str := callfunc ('getsendercurdurawatercase');
+
+      if Str = '0' then begin
+         print ('sendsenderchatmessage 没有竹筒_竹筒无水_都拿不到 2');
+         exit;
+      end;
+
+      print ('changesendercurdurabyname 大型竹筒 0');
+      print ('changesendercurdurabyname 竹筒 0');
+
+      print ('showwindow .\help\迷宫玉仙1.txt 1');
+      exit;
+   end;
+   if aStr = 'favor' then begin
+      Str := callfunc ('getsenderitemexistence 玉仙的无情双刀:1');
+      if Str = 'true' then begin
+         print ('sendsenderchatmessage 任务条件不符 2');
+         exit;
+      end;
+      Str := callfunc ('getsenderitemexistence 雨中客锦囊:1');
+      if Str = 'true' then begin
+         print ('sendsenderchatmessage 任务条件不符 2');
+         exit;
+      end;
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 物品栏已满...');
+         exit;
+      end;
+
+      print ('putsendermagicitem 玉仙的无情双刀:1 @迷宫玉仙 4');
+      print ('say 拿着遗物和本人的刀_去找老侠客 100');
+      print ('say 会得到嘉奖 200');     
+      print ('sendsenderchatmessage 搜集20个_新罗遗失的_黑马武士20 2'); 
+      print ('sendsenderchatmessage 拿给老侠客 2'); 
+      exit;
+   end;
+end;
+
+end.

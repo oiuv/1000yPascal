@@ -1,73 +1,17 @@
 # getmarryclothes
 
-获取当前触发脚本事件的玩家的结婚服装信息，判断玩家是否穿着结婚服装。
+## 功能与语法
 
-## 语法
+查询当前事件发送者在婚姻记录中的“婚礼服装已领取”标志。
+
 ```pascal
-Str := callfunc('getmarryclothes');
+Result := callfunc('getmarryclothes');
 ```
 
-## 参数
-无参数。
+无参数。返回小写字符串 `true` 或 `false`。`TUser.SGetMarryClothes` 调用 `MarryList.isClothes(Name)`，按玩家是 `Girl` 还是 `Boy` 分别读取 `GirlClothes`、`BoyClothes`；没有匹配婚姻记录时返回 `false`。
 
-## 返回值
-返回字符串：
-- `'true'` — 玩家穿着结婚服装
-- `'false'` — 玩家未穿着结婚服装
+这个标志不检查玩家当前是否穿着新郎/新娘套装。炎黄 `婚礼司仪.txt` 会另行调用 `getsenderwearitemname 6` 核对实际装备，二者不能混为一项判断。
 
-## 源码实现
-```pascal
-Result := TBasicObject(FSender).SGetMarryClothes;
-```
+对应写入命令是 `setmarryclothes`。婚姻数据的保存风险见 [Event 运行数据](../../help/Event.md)。
 
-## 示例
-
-### 婚礼司仪中的结婚服装检查
-基于 `婚礼司仪.txt`：
-```pascal
-xStr := callfunc ('getmarryclothes');
-if xStr = 'true' then begin
-    if Str = 'false' then begin
-        Sex := callfunc ('getsendersex');
-        if Sex = '1' then begin
-            Str := callfunc ('getsenderwearitemname 6');
-            if Str <> '新郎套装' then begin
-                print ('say 唉？你的新郎套装为什么不穿上呢？');
-                exit;
-            end;
-            print ('say 请进...');
-            Name := callfunc ('setparty');
-            // 传送进入婚礼场地
-        end;
-        if Sex = '2' then begin
-            Str := callfunc ('getsenderwearitemname 6');
-            if Str <> '新娘套装' then begin
-                print ('say 唉？你的新娘套装为什么不穿上呢？');
-                exit;
-            end;
-            print ('say 请进...');
-            Name := callfunc ('setparty');
-            // 传送进入婚礼场地
-        end;
-    end;
-end;
-```
-
-### 婚礼司仪中的另一处检查
-基于 `婚礼司仪.txt`：
-```pascal
-Str := callfunc ('getmarryclothes');
-// 判断玩家是否穿着结婚服装
-```
-
-## 注意事项
-1. 用于婚礼 NPC 脚本中，检查玩家是否穿着新郎/新娘套装
-2. 穿着结婚服装的玩家可以通过特殊通道进入婚礼场地
-3. 通常与 `getsenderwearitemname` 配合，进一步确认具体穿着的服装名称
-4. 与 `getparty`/`setparty` 配合使用管理婚礼组队状态
-
-## 相关函数
-- `getmarryinfo` — 获取结婚信息
-- `getsenderwearitemname` — 获取玩家穿戴物品名称
-- `getparty` — 获取组队信息
-- `setparty` — 设置组队信息
+源码依据：`uScriptManager.pas`、`UUser.pas` 的 `SGetMarryClothes` 和 `svClass.pas` 的 `TMarryClass.isClothes`。

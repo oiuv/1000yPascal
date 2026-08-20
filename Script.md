@@ -1,152 +1,75 @@
+# Script 脚本入口
 
-## Script
+千年脚本由 `ScriptCls.pas` 的定制解释器执行，不是完整的 Object Pascal。`Script/Script.SDB` 将数字脚本编号映射到 `.txt` 文件；`Item.sdb`、`Map.sdb`、`EventParam.sdb` 以及多类 `Setting` 表通过该编号绑定脚本。
 
-千年脚本在Script目录中，其中`Script.SDB`是脚本索引，为每个脚本指定唯一编号`Name`，方便调用。
+## 版本与证据来源
 
-脚本应用范围很广，在Item.sdb、Map.sdb、EventParam.sdb、CreateNpc.sdb、CreateGate.sdb、CreateDynamicObject.sdb、CreateMonster.sdb都能调用。
+- `gameserver-tgs1000/bin/Script/`：炎黄新章随包脚本，与当前源码配套核对。
+- [`docs/Script/`](Script/README.md)：神武奇章真实线上脚本，适合参考业务流程，但旧接口必须先做兼容检查。
+- `uScriptManager.pas`、`ScriptCls.pas`、`Common/ScriptBasic.pas`：当前接口和解释器语义的最终标准。
 
-千年游戏中所有脚本都是pascal单元`unit`，具体说明见[help/Pascal.md](help/Pascal.md)中的单元介绍，以下是一个标准系统脚本`System.txt`：
+两套真实 `System.txt` 都使用玩家自身的 `FirstQuestNo` 判断首次登录。核心逻辑如下：
 
 ```pascal
-unit System;
-
-interface
-
-function  GetToken (aStr, aToken, aSep : String) : String;
-function  CompareStr (aStr1, aStr2 : String) : Boolean;
-function  callfunc (aText: string): string;
-procedure print (aText: string);
-function  Random (aScope: integer): integer;
-function  Length (aText: string): integer;
-procedure Inc (aInt: integer);
-procedure Dec (aInt: integer);
-function  StrToInt (astr: string): integer;
-function  IntToStr (aInt: integer): string;
-procedure exit;
-
-procedure OnUserStart (aStr : String);
-procedure OnUserEnd (aStr : String);
-
-implementation
-
 procedure OnUserStart (aStr : String);
 var
    Str : String;
-   CompleteQuest, CurrentQuest : Integer;
+   FirstQuest : Integer;
 begin
-   Str := callfunc ('getcompletequest');
-   CompleteQuest := StrToInt (Str);
-   Str := callfunc ('getcurrentquest');
-   CurrentQuest := StrToInt (Str);
-
-   if CompleteQuest < 1 then begin
-      if CurrentQuest < 1 then begin
-         Str := callfunc ('getname');
-         Str := 'sendsendertopmsg 欢迎新玩家[' + Str;
-         Str := Str + '],来到云端千年的武侠世界';
-         print (str);
-         Str := 'changecompletequest 1';
-         print (str);
-         Str := 'changecurrentquest 1';
-         print (str);
-         exit;
-      end;
+   Str := callfunc ('getfirstquest');
+   FirstQuest := StrToInt (Str);
+   if FirstQuest < 1 then begin
+      // 发送欢迎消息
+      Str := 'changefirstquest 1';
+      print (Str);
+      exit;
    end;
 end;
-
-procedure OnUserEnd (aStr : String);
-begin
-
-end;
-
-end.
 ```
 
-## function
+`TUser` 以登录玩家作为 `Self` 调用 `OnUserStart`，所以这里的无 `sender` 版本确实读写玩家任务字段；这不表示其它 NPC 脚本中的 `Self` 也是玩家。
 
-### callfunc
+## 解释器支持范围
 
-调用指定callfunc返回函数结果，具体可调用函数见callfunc目录。
+- 关键字和标识符不区分大小写；单引号内的字符串不会转小写。因此 `print`/`callfunc` 字符串中的接口名必须使用索引所列的精确拼写与大小写。
+- 数据类型只有 `Integer`、`String`、`Boolean`；变量创建时先清零，未显式初始化时分别为 `0`、空字符串和 `False`。
+- 支持 `unit`、`interface`、`extern`、`var`、`implementation`、过程/函数、`if`、`for` 以及有限的表达式。
+- 不支持原生 Pascal 的 `program`、`uses`、`const`、`type`、数组、`writeln`、`readln` 等通用语法。
+- 当前词法器只实际跳过 `//` 行注释；不要使用 `{...}` 或 `(*...*)`。
+- 表达式编译器能力有限，线上脚本通常把长字符串拼接和复杂计算拆成多条赋值。
 
-### CompareStr
+完整限制和安全写法见 [Pascal 脚本语法](help/Pascal.md)。
 
-比较字符串并返回Boolean。
+## 内置函数
 
-```pascal
-bool := CompareStr (aStr1, aStr2)
-```
+| 函数 | 说明 |
+|---|---|
+| `callfunc(Text)` | 调用游戏查询函数并返回字符串；有效名称见 [`callfunc/`](callfunc/README.md) |
+| `CompareStr(A, B)` | 字符串相等时返回 `True` |
+| `GetToken(Source, Token, Sep)` | 取出第一个分段写入 `Token`，返回剩余字符串 |
+| `IntToStr(Value)` | 整数转字符串 |
+| `StrToInt(Text)` | 字符串转整数 |
+| `Length(Text)` | 返回字符串长度 |
+| `Random(N)` | 返回 `0` 到 `N-1`；上界 `N` 不会返回 |
 
-### GetToken
+## 内置过程
 
-根据指定分割符分割字符串并返回结果。
+| 过程 | 说明 |
+|---|---|
+| `print(Text)` | 将字符串交给 `TScriptManager.CommandScript`；第一个空格前必须是已注册命令 |
+| `Inc(Value)` / `Dec(Value)` | 对整数变量加一/减一 |
+| `exit` | 立即结束当前事件 |
 
-```pascal
-bStr := GetToken(aStr, aToken, aSep);
-```
+有效 `print` 命令见 [`print/`](print/README.md)。`print` 不是通用日志或文本输出函数；直接写 `print('普通文本')` 不会自动显示给玩家。
 
-以上示例中变量aStr（参数1）为要分割的字符串;变量aSep(参数3)为分割符，下划线“_”表示根据空格分割;变量aToken（参数2）为字符串aStr中分割符第一次出现位置左边的结果，返回值bStr为aStr分割后剩余部分的结果。
+## 事件入口
 
+事件名以 `On...` 开头，由对象加载脚本时注册，再由具体游戏路径调用。当前共登记 29 个事件，分别记录在 [`procedure/`](procedure/) 和 [`function/`](function/README.md)。
 
-### IntToStr
+事件的 `Self`、`Sender`、参数和返回值必须按调用点判断：
 
-整型转字符串
+- `Self` 是本次执行脚本的对象；`System.OnUserStart` 的 `Self` 是玩家。
+- `Sender` 通常是触发交互或攻击的玩家，也可能为 `nil`。
+- 只有调用方读取返回值的事件才具备拦截语义，例如传送门路径中的 `OnMove` 和攻击前的 `OnDanger`。
 
-```pascal
-aStr := IntToStr (aInt);
-```
-
-### Length
-
-返回给定字符串的长度
-
-```pascal
-iLen := Length (aText);
-```
-
-### Random
-
-返回不大于给定值的Integer随机数
-
-```pascal
-iRandom := Random (4);
-```
-
-### StrToInt
-
-字符串转整型
-
-```pascal
-aInt := StrToInt (astr);
-```
-
-### OnXXX
-
-在`function`目录中的`OnXXX`是特定条件下自动调用的函数，目前只有二个`OnMove`和`OnDanger`，判断结果，具体功能需自己实现。
-
-## procedure
-
-过程是没有返回值的方法，以下是固定功能过程，在脚本中调用。
-
-### Dec
-
-自减过程
-
-### exit
-
-终止(退出)过程或函数执行
-
-### Inc
-
-自增过程
-
-```pascal
-Inc (aInt);
-```
-
-### print
-
-执行指定过程，具体可执行过程见print目录。
-
-### OnXXX
-
-在`procedure`目录中的`OnXXX`是在特定条件下自动调用的过程，具体功能需要自己实现。
+编写新脚本时，先从当前 `bin/Script` 复制结构，再查对应事件和接口页面；迁移神武线上脚本时还要检查 [版本兼容说明](Script/README.md)。

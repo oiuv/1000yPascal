@@ -1,0 +1,39 @@
+unit —©…œÃÏ≤œ;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDropItem (aStr : String);
+procedure OnDieBefore (aStr : String);
+
+implementation
+
+procedure OnDropItem (aStr : String);
+var
+   Str : String;
+begin
+   Str := 'selfchangedynobjstate TRUE';
+   print (Str);
+   exit;
+
+end;
+
+procedure OnDieBefore (aStr : String);
+begin
+   print ('sendsound 9372.wav 45');
+   exit;
+end;
+
+end.
+

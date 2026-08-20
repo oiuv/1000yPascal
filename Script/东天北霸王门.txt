@@ -1,0 +1,28 @@
+unit 东天北霸王门;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDieBefore (aStr : String);
+
+implementation
+
+procedure OnDieBefore (aStr : String);
+begin
+   //悼玫合菩空巩
+   print ('sendsound 9171.wav 47');
+   exit;
+end;
+
+end.

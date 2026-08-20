@@ -1,0 +1,125 @@
+unit 帝王石谷铁匠;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+   CompleteQuest : Integer;
+   CurrentQuest : Integer;
+   
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race <> 1 then begin
+      exit;
+   end;
+
+   Str := callfunc ('getsendercompletequest');
+   CompleteQuest := StrToInt (Str);
+
+   Str := callfunc ('getsendercurrentquest');
+   CurrentQuest := StrToInt (Str);
+
+   if CurrentQuest < 1450 then begin
+      print ('say 我正忙着做石谷钥匙呢……没事儿别打扰我.');
+      exit;
+   end;
+
+   if CurrentQuest = 1450 then begin
+      print ('showwindow .\help\帝王石谷铁匠.txt 1');
+      exit;
+   end;
+
+   if CurrentQuest = 1500 then begin
+      print ('say 事情进行得还顺利吗?');
+      exit;
+   end;
+
+   if CurrentQuest = 1550 then begin
+      print ('say 抱歉_小人有眼无珠没认清大人');
+      exit;
+   end;
+
+
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, Name : String;
+   nCur, nDura : Integer;
+begin
+   if aStr = 'close' then begin
+      print ('say 你这人别浪费我时间，该干什么干什么去吧~');
+      exit;
+   end;
+
+   if aStr = 'about' then begin
+      print ('showwindow .\help\帝王石谷铁匠2.txt 1');
+      exit;
+   end;
+
+   if aStr = 'before' then begin
+      print ('showwindow .\help\帝王石谷铁匠.txt 1');
+      exit;
+   end;
+
+   if aStr = 'make' then begin
+      Str := callfunc ('checkenoughspace 1');
+      if Str = 'false' then begin
+         print ('say 行囊满了');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 石谷钥匙:1');
+      if Str = 'true' then begin
+         print ('say 身上不是有石谷钥匙吗_别太贪心啦');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 金毛狮甲:1');
+      if Str = 'false' then begin
+         print ('say 巧妇难为无米之炊_什么都不拿让我拿什么做呀');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 蝎子尾巴:1');
+      if Str = 'false' then begin
+         print ('say 巧妇难为无米之炊_什么都不拿让我拿什么做呀');
+	      exit;
+      end;
+
+      print ('getsenderitem 蝎子尾巴:1');
+      print ('getsenderitem 金毛狮甲:1');
+      print ('putsendermagicitem 石谷钥匙:1 @帝王石谷铁匠 4');
+
+      Str := callfunc ('getsenderitemexistence 降魔符:1');
+      if Str = 'true' then begin
+         print ('changesendercurrentquest 1500');
+         print ('changesendercompletequest 1450');
+      end;
+      
+      print ('say 请妥善保管');
+      exit;
+   end;
+end;
+
+end.

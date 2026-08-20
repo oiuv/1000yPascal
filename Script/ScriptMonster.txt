@@ -1,0 +1,89 @@
+// Gate脚本在BasicObj中实现, 因没用Gate，现改名做活动脚本控制活动怪物掉落
+unit ScriptMonster;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnDie (aStr : String);
+procedure OnHit (aStr : String);
+
+implementation
+
+procedure OnHit (aStr : String);
+var
+   Str : String;
+begin
+   Str := callfunc ('getsenderrace');
+   if Str <> '1' then exit;
+
+   print ('reposition');
+
+   Str := 'returndamage ' + aStr;
+   Str := Str + ' 25';
+   print (Str);
+end;
+
+// 用来配合ScriptEvent脚本实现Mop奖励
+procedure OnDie (aStr : String);
+var
+   Str, Item : String;
+   iCount, iKind : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   if Str <> '1' then exit;
+   // 根据节日类型发放对应节日物品奖励，要和ScriptEvent脚本配合使用
+   iKind := 12; // 节日类型：1春节 5端午节 8中秋节 12圣诞节
+
+   if iKind = 1 then begin
+      // 春节活动：年兽-新春爆竹、爆竹和恭、喜、发、财（合成红包）
+      // 新春爆竹在祈福宝鼎燃放兑换礼盒
+      // 爆竹在长城以南燃放热闹气氛，红包打开有金元
+      iCount := Random (12);
+      Item := '爆竹:1';
+      if iCount = 3 then Item := '恭:1';
+      if iCount = 4 then Item := '喜:1';
+      if iCount = 8 then Item := '发:1';
+      if iCount = 9 then Item := '财:1';
+      if iCount > 9 then Item := '新春爆竹:1';
+      Str := 'putsendermagicitem '+ Item;
+      Str := Str + ' @年兽 3';
+      print (Str);
+      exit;
+   end;
+   if iKind = 8 then begin
+      // 中秋活动：玉兔-月之灵、月之环、月之华、月这流、月之音
+      // 合成月魂找圆月老人兑换
+      iCount := Random (10);
+      Item := '好运月饼:1';
+      if iCount >= 1 then Item := '月之环:1';
+      if iCount >= 3 then Item := '月之音:1';
+      if iCount >= 5 then Item := '月之华:1';
+      if iCount >= 7 then Item := '月之流:1';
+      if iCount >= 9 then Item := '月之灵:1';
+      Str := 'putsendermagicitem '+ Item;
+      Str := Str + ' @玉兔 3';
+      print (Str);
+      exit;
+   end;
+   if iKind = 12 then begin
+      // 圣诞活动：驯鹿-圣诞铃铛
+      // 圣诞铃铛挂圣诞树兑换礼盒
+      print ('say 叮叮当，叮叮当，铃儿响叮当……');
+      print ('putsendermagicitem 圣诞铃铛:1 @驯鹿 3');
+      exit;
+   end;
+
+end;
+
+end.

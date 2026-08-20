@@ -1,0 +1,140 @@
+unit 聚贤庄庄主;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+var
+   Str : String;
+   Race : Integer;
+begin
+   Str := callfunc ('getsenderrace');
+   Race := StrToInt (Str);
+   if Race = 1 then begin
+      Str := 'showwindow .\help\聚贤庄庄主.txt 1';
+      print (Str);
+      exit;
+   end;
+end;
+
+// getzhuangticketprice getintozhuang getzhuangfight getcheckpickup 为神武不支持的方法
+procedure OnGetResult (aStr : String);
+var
+   Str,Str1,Str2, Name, xStr : String;
+   nValue : Integer;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'salesell' then begin
+      Str2 := callfunc ('getzhuangticketprice');
+      Str1 := 'getsenderitemexistence 钱币:' + Str2;
+      Name := callfunc (str1);
+      if Name = 'false' then begin
+         Str := 'say 你没有足够的钱币？';
+         print (Str);
+         exit;
+      end;
+      Name := callfunc ('checkenoughspace');
+      if Name = 'false' then begin
+         print ('say 物品栏已满');
+         exit;
+      end;
+      Str1 := 'getsenderitem 钱币:' + Str2;   
+      print (Str1);
+      print ('putsendermagicitem 聚贤庄进门券:1 @聚贤庄庄主 4');
+      Str := 'say 花费了' + Str2;
+      Str := Str + '钱币';
+      print (Str);
+      exit;
+   end;
+   if aStr = 'into' then begin
+      Name := callfunc ('getintozhuang');
+      if Name = 'noticket' then begin
+         print ('say 你没有进门券,不能进入');
+         exit;
+      end;
+      if Name = 'ok' then begin
+         print ('say 请进');
+         Name := callfunc ('getsendername');
+         Str := 'movespace ' + Name;
+         Str := Str + ' user 1 232 898 80';
+         print (Str);
+         exit;
+      end;
+      exit;
+   end;
+   if aStr = 'fight' then begin
+      Name := callfunc ('getsenderitemexistence 领土瓜分牌:1');
+      if Name = 'false' then begin
+         print ('say 你没有领土瓜分牌');
+         exit;
+      end;
+      Name := callfunc ('getzhuangfight');
+      if Name = '-1' then begin
+         print ('say 你没有权利申请领土瓜分');
+         exit;
+      end;
+      if Name = '8' then begin
+         print ('say 虽然聚贤庄无人驻守，但你的门派也不够资格。');
+         exit;
+      end;
+      if Name = '7' then begin
+         print ('say 贵派已经执掌此领地。');
+         exit;
+      end;
+      if Name = '6' then begin
+         print ('say 您的瓜分申请已经被接受。');
+         exit;
+      end;
+      if Name = '-2' then begin
+         print ('say 本月申请名额已满。');
+         exit;
+      end;
+      if Name = '9' then begin
+         print ('say 恭喜您，聚贤庄现在已经归贵派的的管辖了。');
+         exit;
+      end;
+      print ('getsenderitem 领土瓜分牌:1');
+      Str := '你已经被列入的瓜分聚贤庄的门派队列中，排本月第' + Name;
+      Str := Str + '位！';
+      print ('say ' + Str);
+      print ('say 请届时召集门员参加。');
+      exit;
+   end;
+   if aStr = 'pickup' then begin
+      Str1 := 'getsenderitemexistence 钱币:15000';
+      Name := callfunc (str1);
+      if Name = 'false' then begin
+         Str := 'say 你没有足够的钱币？';
+         print (Str);
+         exit;
+      end;	
+      Name := callfunc ('getcheckpickup');
+      if Name = 'false' then begin
+         print ('say 抱歉,你已经申请了该技能');
+         exit;
+      end;
+      print ('getsenderitem 钱币:15000');
+      print ('say 申请技能成功');
+   end;
+
+end;
+
+end.

@@ -1,0 +1,134 @@
+unit 龙师父;
+
+interface
+
+function  GetToken (aStr, aToken, aSep : String) : String;
+function  CompareStr (aStr1, aStr2 : String) : Boolean;
+function  callfunc (aText: string): string;
+procedure print (aText: string);
+function  Random (aScope: integer): integer;
+function  Length (aText: string): integer;
+procedure Inc (aInt: integer);
+procedure Dec (aInt: integer);
+function  StrToInt (astr: string): integer;
+function  IntToStr (aInt: integer): string;
+procedure exit;
+
+procedure OnGetResult (aStr : String);
+procedure OnLeftClick (aStr : String);
+
+implementation
+
+procedure OnLeftClick (aStr : String);
+begin
+   print ('showwindow .\help\龙师父.txt 1');
+end;
+
+procedure OnGetResult (aStr : String);
+var
+   Str, JobKind, JobGrade : String;
+begin
+   if aStr = 'close' then begin
+      exit;
+   end;
+   if aStr = 'rollpaper' then begin
+      JobKind := callfunc ('getsenderjobkind');
+      if JobKind = '0' then begin
+         print ('say 老兄_还没职业呢？');
+         exit;
+      end;
+
+      JobGrade := callfunc ('getjobgrade');
+      if JobGrade = '6' then begin
+         print ('showwindow .\help\龙师父3.txt 1');
+         exit;
+      end;
+
+      Str := callfunc ('getsendertalent');
+      if Str < '9998' then begin
+         print ('showwindow .\help\龙师父2.txt 1');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 金元:12');
+      if Str = 'false' then begin
+         print ('say 不足12个金元...');
+         exit;
+      end;
+
+      Str := callfunc ('checkenoughspace');
+      if Str = 'false' then begin
+         print ('say 东西可不少哟');
+         exit;
+      end;
+
+      print ('getsenderitem 金元:12');
+      print ('putsendermagicitem 技术密笈 @龙师父 4');
+      print ('showwindow .\help\龙师父1.txt 1');
+      exit;
+   end;
+   if aStr = 'virtueman' then begin
+      JobKind := callfunc ('getsenderjobkind');
+      if JobKind = '0' then begin
+         print ('say 竟敢戏弄老夫?');
+         exit;
+      end;
+
+      JobGrade := callfunc ('getjobgrade');
+      if JobGrade = '6' then begin
+         print ('say 竟敢戏弄老夫?');
+         exit;
+      end;
+
+      Str := callfunc ('getsendertalent');
+      if Str < '9998' then begin
+         print ('say 竟敢戏弄老夫?');
+         exit;
+      end;
+
+      Str := callfunc ('getsenderitemexistence 技术密笈:1');
+      if Str = 'false' then begin
+         print ('say 竟敢戏弄老夫?');
+         exit;
+      end;
+      if JobKind = '1' then begin
+         Str := callfunc ('getsenderitemexistence 黄金钥匙:1');
+         if Str = 'false' then begin
+            print ('say 竟敢戏弄老夫?');
+            exit;
+         end;
+         print ('getsenderitem 黄金钥匙:1');
+      end;
+      if JobKind = '2' then begin
+         Str := callfunc ('getsenderitemexistence 乾坤日月酒:1');
+         if Str = 'false' then begin
+            print ('say 竟敢戏弄老夫?');
+            exit;
+         end;
+         print ('getsenderitem 乾坤日月酒:1');
+      end;
+      if JobKind = '3' then begin
+         Str := callfunc ('getsenderitemexistence 太极线:1');
+         if Str = 'false' then begin
+            print ('say 竟敢戏弄老夫?');
+            exit;
+         end;
+         print ('getsenderitem 太极线:1');
+      end;
+      if JobKind = '4' then begin
+         Str := callfunc ('getsenderitemexistence 玻璃戒指:1');
+         if Str = 'false' then begin
+            print ('say 竟敢戏弄老夫?');
+            exit;
+         end;
+         print ('getsenderitem 玻璃戒指:1');
+      end;
+
+      print ('getsenderitem 技术密笈:1');
+      print ('setsendervirtueman');
+      print ('showwindow .\help\龙师父4.txt 1');
+      exit;
+   end;
+end;
+
+end.
