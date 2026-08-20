@@ -44,7 +44,7 @@
 |--------|---:|------|
 | `HAVEBASICMAGICSIZE` | 20 | 基本武功最大数量 |
 | `HAVEMAGICSIZE` | 30 | 普通武功最大数量 |
-| `HAVEMAGICRISESIZE` | 30 | 上层武功最大数量 |
+| `HAVERISEMAGICSIZE` | 30 | 上层武功最大数量 |
 | `HAVEMYSTERYMAGICSIZE` | 30 | 掌法武功最大数量 |
 | `HAVEBESTSPECIALMAGICSIZE` | 15 | 绝世超式武功最大数量 |
 | `HAVEBESTPROTECTMAGICSIZE` | 5 | 绝世公力武功最大数量 |

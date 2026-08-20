@@ -40,4 +40,4 @@ end;
 
 ## 相关事件
 
-- [OnTimer](OnTimer.md) — 对象级别的定时器事件（每 100ms 触发）
+- [OnTimer](OnTimer.md) — 对象级别的定时器事件（每 1 秒触发）

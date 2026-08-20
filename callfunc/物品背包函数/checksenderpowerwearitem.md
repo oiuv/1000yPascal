@@ -1,4 +1,4 @@
-# getsenderpowerwearitem
+# checksenderpowerwearitem
 
 ## 功能描述
 检查玩家是否穿戴了带有力量属性的装备（技能装备）。脚本中调用名称为 `checksenderpowerwearitem`。
@@ -50,7 +50,7 @@ end;
 
 ## 注意事项
 
-1. **调用名称**：源码中的 cmd 名称为 `checksenderpowerwearitem`
+1. **调用名称**：仅使用源码实际注册的 `checksenderpowerwearitem`
 2. **返回值格式**：返回字符串类型的整数，需要 `StrToInt` 转换后判断
 3. **比武场使用**：广泛用于比武场景中，确保玩家不穿戴加成装备以保证公平
 4. **无参数**：不需要传入任何参数

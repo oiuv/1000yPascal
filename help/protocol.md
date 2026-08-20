@@ -34,7 +34,7 @@ end;
 
 **包头固定大小**: 8字节（PacketSize + RequestID + RequestMsg + ResultCode）
 
-**最大包大小**: MAX_PACKET_SIZE = 8192 字节
+**最大 Data 载荷**：`MAX_PACKET_SIZE = 8192` 字节。完整 `TPacketData` 还包含 8 字节包头，因此结构最大为 8200 字节。
 
 ### 1.3 加密数据包格式
 
@@ -53,11 +53,13 @@ end;
 - **包尾**: `0x29`（ASCII ')'）
 - **加密数据**: 对 TPacketData 结构进行加密后的字节流
 
-**示例**:
+**示例**（空载荷、`RequestID=1`、`RequestMsg=5`）:
 ```
-原始数据: 28 5A 00 00 00 01 00 05 00 ...（未加密）
+原始数据: 08 00 01 00 00 00 05 00
 传输格式: 28 [加密后的字节流] 29
 ```
+
+`0x28` 和 `0x29` 只属于加密传输外层，不是原始 `TPacketData` 的字段。
 
 ### 1.4 非加密数据包格式
 
@@ -855,7 +857,7 @@ REMOTEACCEPTPORT=1021
 |------|:----:|------|
 | TNameString | 19字节 | 角色名（中文9字符，GBK编码） |
 | TCaptionString | 40字节 | 标题（中文20字符，GBK编码） |
-| TWordString | 变长 | 字串，以null结尾 |
+| TWordString | 4096字节 | 固定长度字节数组；实际文本在数组内以 null 结尾 |
 
 **注意**: 所有字符串使用 GBK 编码，不是 UTF-8。
 
@@ -949,13 +951,15 @@ name = data.decode('gbk').rstrip('\x00')
 
 ### 8.2 数据包示例
 
-**登录请求** (CM_IDPASS):
+**登录请求**（CM_IDPASS，假设首个请求的 `RequestID=0`）：
 ```
-原始数据: 08 00 00 00  01 00 00 00  03 00  ...
-          |  PacketSize | RequestID  |Msg|Ret| Data...
+44 00  00 00 00 00  00  00  3A 00  03 ...
+|Size|  | RequestID | Msg Ret |ComData|CM_IDPASS...
 
 加密后: 28 [加密字节流] 29
 ```
+
+客户端先把 58 字节 `TCIdPass`（`rmsg` + 3 个 19 字节 `TNameString`）封装进 `TWordComData`，所以 Data 为 60 字节，完整 `TPacketData.PacketSize` 为 68（`0x0044`）。外层 `RequestMsg` 为 0，`CM_IDPASS=3` 位于 `TWordComData.Data` 的第一个字节。
 
 **角色移动** (CM_MOVE):
 ```

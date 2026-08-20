@@ -69,8 +69,8 @@ code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9
 <tr><th>类别</th><th>技术</th><th>说明</th></tr>
 <tr><td>主要语言</td><td><span class="tag tag-blue">Delphi 7</span></td><td>Object Pascal，VCL 窗体架构</td></tr>
 <tr><td>辅助语言</td><td><span class="tag tag-green">Python</span></td><td>测试/监控/协议分析/部分服务重写</td></tr>
-<tr><td>网络协议</td><td><span class="tag tag-purple">TCP + UDP</span></td><td>自定义二进制协议，包头0x28 包尾0x29</td></tr>
-<tr><td>数据库</td><td><span class="tag tag-orange">MSSQL / SDB / FDB</span></td><td>正式用MSSQL，开发用自定义文件数据库</td></tr>
+<tr><td>网络协议</td><td><span class="tag tag-purple">TCP + UDP</span></td><td>自定义二进制协议；加密 TCP 链路使用 0x28/0x29 外层边界</td></tr>
+<tr><td>数据库</td><td><span class="tag tag-orange">MSSQL / SDB / FDB</span></td><td>Login 提供 MSSQL/SDB 两套账号实现，DB 使用 FDB 持久化角色数据</td></tr>
 <tr><td>加密</td><td><span class="tag tag-red">AES + uCrypt</span></td><td>AES(.obj) + 自定义类Base64加密</td></tr>
 <tr><td>脚本系统</td><td><span class="tag tag-blue">Pascal Script</span></td><td>内嵌解释器，NPC/事件逻辑热更新</td></tr>
 <tr><td>图形接口</td><td><span class="tag tag-purple">DirectX</span></td><td>客户端渲染</td></tr>
@@ -127,8 +127,8 @@ code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9
 </div>
 
 <div class="card">
-<h3>安全设计</h3>
-<p>仅 <span class="highlight">Balance(3053)</span> 和 <span class="highlight">Gate(3054)</span> 端口对外开放，其余服务全部部署在内网。</p>
+<h3>建议的部署边界</h3>
+<p>客户端只需访问 <span class="highlight">Balance(3053)</span> 和 <span class="highlight">Gate(3054)</span>。生产环境应通过防火墙把其余服务限制在内网；源码不能证明服务器当前的实际公网暴露状态。</p>
 </div>
 </div>
 
@@ -148,8 +148,8 @@ code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9
 <tr><th>目录</th><th>模块</th><th>端口</th><th>职责</th></tr>
 <tr><td><code>balance/</code></td><td>负载均衡</td><td>TCP:3053, UDP:3030</td><td>按最少连接数算法分配最优网关</td></tr>
 <tr><td><code>gate_biscuit/</code></td><td>网关服务器</td><td>TCP:3054</td><td><strong>核心枢纽</strong>，转发数据到 Login/DB/Game/Paid</td></tr>
-<tr><td><code>loginsdb_biscuit/</code></td><td>SDB 登录</td><td>TCP:3050</td><td>SDB 文件数据库认证（开发环境）</td></tr>
-<tr><td><code>loginsql/</code></td><td>SQL 登录</td><td>TCP:3050</td><td>MSSQL 认证（正式运营）</td></tr>
+<tr><td><code>loginsdb_biscuit/</code></td><td>SDB 登录</td><td>TCP:3050</td><td>SDB 文件账号认证实现</td></tr>
+<tr><td><code>loginsql/</code></td><td>SQL 登录</td><td>TCP:3050</td><td>MSSQL 账号认证实现</td></tr>
 <tr><td><code>db/</code></td><td>数据库服务器</td><td>TCP:3051, 1024, 1020</td><td>角色数据持久化（FDB格式）</td></tr>
 <tr><td><code>gameserver-tgs1000/</code></td><td>游戏服务器</td><td>TCP:3052</td><td>全部游戏逻辑主进程</td></tr>
 </table>
@@ -319,8 +319,8 @@ code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9
 <h3>三种数据库</h3>
 <table>
 <tr><th>类型</th><th>格式</th><th>使用场景</th><th>模块</th></tr>
-<tr><td><span class="tag tag-blue">MSSQL</span></td><td>关系型数据库 (ODBC)</td><td>正式运营 — 账号数据</td><td>loginsql/</td></tr>
-<tr><td><span class="tag tag-green">SDB</span></td><td>字符串键值文件</td><td>开发测试 — 账号/配置</td><td>loginsdb_biscuit/</td></tr>
+<tr><td><span class="tag tag-blue">MSSQL</span></td><td>关系型数据库 (ODBC)</td><td>SQL Login 的账号数据</td><td>loginsql/</td></tr>
+<tr><td><span class="tag tag-green">SDB</span></td><td>字符串键值文件</td><td>SDB Login 的账号数据及游戏配置</td><td>loginsdb_biscuit/</td></tr>
 <tr><td><span class="tag tag-orange">FDB</span></td><td>自定义二进制文件数据库</td><td>角色数据持久化</td><td>db/</td></tr>
 </table>
 </div>
@@ -368,12 +368,12 @@ code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9
 <tr><th>类别</th><th>文件</th><th>功能</th></tr>
 <tr><td><span class="tag tag-purple">加密</span></td><td>uCrypt.py, 1000yCrypto.py</td><td>Python 版加密算法 + 命令行工具（加密/解密/数据包解析）</td></tr>
 <tr><td><span class="tag tag-blue">协议分析</span></td><td>tcp_proxy.py, udp_proxy.py</td><td>通用 TCP/UDP 代理抓包（HEX/ASCII 日志）</td></tr>
-<tr><td><span class="tag tag-green">服务重写</span></td><td>1000y_balance.py</td><td>Python 版 Balance 负载均衡（完全兼容原版协议）</td></tr>
+<tr><td><span class="tag tag-green">服务重写</span></td><td>1000y_balance.py</td><td>Python 版 Balance 负载均衡；已按源码实现主要协议，仍需使用真实客户端和 Gate 做联机兼容性验证</td></tr>
 <tr><td><span class="tag tag-green">服务重写</span></td><td>paid_server.py</td><td>付费验证（SQLite + 5种付费模式 + CLI管理）</td></tr>
 <tr><td><span class="tag tag-orange">网关代理</span></td><td>gate_proxy.py</td><td>版本号转换 + IP白名单 + 实时解密显示</td></tr>
 <tr><td><span class="tag tag-orange">数据工具</span></td><td>fdb_reader.py</td><td>FDB 数据库文件读取/JSON 导出</td></tr>
 <tr><td><span class="tag tag-blue">日志服务</span></td><td>udp_logger/*.py (6个)</td><td>物品/鼠标/监控/付费/连线/对象 — UDP日志接收</td></tr>
-<tr><td><span class="tag tag-blue">分析工具</span></td><td>udp_logger/analyzers/*.py (4个)</td><td>物品/鼠标/对象/付费日志分析</td></tr>
+<tr><td><span class="tag tag-blue">分析工具</span></td><td>udp_logger/analyzers/*.py (5个)</td><td>物品/鼠标/对象/付费/用户数据分析</td></tr>
 </table>
 </div>
 
@@ -396,7 +396,7 @@ code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9
 <table>
 <tr><th>机制</th><th>实现方式</th><th>风险</th></tr>
 <tr><td>网络加密</td><td>自定义类Base64 (LCG随机种子=1 + Fisher-Yates洗牌)</td><td><span class="risk-med">⚠️ 中</span> — 随机种子为常量，加密表可还原</td></tr>
-<tr><td>服务器授权</td><td>SHA1+AES 硬件指纹授权码，注册表存储（Game/DB 授权判断已注释，仅 Balance 生效）</td><td><span class="risk-med">⚠️ 部分有效</span></td></tr>
+<tr><td>服务器授权</td><td>源码保留 SHA1+AES 硬件指纹及注册表工具，但 Game 的拒绝/关闭逻辑已注释，DB 和 Balance 中未找到执行授权判断的代码</td><td><span class="risk-high">🔴 未强制执行</span></td></tr>
 <tr><td>IP 白名单</td><td>IPList.txt 文件加载</td><td><span class="risk-med">⚠️ 中</span> — 文件缺失时放行所有连接</td></tr>
 <tr><td>包频率限制</td><td>滑动窗口，每秒≤10包</td><td><span class="risk-low">✅ 有效</span></td></tr>
 <tr><td>数据完整性</td><td>CRC32 校验 (TDBRecord.CRCKey)</td><td><span class="risk-low">✅ 基本有效</span></td></tr>

@@ -10,15 +10,15 @@
 
 | 数据库类型 | 文件扩展名 | 用途 | 使用模块 | 说明 |
 |-----------|-----------|------|---------|------|
-| **MSSQL** | — | 正式环境账号数据 | `loginsql/uDBAdapter.pas` | 通过 BDE `TQuery` 操作 `account1000y` 表 |
-| **SDB** | `.sdb` | 开发环境账号数据 / 配置数据 | `loginsdb_biscuit/uDBAdapter.pas`、`Common/UserSdb.pas` | 纯文本 CSV 格式，`TUserStringDB` 类操作 |
+| **MSSQL** | — | SQL 登录实现的账号数据 | `loginsql/uDBAdapter.pas` | 通过 BDE `TQuery` 操作 `account1000y` 表 |
+| **SDB** | `.sdb` | SDB 登录实现的账号数据 / 游戏配置 | `loginsdb_biscuit/uDBAdapter.pas`、`Common/UserSdb.pas` | 纯文本 CSV 格式，`TUserStringDB` 类操作 |
 | **FDB** | `.fdb` | 角色数据持久化 | `db/uDBProvider.pas`、`Common/uDBRecordDef.pas` | 自定义二进制格式，支持多文件扩展 |
 
 ### 1.1 各数据库的使用场景
 
 - **FDB**：DB 服务器（端口 3051）使用 `TDBProvider` 管理角色数据。文件命名规则为 `XXX00.fdb`、`XXX01.fdb`...最多 64 个文件（`MAX_OPEN_FILE = 64`），每个文件最大 1GB。
-- **SDB**：Login 服务器的开发模式（`loginsdb_biscuit`）使用 `TUserStringDB` 存储账号数据，文件位于 `.\Data\Login.sdb`。同时游戏配置数据（物品、怪物、地图等）也使用 SDB 格式。
-- **MSSQL**：Login 服务器的正式模式（`loginsql`）使用 MSSQL 数据库，表名 `account1000y`。
+- **SDB**：`loginsdb_biscuit` 使用 `TUserStringDB` 存储账号数据，文件位于 `.\Data\Login.sdb`。游戏配置数据（物品、怪物、地图等）也使用 SDB 格式。
+- **MSSQL**：`loginsql` 使用 MSSQL 数据库，表名 `account1000y`。源码提供了两套 Login 实现，但没有把它们定义为通用的“开发/正式”模式；具体部署应以服务器实际启动的程序为准。
 
 ---
 
@@ -196,7 +196,7 @@
 
 ## 3. FDB 文件格式
 
-> 来源：`Common/uDBRecordDef.pas`（结构定义）、`db/uRecordDef.pas`（`TDBProvider` 实现）
+> 来源：`Common/uDBRecordDef.pas`、`db/uRecordDef.pas`（结构定义），以及 `Common/uDBProvider.pas`（`TDBProvider` 实现）
 
 ### 3.1 文件头 TDBHeader
 
@@ -253,7 +253,7 @@
 
 - 文件命名：`{名称}{序号}.fdb`，如 `createdb00.fdb`、`createdb01.fdb`
 - 序号 < 10 时补零（`%s0%d%s`），≥ 10 不补零（`%s%d%s`）
-- 每个文件最大记录数：`1GB ÷ 5889`（约 173,100 条记录）
+- 每个文件最大记录数：`1024 × 1024 × 1024 div 5889 = 182,330` 条记录
 - 最多 64 个文件（`MAX_OPEN_FILE = 64`）
 - 当当前文件已满时，自动创建下一个文件
 
@@ -296,7 +296,7 @@
 - 来源：`Common/uCookie.pas` 中的 `oz_CRC32` 函数
 - 计算范围：`TDBRecord` 的前 `SizeOf(TDBRecord) - 4` 字节（即除 `CRCKey` 字段外的所有数据）
 - 存储位置：`TDBRecord.CRCKey`（最后 4 字节，`Cardinal` 类型）
-- 计算时机：**仅在 `DB_UPDATE_END` 时重算 CRC**，普通的 `DB_UPDATE` 不计算 CRC（直接写入数据）
+- 主要更新路径：普通 `DB_UPDATE` 直接写入传入记录；`DB_UPDATE_END` 会先重算 CRC 再写入。`DB_INSERT` 以及远程管理写入路径也会重算 CRC，不能概括为“仅 DB_UPDATE_END 计算”。
 
 ```pascal
 // db/uConnector.pas — DB_UPDATE_END 处理
@@ -305,7 +305,7 @@ RecordData.CRCKey := oz_CRC32(@RecordData, SizeOf(RecordData) - 4);
 
 - CRC32 算法：标准 CRC32（初始值 `$FFFFFFFF`，最终取反），使用 256 项查找表
 
-### 3.8 TCheckCharData 完整性校验
+### 3.8 TCheckCharData 保存队列封装
 
 ```pascal
 TCheckCharData = packed record
@@ -314,7 +314,7 @@ TCheckCharData = packed record
 end;
 ```
 
-用于数据传输时的完整性校验，`rEnd` 作为记录结束标记。
+该结构只在 Game 的保存缓冲队列中把角色记录与发送类型标志放在一起：`rEnd=0` 发送 `DB_UPDATE`，`rEnd=1` 发送 `DB_UPDATE_END`。实际发往 DB 的是 `rCharData`，`rEnd` 本身不随记录传输，也不承担完整性校验。
 
 ---
 
@@ -376,8 +376,10 @@ PassWord,CharInfo0,CharInfo1,CharInfo2,CharInfo3,CharInfo4,IpAddr,UserName,Birth
 
 ### 5.1 account1000y 表
 
-| 列序号 | 列名 | 类型 | 说明 |
-|--------|------|------|------|
+> 源码没有提供 `CREATE TABLE` 或其他 MSSQL DDL。下表的列顺序来自 `TQuery.Fields[n]` 和 SQL 拼接代码；“Pascal 侧长度”来自 `TLGRecord` 的字符串缓冲区，只表示程序截取上限，不等同于 MSSQL 的真实列类型。
+
+| 列序号 | 列名 | Pascal 侧长度 | 说明 |
+|--------|------|----------------|------|
 | 0 | `account` | `String[20]` | 账号名（主键） |
 | 1 | `password` | `String[20]` | 密码 |
 | 2 | `char1` | `String` | 角色 1（格式：`角色名:服务器名`） |
@@ -395,8 +397,8 @@ PassWord,CharInfo0,CharInfo1,CharInfo2,CharInfo3,CharInfo4,IpAddr,UserName,Birth
 | 14 | `email` | `String[50]` | 邮箱 |
 | 15 | `nativenumber` | `String[20]` | 身份证号 |
 | 16 | `masterkey` | `String[20]` | 主密钥 |
-| 17 | `ptname` | `String[20]` | 监护人姓名（已注释） |
-| 18 | `ptnativenumber` | `String[20]` | 监护人身份证号（已注释） |
+
+源码还保留了对序号 17、18（监护人姓名和身份证号）的注释代码，但没有读取它们，且不足以证明当前数据库实际存在这两列。
 
 ### 5.2 TLGRecord 结构
 
@@ -496,7 +498,7 @@ end;
     │                                 └── WriteBuffer(RecordData)
 ```
 
-CRC 计算在 DB 服务器的 `uConnector.pas`、`uSRemoteConnector.pas`、`uCRemoteConnector.pas` 中执行，仅在 `DB_UPDATE_END` 时计算，覆盖记录除最后 4 字节（`CRCKey` 本身）外的所有数据。
+主连接器在 `DB_UPDATE_END` 和插入记录时计算 CRC；`uSRemoteConnector.pas`、`uCRemoteConnector.pas` 在远程写入记录时也直接计算 CRC。计算范围均覆盖记录除最后 4 字节（`CRCKey` 本身）外的所有数据。
 
 ### 6.4 DB 服务器写入流程
 

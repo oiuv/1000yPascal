@@ -1,4 +1,4 @@
-# getsenderattribitem
+# checksenderattribitem
 
 ## 功能描述
 检查玩家是否持有属性物品（特殊属性装备）。脚本中调用名称为 `checksenderattribitem`。
@@ -51,7 +51,7 @@ end;
 
 ## 注意事项
 
-1. **调用名称**：源码中的 cmd 名称为 `checksenderattribitem`，注意与文档标题 `getsenderattribitem` 的对应关系
+1. **调用名称**：仅使用源码实际注册的 `checksenderattribitem`
 2. **返回值格式**：返回字符串 'true' 或 'false'
 3. **任务互斥**：常用于任务系统中检查玩家是否已在进行同类任务，避免重复接取
 4. **属性类型**：具体属性类型编号的含义由游戏数据定义

@@ -56,14 +56,14 @@
 | **Game** | `gameserver-tgs1000/` | 游戏服务器。处理游戏逻辑、地图管理、怪物/NPC 更新、用户交互 |
 | **Paid** | （外部服务） | 计费服务器。验证用户付费状态和到期时间 |
 
-### 1.3 安全设计
+### 1.3 建议的部署边界
 
-**仅 Balance 和 Gate 的客户端端口对外开放**：
+按协议拓扑，客户端只需要访问以下端口：
 
 - `Balance TCP 3053` — 客户端初始连接入口（短连接）
 - `Gate TCP 3054` — 客户端游戏连接入口（长连接）
 
-所有其他服务均监听在内网，通过 `RemoteIP.txt` 进行 IP 白名单过滤：
+因此生产部署通常只对外开放 Balance 和 Gate，其余服务应由防火墙限制在内网。源码中的 `RemoteIP.txt` 白名单提供额外限制，但源码本身不能证明服务器当前的公网暴露状态：
 
 - Login (`sckAccept`) — 仅接受白名单 IP（`IPChecker.IsThereAtList`）
 - DB (`sckAccept`) — 仅接受白名单 IP
@@ -99,7 +99,7 @@
 | **6010** | Game → Logger | MOUSEEVENT 鼠标事件日志 |
 | **6011** | Game → Logger | MONITER 监控日志 |
 | **6022** | Game → Logger | CONNECT 连接日志 |
-| **6000** | Game → Logger | PAY 计费日志 / MONITER 监控 |
+| **6000** | Game → Logger | PAY 计费日志 |
 | **3003** | Game → Logger | OBJECT 对象日志 |
 | **3005** | Game → Logger | RELATION 关系日志 |
 
@@ -469,7 +469,7 @@ SaveBuffer := TPacketBuffer.Create(1024 * 1024 * 4);  // 4MB 缓冲区
 
 ### 6.3 定期保存
 
-每个在线角色每 10 分钟触发一次保存（`60 * 10 * 100` 毫秒）：
+每个在线角色每 10 分钟触发一次保存（`60 * 10 * 100` 个 10ms tick）：
 
 ```delphi
 // gameserver-tgs1000/uConnect.pas — TConnector.Update
@@ -560,15 +560,17 @@ end;
 
 Game 服务器通过 UDP 向外部日志服务推送数据，共 7 个日志通道：
 
-| 日志类型 | 配置节 | 默认 IP | 默认端口 | 说明 |
-|----------|--------|---------|----------|------|
-| ITEM | `[UDP_ITEM]` | 127.0.0.1 | 6001 | 物品变动日志 |
-| MOUSEEVENT | `[UDP_MOUSEEVENT]` | 127.0.0.1 | 6010 | 鼠标事件日志 |
-| MONITER | `[UDP_MONITER]` | 127.0.0.1 | 6000 | 系统监控 |
-| CONNECT | `[UDP_CONNECT]` | 127.0.0.1 | 6022 | 连接/断开日志 |
-| PAY | `[UDP_PAY]` | 127.0.0.1 | 6000 | 计费日志 |
-| OBJECT | `[UDP_OBJECT]` | 127.0.0.1 | 3003 | 对象操作日志 |
-| RELATION | `[UDP_RELATION]` | 127.0.0.1 | 3005 | 关系日志 |
+| 日志类型 | 配置节 | 服务器配置端口 | 源码缺省端口 | 说明 |
+|----------|--------|----------------|--------------|------|
+| ITEM | `[UDP_ITEM]` | 6001 | 6001 | 物品变动日志 |
+| MOUSEEVENT | `[UDP_MOUSEEVENT]` | 6010 | 6001 | 鼠标事件日志 |
+| MONITER | `[UDP_MONITER]` | 6011 | 6000 | 系统监控 |
+| CONNECT | `[UDP_CONNECT]` | 6022 | 6022 | 连接/断开日志 |
+| PAY | `[UDP_PAY]` | 6000 | 6000 | 计费日志 |
+| OBJECT | `[UDP_OBJECT]` | 3003 | 3003 | 对象操作日志 |
+| RELATION | `[UDP_RELATION]` | 3005 | 3005 | 关系日志 |
+
+“服务器配置端口”对应当前提供的 `sv1000.ini`；只有相应配置项缺失时，程序才使用 `SVMain.pas` 中的源码缺省值。各通道缺省 IP 均为 `127.0.0.1`。
 
 ### 7.3 自动重连机制
 

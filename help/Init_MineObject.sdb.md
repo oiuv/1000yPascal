@@ -20,9 +20,9 @@ CSV 格式，逗号分隔，首行为列名。
 | ViewName | String | 显示名称（如"金属"、"岩石"、"宝石"、"水石"、"铁矿石"、"药草"） | `StrPCopy(@pmd^.rViewName, Db.GetFieldValueString(iName, 'ViewName'))` |
 | PickConst | Integer | 采集速度常数。每次采矿命中时累加 `PickConst × FToolConst(=5)` 到采集量，超过 100 则产出一个矿石（埋藏量-1）。值越大采集越快。常见值：6（4次/个）、9（3次/个）、12（2次/个） | `pmd^.rPickConst := Db.GetFieldValueInteger(iName, 'PickConst')`；使用处：`uUserSub.pas` 第 12464 行 `FMinePickAmount := FMinePickAmount + (aSubData.HitData.PickConst * FToolConst)` |
 | Deposits | String | 埋藏量列表，冒号分隔的5个数值 | `pmd^.rDeposits[j] := _StrToInt(rdStr)` |
-| Item1-Item10 | String | 可产出的物品名称（最多10种），按品质从低到高排列（Item1 最常见，Item10 最稀有）。实际产出由 ToolRate 概率表 + `Random(10000)` 决定 | `ItemClass.GetItemData(Str, ItemData)` → `pmd^.rAvailItems[j]` |
+| Item1-Item10 | String | 可产出的物品名称（最多10种）。常规 A/B 配置按品质从高到低排列，Item1 对应最高品质、最低概率档；特殊 C/D 配置应直接按该行物品表解释。概率由 ToolRate 的同序号区间和 `Random(10000)` 决定 | `ItemClass.GetItemData(Str, ItemData)` → `pmd^.rAvailItems[j]` |
 | Sound | String | 采集音效数据 | `StrToEffectData(pmd^.rSoundData, Db.GetFieldValueString(iName, 'Sound'))` |
-| RegenIntervals | String | 刷新间隔列表，冒号分隔的3个数值（毫秒） | `pmd^.rRegenIntervals[j] := _StrToInt(rdStr)` |
+| RegenIntervals | String | 刷新间隔列表，冒号分隔的3个 10ms tick 值。例如 `18000:30000:60000` 分别约为 3、5、10 分钟 | `pmd^.rRegenIntervals[j] := _StrToInt(rdStr)`；比较处：`CurTick >= FRegenedTick + FRegenInterval` |
 | DropMop | String | 采集时可能掉落的怪物，格式为"怪物名:数量" | `StrPCopy(@pmd^.rDropMop[j].rName, rdStr)` |
 
 ### 采矿对象分类
@@ -34,9 +34,9 @@ CSV 格式，逗号分隔，首行为列名。
 | 宝石A/B | 宝石 | 9/12 | 黑珍珠/白玉/黄玉/绿玉/青玉原石 |
 | 水石A/B/C/D | 水石 | 6/9/9/6 | 各类水石原石 |
 | 生铁A/B | 铁矿石 | 9/12 | 千年衔铁/熔岩铁/玄铁/墨铁/钢铁/生铁 |
-| 草药A/B/C | 药草 | 9/12/待确认 | 各类药材 |
+| 草药A/B/C | 药草 | 9/12/9 | 各类药材 |
 
-A 类为高级矿点（PickConst=9，需 3 次命中产出一个矿石），B 类为普通矿点（PickConst=12，需 2 次命中产出一个矿石）。PickConst 值越小采集越慢。
+金属、岩石、宝石、生铁和草药的 A/B 配置分别使用 PickConst 9/12，即通常需 3/2 次命中产出一个物品；水石使用不同数值，应以上表为准。PickConst 值越小采集越慢。
 
 ## 相关源码
 

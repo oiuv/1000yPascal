@@ -184,7 +184,6 @@ Str := callfunc ('getsenderlife');
 // 职业相关
 Str := callfunc ('getsenderjobgrade');
 Str := callfunc ('getsenderjobkind');
-Str := callfunc ('getjobgrade');
 
 // 力量等级
 Str := callfunc ('getsendercurpowerlevel');
@@ -260,7 +259,6 @@ Str := callfunc ('getpossiblegrade 0 1');
 - `gethavegradequestitem` - 获取等级任务物品状态
 - `getintoarena` - 获取竞技场进入状态
 - `getintozhuang` - 获取山庄进入状态
-- `getjobgrade` - 获取职业等级
 - `getlife` - 获取生命值
 - `getmarryclothes` - 获取结婚服装信息
 - `getmarryinfo` - 获取结婚信息

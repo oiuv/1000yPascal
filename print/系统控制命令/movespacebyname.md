@@ -5,7 +5,7 @@
 
 ## 语法格式
 ```pascal
-print('movespacebyname <名称> <类型> <地图ID> <X坐标> <Y坐标> [附加参数]');
+print('movespacebyname <名称> <类型> <地图ID> <X坐标> <Y坐标>');
 ```
 
 ## 参数说明
@@ -16,7 +16,6 @@ print('movespacebyname <名称> <类型> <地图ID> <X坐标> <Y坐标> [附加�
 | 地图ID | Integer | 目标地图编号 |
 | X坐标 | Integer | 目标 X 坐标 |
 | Y坐标 | Integer | 目标 Y 坐标 |
-| 附加参数 | String | 可选的额外参数 |
 
 ## 源码实现
 基于 `uScriptManager.pas` 中的处理逻辑：
@@ -28,7 +27,7 @@ end else if cmd = 'movespacebyname' then begin
       TBasicObject (aSelf).SMoveSpaceByName (Params, Params [0], Params [1], 1);
 ```
 
-注意原始代码中有一段被注释掉的旧实现，当前实现将 `Params[0]`（名称）和 `Params[1]`（类型）传递给 `SMoveSpaceByName`。
+注意原始代码中有一段被注释掉的旧实现。当前命令只把前五个参数打包为名称、类型、地图、X、Y，并以固定延迟 1 调用 `SMoveSpaceByName`；第五个参数之后的内容不会参与传送逻辑。
 
 ## 使用示例
 
@@ -47,14 +46,15 @@ if rInt = 2 then begin
 end;
 ```
 
-### 玩家传送到指定NPC位置
+### 玩家传送到固定坐标
 ```pascal
-// 来自 太极公子.txt - 将玩家传送到NPC附近
+// 将发送者传送到地图 1 的 (165, 775)
 Name := callfunc ('getsendername');
-Str := 'movespacebyname ' + Name;
-Str := Str + ' user 1 165 775 密室太极老人 npc 300';
+Str := 'movespacebyname ' + Name + ' user 1 165 775';
 print (Str);
 ```
+
+部分旧脚本会在坐标后附加 NPC 名称、类型和数字；当前实现会忽略这些额外内容，不能据此实现“传送到指定 NPC”。
 
 ## 注意事项
 

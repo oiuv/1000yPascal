@@ -11,7 +11,7 @@ Str := callfunc('getsenderjobgrade');
 无参数。
 
 ## 返回值
-返回字符串，为玩家职业等级的整数形式。等级 `'6'` 通常为最高等级。
+返回字符串，为玩家职业等级的整数形式。
 
 ## 源码实现
 ```pascal
@@ -44,9 +44,8 @@ Name := callfunc ('getsenderjobgrade');
 ## 注意事项
 1. 职业等级与职业类型（`getsenderjobkind`）配合使用
 2. 通常用于判断玩家是否达到某个职业阶段
-3. 等级 `'6'` 一般表示已达最高等级，某些 NPC 会拒绝为满级玩家提供服务
 
 ## 相关函数
 - `getsenderjobkind` — 获取玩家职业类型
 - `getsendertalent` — 获取玩家天赋值
-- `getjobgrade` — 获取对象（自身）职业等级
+- `getjobgrade` — 未实现的历史名称，不应使用

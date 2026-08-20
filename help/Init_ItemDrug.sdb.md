@@ -17,11 +17,11 @@ CSV 格式，逗号分隔，首行为列名。
 | 列名 | 类型 | 说明 | 源码依据 |
 |------|------|------|----------|
 | Name | String | 药品名称（主键） | `StrPCopy (@pd^.rName, DB.GetFieldValueString (iName, 'Name'))` |
-| Type | Integer | 药品类型。0=普通药品（直接加固定值），1=百分比药品（按当前属性百分比计算），2=特殊药品（百分比加属性并附加固定加成） | `pd^.rType := DB.GetFieldValueInteger (iName, 'Type')` |
+| Type | Integer | 药品类型。0=固定值恢复，1=按属性上限百分比恢复，2=有持续时间的临时属性加成 | `pd^.rType := DB.GetFieldValueInteger (iName, 'Type')` |
 | UseInterval | Integer | 使用间隔（单位：10ms tick，即值 100 = 1 秒）。源码中已加载但服务端未实际使用此字段做时间判定 | `pd^.rUseInterval := DB.GetFieldValueInteger (iName, 'UseInterval')` |
-| UseCount | Integer | 可使用次数（次数用完后药品效果消失） | `pd^.rUseCount := DB.GetFieldValueInteger (iName, 'UseCount')` |
+| UseCount | Integer | 效果执行次数。服务端每秒执行一次 Type 0/1/2 分支并增加 `rUsedCount`，达到此值后清空药品效果槽 | `pd^.rUseCount := DB.GetFieldValueInteger (iName, 'UseCount')` |
 | StillInterval | Integer | 药效持续时间（单位：10ms tick，即值 120000 = 20 分钟），仅 Type=2 的药品使用。药效到期判定：`CurTick >= DrugUseTick + DrugInterval` | `pd^.rStillInterval := DB.GetFieldValueInteger (iName, 'StillInterval')` |
-| eEnergy | Integer | 元气增加量。Type≠0 时乘以系数（如 10/10），Type=0 时直接取值 | `pd^.rEventEnergy := Db.GetFieldValueinteger (iName, 'eEnergy') * ITEMDRUG_MUL_EVENTENERGY div ITEMDRUG_DIV_VALUE` |
+| eEnergy | Integer | 元气效果值。Type 0 加载时应用下方倍率，Type 1/2 直接读取原值；具体用法还取决于类型分支 | `svClass.pas` 第 6686-6703 行 |
 | eInPower | Integer | 内功增加量 | `pd^.rEventInPower := Db.GetFieldValueinteger (iName, 'eInPower') * ITEMDRUG_MUL_EVENTINPOWER div ITEMDRUG_DIV_VALUE` |
 | eOutPower | Integer | 外力增加量 | `pd^.rEventOutPower := Db.GetFieldValueinteger (iName, 'eOutPower') * ITEMDRUG_MUL_EVENTOUTPOWER div ITEMDRUG_DIV_VALUE` |
 | eMagic | Integer | 法力增加量 | `pd^.rEventMagic := Db.GetFieldValueinteger (iName, 'eMagic') * ITEMDRUG_MUL_EVENTMAGIC div ITEMDRUG_DIV_VALUE` |
@@ -46,9 +46,11 @@ CSV 格式，逗号分隔，首行为列名。
 
 ### 药品类型说明
 
-- **Type 0**（普通药品）：服药后直接按固定值恢复属性，每次使用消耗一次 UseCount
-- **Type 1**（百分比药品）：按当前属性的百分比计算恢复量，公式为 `当前属性 × 效果值 / 100 / UseCount`
-- **Type 2**（特殊药品）：具有持续时间的药品，在 StillInterval tick 内持续生效（1 tick = 10ms，如 120000 = 20 分钟）。药效每秒检查一次（`CurTick > CheckDrugTick + 100`），到期后清除所有加成属性
+- **Type 0**（固定值恢复）：每秒把加载后的效果值加到当前属性，最多不超过属性上限。Type 0 加载时会应用下方倍率，其中活力及部位活力倍率为 `15/10`。
+- **Type 1**（百分比恢复）：每秒按属性**上限**计算恢复量，公式为 `属性上限 × 效果值 / 100 / UseCount`。源码的外功计算实际沿用了 `InPower` 和 `eInPower`，文档按当前代码记录此行为，不推断其设计意图。
+- **Type 2**（临时属性加成）：把内功、外功、武功、活力及攻防等字段写入临时加成结构，并在 `StillInterval` 到期后统一清除。时间单位为 10ms tick，例如 120000 为 20 分钟。
+
+所有类型的效果槽每 100 tick（约 1 秒）处理一次；`UseCount` 控制处理次数，不表示物品可被玩家重复服用的次数。
 
 ### 常量定义
 
