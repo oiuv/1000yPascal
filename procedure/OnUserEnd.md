@@ -12,7 +12,13 @@ procedure OnUserEnd (aStr : String);
 
 ## 触发条件
 
-玩家离开游戏世界时触发。此事件**仅在系统脚本 `System.txt` 中有效**，由引擎通过 `CheckScriptEvent` 注册并调用。每个玩家退出游戏（断开连接）时都会触发一次，可用于清理数据、记录日志、发送告别消息等全局逻辑。
+> ⚠️ **预留事件，当前版本未启用**
+>
+> 源码中 `SOnUserEnd` 仅在 `BasicObj.pas` 第 2890 行通过 `CheckScriptEvent` 注册了事件槽位，但整个代码库中**不存在** `CallEvent(... SOnUserEnd ...)` 的调用。此事件在当前版本中**不会被触发**。
+>
+> 作为对比，配对的 `OnUserStart` 事件在 `UUser.pas` 第 4907 行有实际的 `CallEvent` 调用。
+
+~~玩家离开游戏世界时触发。~~ 此事件已注册但无触发调用点，为预留事件。
 
 ## 适用对象
 

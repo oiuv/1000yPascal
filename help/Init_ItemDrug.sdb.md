@@ -18,9 +18,9 @@ CSV 格式，逗号分隔，首行为列名。
 |------|------|------|----------|
 | Name | String | 药品名称（主键） | `StrPCopy (@pd^.rName, DB.GetFieldValueString (iName, 'Name'))` |
 | Type | Integer | 药品类型。0=普通药品（直接加固定值），1=百分比药品（按当前属性百分比计算），2=特殊药品（百分比加属性并附加固定加成） | `pd^.rType := DB.GetFieldValueInteger (iName, 'Type')` |
-| UseInterval | Integer | 使用间隔（毫秒） | `pd^.rUseInterval := DB.GetFieldValueInteger (iName, 'UseInterval')` |
+| UseInterval | Integer | 使用间隔（单位：10ms tick，即值 100 = 1 秒）。源码中已加载但服务端未实际使用此字段做时间判定 | `pd^.rUseInterval := DB.GetFieldValueInteger (iName, 'UseInterval')` |
 | UseCount | Integer | 可使用次数（次数用完后药品效果消失） | `pd^.rUseCount := DB.GetFieldValueInteger (iName, 'UseCount')` |
-| StillInterval | Integer | 药效持续时间（毫秒），仅 Type=2 的药品使用 | `pd^.rStillInterval := DB.GetFieldValueInteger (iName, 'StillInterval')` |
+| StillInterval | Integer | 药效持续时间（单位：10ms tick，即值 120000 = 20 分钟），仅 Type=2 的药品使用。药效到期判定：`CurTick >= DrugUseTick + DrugInterval` | `pd^.rStillInterval := DB.GetFieldValueInteger (iName, 'StillInterval')` |
 | eEnergy | Integer | 元气增加量。Type≠0 时乘以系数（如 10/10），Type=0 时直接取值 | `pd^.rEventEnergy := Db.GetFieldValueinteger (iName, 'eEnergy') * ITEMDRUG_MUL_EVENTENERGY div ITEMDRUG_DIV_VALUE` |
 | eInPower | Integer | 内功增加量 | `pd^.rEventInPower := Db.GetFieldValueinteger (iName, 'eInPower') * ITEMDRUG_MUL_EVENTINPOWER div ITEMDRUG_DIV_VALUE` |
 | eOutPower | Integer | 外力增加量 | `pd^.rEventOutPower := Db.GetFieldValueinteger (iName, 'eOutPower') * ITEMDRUG_MUL_EVENTOUTPOWER div ITEMDRUG_DIV_VALUE` |
@@ -48,7 +48,7 @@ CSV 格式，逗号分隔，首行为列名。
 
 - **Type 0**（普通药品）：服药后直接按固定值恢复属性，每次使用消耗一次 UseCount
 - **Type 1**（百分比药品）：按当前属性的百分比计算恢复量，公式为 `当前属性 × 效果值 / 100 / UseCount`
-- **Type 2**（特殊药品）：具有持续时间的药品，在 StillInterval 毫秒内持续生效
+- **Type 2**（特殊药品）：具有持续时间的药品，在 StillInterval tick 内持续生效（1 tick = 10ms，如 120000 = 20 分钟）。药效每秒检查一次（`CurTick > CheckDrugTick + 100`），到期后清除所有加成属性
 
 ### 常量定义
 
@@ -72,8 +72,8 @@ ITEMDRUG_MUL_EVENTLEGLIFE  = 15;
 | 仙豆一 | 0 | 高级恢复药品 |
 | 承气汤 | 0 | 大量恢复元气（eEnergy=700） |
 | 青盐精 | 1 | 百分比药品，恢复各属性50% |
-| 阴阳丹 | 2 | 持续型药品，持续120秒 |
-| 千年山参 | 2 | 最高级药品，全属性大幅提升 |
+| 阴阳丹 | 2 | 持续型药品，StillInterval=120000（20 分钟） |
+| 千年山参 | 2 | 最高级药品，StillInterval=180000（30 分钟），全属性大幅提升 |
 
 ## 相关源码
 

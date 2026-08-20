@@ -16,9 +16,15 @@ procedure OnDestroy (aStr : String);
 
 ## 触发条件
 
-对象收到 `FM_BEFOREDESTROY` 消息时触发，在对象被从地图移除之前调用。
+> ⚠️ **当前版本未启用**
+>
+> `FM_BEFOREDESTROY` 消息的发送代码在 `fieldmsg.pas` 第 284 行已被注释：
+> ```pascal
+> // SendMessage (hfu, FM_BEFOREDESTROY, SenderInfo, aSubData);
+> ```
+> 虽然 `BasicObj.pas` 第 1638-1645 行保留了消息处理分支，但由于消息从未被发出，此事件在当前版本中**不会被触发**。
 
-> 源码: `BasicObj.pas` 第 1640-1643 行
+对象收到 `FM_BEFOREDESTROY` 消息时触发，在对象被从地图移除之前调用。
 
 ## 适用对象
 

@@ -13,7 +13,7 @@ procedure OnCreate (aStr : String);
 | aStr | String | 空字符串，无附加信息 |
 
 ## 触发条件
-当游戏对象（NPC、Monster、DynamicObject）被创建并放入地图后，引擎向该对象发送 `FM_AFTERCREATE` 消息时触发。此事件在对象生命周期中只触发一次，适合用于：
+当游戏对象（NPC、Monster、DynamicObject）被创建并放入地图后，引擎通过 `TFieldPhone.SendMessage` 向邻域对象广播 `FM_AFTERCREATE` 消息时触发（`fieldmsg.pas` 第 307 行，在处理 `FM_CREATE` 后自动向周围对象发送）。此事件在对象生命周期中只触发一次，适合用于：
 - 向进入视野的玩家弹出对话窗口
 - 初始化对象的状态变量
 - 设置对象的初始行为

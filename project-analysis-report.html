@@ -97,7 +97,7 @@ code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9
       ┌────────────┘     │     │     └────────────┐
       ▼                  ▼     ▼                  ▼
 ┌───────────┐  ┌──────────┐ ┌──────────┐ ┌───────────────┐
-│Login(3050)│  │ DB(3051) │ │Game(3052)│ │ Paid (3049)   │
+│Login(3050)│  │ DB(3051) │ │Game(3052)│ │ Paid (5999)   │
 │ 登录认证   │  │ 数据持久化│ │ 游戏逻辑  │ │ 付费验证      │
 └───────────┘  └──────────┘ └──────────┘ └───────────────┘
                                     │
@@ -373,7 +373,7 @@ code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9
 <tr><td><span class="tag tag-orange">网关代理</span></td><td>gate_proxy.py</td><td>版本号转换 + IP白名单 + 实时解密显示</td></tr>
 <tr><td><span class="tag tag-orange">数据工具</span></td><td>fdb_reader.py</td><td>FDB 数据库文件读取/JSON 导出</td></tr>
 <tr><td><span class="tag tag-blue">日志服务</span></td><td>udp_logger/*.py (6个)</td><td>物品/鼠标/监控/付费/连线/对象 — UDP日志接收</td></tr>
-<tr><td><span class="tag tag-blue">分析工具</span></td><td>udp_logger/*_analyzer.py (4个)</td><td>物品/鼠标/对象/付费日志分析</td></tr>
+<tr><td><span class="tag tag-blue">分析工具</span></td><td>udp_logger/analyzers/*.py (4个)</td><td>物品/鼠标/对象/付费日志分析</td></tr>
 </table>
 </div>
 
@@ -396,7 +396,7 @@ code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9
 <table>
 <tr><th>机制</th><th>实现方式</th><th>风险</th></tr>
 <tr><td>网络加密</td><td>自定义类Base64 (LCG随机种子=1 + Fisher-Yates洗牌)</td><td><span class="risk-med">⚠️ 中</span> — 随机种子为常量，加密表可还原</td></tr>
-<tr><td>服务器授权</td><td>SHA1+AES 硬件指纹授权码，注册表存储</td><td><span class="risk-low">✅ 基本有效</span></td></tr>
+<tr><td>服务器授权</td><td>SHA1+AES 硬件指纹授权码，注册表存储（Game/DB 授权判断已注释，仅 Balance 生效）</td><td><span class="risk-med">⚠️ 部分有效</span></td></tr>
 <tr><td>IP 白名单</td><td>IPList.txt 文件加载</td><td><span class="risk-med">⚠️ 中</span> — 文件缺失时放行所有连接</td></tr>
 <tr><td>包频率限制</td><td>滑动窗口，每秒≤10包</td><td><span class="risk-low">✅ 有效</span></td></tr>
 <tr><td>数据完整性</td><td>CRC32 校验 (TDBRecord.CRCKey)</td><td><span class="risk-low">✅ 基本有效</span></td></tr>

@@ -1,7 +1,11 @@
 # changequeststr
 
+> ⚠️ **此命令不存在**
+>
+> `changequeststr` 在 `uScriptManager.pas` 的 `CommandScript` 方法中没有对应的处理分支，源码中不存在此命令。任务字符串相关操作仅有 `changesenderqueststr`（作用于 `aSender`，即玩家）。
+
 ## 功能描述
-改变自身的任务字符串参数。与 `changesenderqueststr` 不同，此命令修改的是脚本对象自身的任务字符串。
+~~改变自身的任务字符串参数。~~ 此命令未实现。与 `changesenderqueststr` 不同，`changequeststr` 预期修改脚本对象自身的任务字符串，但源码中缺少对应处理。
 
 ## 语法格式
 ```pascal

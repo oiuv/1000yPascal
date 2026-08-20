@@ -44,8 +44,8 @@
 |--------|---:|------|
 | `HAVEBASICMAGICSIZE` | 20 | 基本武功最大数量 |
 | `HAVEMAGICSIZE` | 30 | 普通武功最大数量 |
-| `HAVEMAGICRISESIZE` | 30 | 上升武功最大数量 |
-| `HAVEMYSTERYMAGICSIZE` | 30 | 酒浆法武功最大数量 |
+| `HAVEMAGICRISESIZE` | 30 | 上层武功最大数量 |
+| `HAVEMYSTERYMAGICSIZE` | 30 | 掌法武功最大数量 |
 | `HAVEBESTSPECIALMAGICSIZE` | 15 | 绝世超式武功最大数量 |
 | `HAVEBESTPROTECTMAGICSIZE` | 5 | 绝世公力武功最大数量 |
 | `HAVEBESTATTACKMAGICSIZE` | 5 | 绝世必杀武功最大数量 |
@@ -78,7 +78,7 @@
 | `USERMANAGERPOST` | 1000 | 用户管理器端口偏移 |
 | `FIELDPOST` | 100 | 场景端口偏移 |
 | `MAXCONDITIONCOUNT` | 3 | 最大条件计数 |
-| `SAVE_USERDATA_DELAY_TIME` | 75000 | 用户数据保存延迟（5×60×100 = 5分钟，单位10ms） |
+| `SAVE_USERDATA_DELAY_TIME` | 30000 | 用户数据保存延迟（5×60×100 = 5分钟，单位10ms） |
 
 ---
 

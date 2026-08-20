@@ -199,8 +199,8 @@ Server Message — 服务端发送给客户端的消息。
 | `SM_BASICMAGIC` | 34 | 基础武功 |
 | `SM_SAYUSEMAGIC` | 36 | 使用武功说话 |
 | `SM_BOSHIFTATTACK` | 37 | BOSS偏移攻击 |
-| `SM_HAVERISEMAGIC` | 61 | 持有上升武功 |
-| `SM_HAVEMYSTERY` | 76 | 持有酒浆法 |
+| `SM_HAVERISEMAGIC` | 61 | 持有上层武功 |
+| `SM_HAVEMYSTERY` | 76 | 持有掌法 |
 | `SM_HAVEBESTMAGIC` | 86 | 持有绝世武功 |
 | `SM_SHOWBESTATTACKMAGICWINDOW` | 88 | 显示绝世必杀窗口 |
 | `SM_SHOWBESTPROTECTMAGICWINDOW` | 89 | 显示绝世公力窗口 |

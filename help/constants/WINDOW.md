@@ -25,7 +25,7 @@
 | `WINDOW_GUILDWAR1` | 12 | 门派战1 | 门派大战窗口1 |
 | `WINDOW_GUILDWAR2` | 13 | 门派战2 | 门派大战窗口2 |
 | `WINDOW_GUILDMAGIC` | 14 | 门派武功 | 门派武功窗口 |
-| `WINDOW_RISEMAGICS` | 15 | 上升武功 | 浪人武功窗口 |
+| `WINDOW_RISEMAGICS` | 15 | 上层武功 | 上层武功窗口 |
 | `WINDOW_POWERLEVEL` | 16 | 元气等级 | 元气阶段窗口 |
 | `WINDOW_HELP` | 17 | 帮助 | F1帮助/任务窗口 |
 | `WINDOW_TRADE` | 18 | 买卖 | NPC 交易窗口 |
@@ -34,7 +34,7 @@
 | `WINDOW_ROOMWINDOW` | 21 | 房间 | 房间窗口（对战服务器用） |
 | `WINDOW_GRADEWINDOW` | 22 | 品级 | 品级窗口（对战服务器用） |
 | `WINDOW_SALE` | 23 | 商店买卖 | NPC 商店买卖窗口 |
-| `WINDOW_MYSTERYMAGICS` | 24 | 酒浆法 | 酒术/妖术窗口（2002-11-07） |
+| `WINDOW_MYSTERYMAGICS` | 24 | 掌法 | 掌法窗口（2002-11-07） |
 | `WINDOW_MARKET` | 25 | 个人销售 | 玩家摆摊销售窗口 |
 | `WINDOW_INDIVIDUALMARKET` | 26 | 个人购买 | 购买其他玩家摆摊物品窗口 |
 | `WINDOW_BESTMAGIC` | 28 | 绝世武功 | 绝世武功窗口 |

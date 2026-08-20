@@ -10,9 +10,9 @@
 
 | 常量名 | 值 | 中文说明 | 详细说明 |
 |--------|---:|----------|----------|
-| `MAGICCLASS_MAGIC` | 0 | 基本武功 | 基础武学（拳法/剑法/刀法/枪法/槌法/弓术/投掷/轻功/呼吸/护身） |
-| `MAGICCLASS_RISEMAGIC` | 1 | 上升武功 | 浪人系列高级武学（上层武功） |
-| `MAGICCLASS_MYSTERY` | 2 | 酒浆法 | 酒术/妖术（2002-11-12 新增） |
+| `MAGICCLASS_MAGIC` | 0 | 基本武功 | 一级武功（拳法/剑法/刀法/枪法/槌法/弓术/投掷/轻功/呼吸/护身） |
+| `MAGICCLASS_RISEMAGIC` | 1 | 上层武功 | 二级武功，在基本武功基础上的更高境界 |
+| `MAGICCLASS_MYSTERY` | 2 | 掌法 | 掌法系统（2002-11-12 新增） |
 | `MAGICCLASS_BESTMAGIC` | 3 | 绝世武功 | 绝世武学（2003-09-18 新增），含公力/超式/必杀技 |
 
 ---
@@ -75,8 +75,8 @@
 |--------|---:|------|
 | `HAVEBASICMAGICSIZE` | 20 | 基本武功最大数量 |
 | `HAVEMAGICSIZE` | 30 | 普通武功最大数量 |
-| `HAVEMYSTERYMAGICSIZE` | 30 | 酒浆法武功最大数量 |
-| `HAVEMAGICRISEMAGICSIZE` | 30 | 上升武功最大数量 |
+| `HAVEMYSTERYMAGICSIZE` | 30 | 掌法武功最大数量 |
+| `HAVERISEMAGICSIZE` | 30 | 上层武功最大数量 |
 | `HAVEBESTSPECIALMAGICSIZE` | 15 | 绝世超式武功最大数量 |
 | `HAVEBESTPROTECTMAGICSIZE` | 5 | 绝世公力武功最大数量 |
 | `HAVEBESTATTACKMAGICSIZE` | 5 | 绝世必杀武功最大数量 |
@@ -90,7 +90,7 @@
 |--------|---:|------|
 | `TYPE_MAGICRELATION_NONE` | 0 | 独立 |
 | `TYPE_MAGICRELATION_BASIC` | 1 | 基本武功关系 |
-| `TYPE_MAGICRELATION_RISE` | 2 | 上升武功关系 |
+| `TYPE_MAGICRELATION_RISE` | 2 | 上层武功关系 |
 | `TYPE_MAGICRELATION_BESTPROTECT` | 3 | 绝世公力关系 |
 | `TYPE_MAGICRELATION_BESTATTACK` | 4 | 绝世必杀关系 |
 

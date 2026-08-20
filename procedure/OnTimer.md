@@ -14,14 +14,14 @@ procedure OnTimer (aStr : String);
 
 ## 触发条件
 
-- **BasicObject 级别**：每 100ms 触发一次，传递当前时间字符串，格式为 `"时 分 秒"`（如 `"14 30 25"`）
+- **BasicObject 级别**：每 1 秒触发一次，传递当前时间字符串，格式为 `"时 分 秒"`（如 `"14 30 25"`）
 - **Manager（地图脚本）级别**：每 60 秒触发一次，传递空字符串
 
 源码位置：`BasicObj.pas` 第 1739-1745 行
 
 ## 适用对象
 
-- DynamicObject（动态对象）— 每 100ms
+- DynamicObject（动态对象）— 每 1 秒
 - NPC / Monster
 - Map Script（地图脚本，通过 `ScriptMap.txt`）— 每 60 秒
 
@@ -75,7 +75,7 @@ end;
 
 ### 示例 3：定期检查物品刷新（狐狸洞.txt）
 
-利用 100ms 级别的定时触发，定期检查并刷新物品：
+利用 1 秒级别的定时触发，定期检查并刷新物品：
 
 ```pascal
 procedure OnTimer (aStr : String);

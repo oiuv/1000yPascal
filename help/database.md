@@ -122,8 +122,8 @@
 | 偏移 | 大小 | 字段名 | 类型 | 说明 |
 |------|------|--------|------|------|
 | 1850 | 720 | `HaveMagicArr` | `array[0..29] of TDBMagicData` | 持有武功（30×24 字节） |
-| 2570 | 720 | `HaveRiseMagicArr` | `array[0..29] of TDBMagicData` | 上升武功（30×24 字节） |
-| 3290 | 720 | `HaveMysteryArr` | `array[0..29] of TDBMagicData` | 酒掌法武功（30×24 字节） |
+| 2570 | 720 | `HaveRiseMagicArr` | `array[0..29] of TDBMagicData` | 上层武功（30×24 字节） |
+| 3290 | 720 | `HaveMysteryArr` | `array[0..29] of TDBMagicData` | 掌法武功（30×24 字节） |
 
 #### 绝世武功数组（偏移 4010–5134，共 1125 字节）
 
@@ -200,6 +200,8 @@
 
 ### 3.1 文件头 TDBHeader
 
+> 来源：`Common/uDBRecordDef.pas`（packed record）
+
 ```
 偏移  大小  字段             说明
 0     4    ID               固定为 'DBID'（4 字节）
@@ -207,12 +209,10 @@
 8     4    RecordDataSize   记录数据大小 = SizeOf(TDBRecord) - 1
 12    4    RecordFullSize   记录完整大小 = SizeOf(TDBRecord)
 16    1    boSavedIndex     是否已保存索引（Boolean）
-17    15   Dummy            保留（对齐到 4 字节边界）
+17    32   Dummy            保留空间（array[0..31] of byte）
 ```
 
-**文件头总大小：32 字节**（`packed record`，4+4+4+4+1+15 = 32）
-
-> 注：`db/uRecordDef.pas` 中的非 packed 版本 `TDBHeader` 的 `Dummy` 为 `array[0..31] of byte`（32 字节），总大小约 52 字节。实际 FDB 文件使用 `Common/uDBRecordDef.pas` 的 packed 版本。
+**文件头总大小：49 字节**（`packed record`，4+4+4+4+1+32 = 49）
 
 ### 3.2 索引头 TIndexHeader
 
@@ -231,39 +231,43 @@
 
 ```
 ┌─────────────────────────────────────────────┐
-│ TDBHeader (32 bytes)                        │
+│ TDBHeader (49 bytes)                        │
 ├─────────────────────────────────────────────┤
-│ Record 0 (RecordFullSize bytes)             │
-│ Record 1 (RecordFullSize bytes)             │
-│ Record 2 (RecordFullSize bytes)             │
+│ Slot 0: boUsed(1) + TDBRecord(5888) = 5889  │
+│ Slot 1: boUsed(1) + TDBRecord(5888) = 5889  │
+│ Slot 2: boUsed(1) + TDBRecord(5888) = 5889  │
 │ ...                                         │
-│ Record N-1 (RecordFullSize bytes)           │
+│ Slot N-1: boUsed(1) + TDBRecord(5888)       │
 └─────────────────────────────────────────────┘
 ```
 
-每个记录槽位固定为 `RecordFullSize` 字节。`boUsed` 字段（记录的第 1 个字节）标识该记录是否被使用：
+每个磁盘槽位由 `boUsed`（1 字节）+ `TDBRecord`（5888 字节）= **5889 字节**组成。
+
+`boUsed` 字段标识该记录是否被使用：
 - `boUsed = 1`：已分配，包含有效角色数据
 - `boUsed = 0`：空白槽位，可被新角色复用
+
+> 注：`boUsed` 是 `db/uRecordDef.pas` 中 DB 服务器端 `TDBRecord` 的第一个字段（`boUsed: byte`），后接与 `Common/uDBRecordDef.pas` 中 packed `TDBRecord` 对应的数据（5888 字节）。
 
 ### 3.4 多文件扩展策略
 
 - 文件命名：`{名称}{序号}.fdb`，如 `createdb00.fdb`、`createdb01.fdb`
 - 序号 < 10 时补零（`%s0%d%s`），≥ 10 不补零（`%s%d%s`）
-- 每个文件最大记录数：`1GB ÷ RecordFullSize`（约 173,400 条记录）
+- 每个文件最大记录数：`1GB ÷ 5889`（约 173,100 条记录）
 - 最多 64 个文件（`MAX_OPEN_FILE = 64`）
 - 当当前文件已满时，自动创建下一个文件
 
 ### 3.5 记录定位算法
 
 ```
-文件内偏移 = TDBHeader大小 + RecordNo × RecordFullSize
+文件内偏移 = 49(TDBHeader) + RecordNo × 5889(boUsed + TDBRecord)
 ```
 
 查找流程：
 1. 通过 `TIndexClass` 的**二分查找**在内存索引中定位角色名 → 得到 `(FileNo, RecordNo)`
 2. 选择对应的文件流 `DBStream[FileNo]`
-3. `Seek(Header大小 + RecordNo × RecordFullSize)`
-4. 读取/写入 `SizeOf(TDBRecord)` 字节
+3. `Seek(49 + RecordNo × 5889)`
+4. 读取/写入记录数据（boUsed + TDBRecord）
 
 索引在启动时从所有 FDB 文件扫描构建，按角色名排序后使用二分查找（`O(log n)`）。
 
@@ -292,9 +296,10 @@
 - 来源：`Common/uCookie.pas` 中的 `oz_CRC32` 函数
 - 计算范围：`TDBRecord` 的前 `SizeOf(TDBRecord) - 4` 字节（即除 `CRCKey` 字段外的所有数据）
 - 存储位置：`TDBRecord.CRCKey`（最后 4 字节，`Cardinal` 类型）
-- 计算时机：每次写入 FDB 前计算并填入
+- 计算时机：**仅在 `DB_UPDATE_END` 时重算 CRC**，普通的 `DB_UPDATE` 不计算 CRC（直接写入数据）
 
 ```pascal
+// db/uConnector.pas — DB_UPDATE_END 处理
 RecordData.CRCKey := oz_CRC32(@RecordData, SizeOf(RecordData) - 4);
 ```
 
@@ -441,7 +446,7 @@ end;
 
 角色数据在以下时机保存：
 
-1. **定期自动保存**：游戏服务器每 **5 分钟**（`SAVE_USERDATA_DELAY_TIME = 5 * 60 * 100`，单位为 10ms tick）自动保存所有在线角色数据
+1. **定期自动保存**：游戏服务器每 **10 分钟**（实际代码使用 `10 * 60 * 100`，单位为 10ms tick）自动保存所有在线角色数据
 
    ```pascal
    // gameserver-tgs1000/UUser.pas
@@ -483,14 +488,15 @@ end;
 游戏服务器                         DB 服务器
     │                                 │
     ├── 收集 CharData ──────────────→ │
-    │                                 ├── 计算 CRC32
+    │                                 ├── DB_UPDATE: 直接写入数据（不计算 CRC）
+    │                                 ├── DB_UPDATE_END: 计算 CRC32
     │                                 │   CRCKey = oz_CRC32(@RecordData, SizeOf - 4)
     │                                 ├── 写入 TDBRecord
     │                                 ├── Seek 到记录位置
     │                                 └── WriteBuffer(RecordData)
 ```
 
-CRC 计算在 DB 服务器的 `uConnector.pas`、`uSRemoteConnector.pas`、`uCRemoteConnector.pas` 中执行，覆盖记录除最后 4 字节（`CRCKey` 本身）外的所有数据。
+CRC 计算在 DB 服务器的 `uConnector.pas`、`uSRemoteConnector.pas`、`uCRemoteConnector.pas` 中执行，仅在 `DB_UPDATE_END` 时计算，覆盖记录除最后 4 字节（`CRCKey` 本身）外的所有数据。
 
 ### 6.4 DB 服务器写入流程
 
@@ -498,8 +504,8 @@ CRC 计算在 DB 服务器的 `uConnector.pas`、`uSRemoteConnector.pas`、`uCRe
 1. 接收游戏服务器发来的保存请求
 2. 通过 IndexClass 二分查找角色名 → (FileNo, RecordNo)
 3. 填充 TDBRecord 数据
-4. 计算 CRC32 校验值 → 写入 CRCKey 字段
-5. DBStream[FileNo].Seek(Header大小 + RecordNo × RecordFullSize)
+4. DB_UPDATE_END 时计算 CRC32 校验值 → 写入 CRCKey 字段
+5. DBStream[FileNo].Seek(49 + RecordNo × 5889)
 6. DBStream[FileNo].WriteBuffer(RecordData, SizeOf(TDBRecord))
 ```
 

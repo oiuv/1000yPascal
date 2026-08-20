@@ -22,9 +22,9 @@ procedure OnHide (aStr : String);
 
 ## 状态
 
-预留事件，不可用。与 [OnShow](OnShow.md) 配对，但两者均未在运行时被触发。
+预留事件，不可用。与 [OnShow](OnShow.md) 配对，但 OnShow 已在 `uNpc.pas` 第 471-472 行通过 `FM_SHOW` 消息实际触发（当邻域对象从隐藏变为可见时），OnHide 则仍无触发点。
 
 ## 相关事件
 
-- [OnShow](OnShow.md) — 对象变为可见时触发（同样为预留状态）
+- [OnShow](OnShow.md) — 对象变为可见时触发（NPC 类已实现，通过 FM_SHOW 消息调用）
 - [OnChangeState](OnChangeState.md) — 对象状态变化时触发（可用）

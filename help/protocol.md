@@ -70,7 +70,7 @@ end;
 └──────────────┴───────────┴────────────┴────────────┴──────────┘
 ```
 
-**注意**: 服务间内部通信（如 Gate→Game、Gate→DB）通常不加密，客户端连接通常启用加密。
+**注意**: 服务间内部通信中，仅 Gate→Game 不加密，Gate↔DB、Gate↔Login、Gate↔Paid 均启用加密。客户端连接通常启用加密。
 
 ---
 
@@ -561,9 +561,10 @@ Gate
 |---------|------|------|
 | 客户端 ↔ Balance | ✓ | 使用加密 |
 | 客户端 ↔ Gate | ✓ | 使用加密 |
-| Gate ↔ Game | ✗ | 通常不加密 |
-| Gate ↔ DB | ✗ | 通常不加密 |
-| Gate ↔ Login | ✗ | 通常不加密 |
+| Gate ↔ Game | ✗ | 不加密 |
+| Gate ↔ DB | ✓ | 使用加密 |
+| Gate ↔ Login | ✓ | 使用加密 |
+| Gate ↔ Paid | ✓ | 使用加密 |
 
 **加密判断**:
 ```pascal
@@ -575,7 +576,7 @@ end;
 ```
 
 - 客户端连接: `aboUseCrypt = true`
-- 服务端连接: `aboUseCrypt = false`
+- 服务端连接: 视具体连接而定（Gate→Game 不加密，Gate→DB/Login/Paid 加密）
 
 ### 4.4 缓冲区管理
 
@@ -691,11 +692,11 @@ end;
 Gate 定期向 Balance 的 UDP 3030 端口发送状态信息：
 
 ```
-格式: rMsg(Byte) + rIpAddr(19字节) + rPort(Integer) + rUserCount(Integer)
+格式: rMsg(Byte) + rIpAddr(20字节) + rPort(Integer) + rUserCount(Integer)
 
 字段说明:
-- rMsg: 消息类型（1=连接, 2=断开, 3=保存并关闭）
-- rIpAddr: 网关IP地址（19字节，GBK编码）
+- rMsg: 消息类型（BM_GATEINFO = 0）
+- rIpAddr: 网关IP地址（20字节，GBK编码）
 - rPort: 网关端口（4字节，通常为3054）
 - rUserCount: 当前用户数（4字节）
 ```
@@ -781,36 +782,57 @@ Gate → Game
 
 **BALANCE.INI**:
 ```ini
+[BALANCE]
 TCPLOCALPORT=3053
 UDPLOCALPORT=3030
 ```
 
 **GATE.INI**:
 ```ini
+[GATE_SERVER]
+LOCALIP=127.0.0.1
 LOCALPORT=3054
+BALANCEIP=127.0.0.1
 BALANCEPORT=3030
 
-[GAME]
+[GAME_SERVER]
+REMOTEIP=127.0.0.1
 REMOTEPORT=3052
 
-[DB]
+[DB_SERVER]
+REMOTEIP=127.0.0.1
 REMOTEPORT=3051
 
-[LOGIN]
+[LOGIN_SERVER]
+REMOTEIP=127.0.0.1
 REMOTEPORT=3050
 
-[PAID]
+[PAID_SERVER]
+REMOTEIP=127.0.0.1
 REMOTEPORT=5999
+LOCALPORT=5998
 ```
 
 **DB.INI**:
 ```ini
-LOCALPORT=3051
+[DB_SERVER]
+FileName=TESTDB.FDB
+BufferSizeS2S=1048576
+GateAcceptPort=3051
+RemotePort=1024
+ItemRemotePort=1020
 ```
 
 **login.ini**:
 ```ini
-LOCALPORT=3050
+[ODBC]
+DSN=account1000y
+UserName=sa
+Password=sa
+
+[SERVER]
+CLIENTACCEPTPORT=3050
+REMOTEACCEPTPORT=1021
 ```
 
 ---
@@ -945,8 +967,8 @@ Data: 方向(2字节) + X坐标(2字节) + Y坐标(2字节)
 
 - [消息类型常量](constants/MESSAGES.md) — 完整的 SM_*/CM_*/FM_* 常量列表
 - [数据结构定义](deftype.pas) — deftype.pas 的详细文档
-- [Balance 服务](../python_services/balance/README.md) — 负载均衡服务说明
-- [Gate 服务](../python_services/gate/README.md) — 网关服务说明
+- [Balance 服务](../../python_services/balance/README.md) — 负载均衡服务说明
+- [Gate 服务](../../python_services/gate/README.md) — 网关服务说明
 
 ---
 
