@@ -1,21 +1,21 @@
-## BattleMapËµÃ÷
+## BattleMapè¯´æ˜
 
-Íæ¼Ò×é¶Ó¶ÔÕ½£¬Ã¿¸öµØÍ¼ĞèÒªÅäÖÃ2¶ÓÊı¾İ¡£
+ç©å®¶ç»„é˜Ÿå¯¹æˆ˜ï¼Œæ¯ä¸ªåœ°å›¾éœ€è¦é…ç½®2é˜Ÿæ•°æ®ã€‚
 
-## EventItemËµÃ÷
+## EventItemè¯´æ˜
 
 ```pascal
-// 2~8 ÎªQuestNoticeÄ¿Â¼ÖĞµÄÎïÆ·
+// 2~8 ä¸ºQuestNoticeç›®å½•ä¸­çš„ç‰©å“
 Name := callfunc ('getrandomitem 0');
 Name := callfunc ('getrandomitem 1');
 ```
 
-- RandomEventItem0: ÖĞÑë±ÈÎäÀÏÈË¸ß¼¶¶Ò»»½±Àø|¸ß¼¶±¦Ïä|ÀñºĞ
-- RandomEventItem1: Ï¬Å£ÁÔÈË¶Ò»»
+- RandomEventItem0: ä¸­å¤®æ¯”æ­¦è€äººé«˜çº§å…‘æ¢å¥–åŠ±|é«˜çº§å®ç®±|ç¤¼ç›’
+- RandomEventItem1: çŠ€ç‰›çŒäººå…‘æ¢
 
-´ÓÔ´Âë¿´£¬¿ÉÒÔÓĞRandomEventItem0µ½RandomEventItem3£¬¹²4¸öÎÄ¼ş(ÉñÎäÉúĞ§0ºÍ1)¡£ÁíÍâ£¬Èç¹ûItemµÄkindÖµÎª55£¬Ë«»÷¿ÉµôÂäRandomEventItem0.sdbÖĞµÄÎïÆ·¡£
+ä»æºç çœ‹ï¼Œå¯ä»¥æœ‰RandomEventItem0åˆ°RandomEventItem3ï¼Œå…±4ä¸ªæ–‡ä»¶(ç¥æ­¦ç”Ÿæ•ˆ0å’Œ1)ã€‚å¦å¤–ï¼Œå¦‚æœItemçš„kindå€¼ä¸º55ï¼ŒåŒå‡»å¯æ‰è½RandomEventItem0.sdbä¸­çš„ç‰©å“ã€‚
 
-### Ïà¹ØÔ´Âë
+### ç›¸å…³æºç 
 
 ```pascal
 

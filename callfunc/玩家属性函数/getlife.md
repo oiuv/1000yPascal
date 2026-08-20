@@ -1,53 +1,33 @@
 # getlife
 
-获取当前脚本关联对象（自身）的生命值。注意：此函数操作的是 `FSelf`（脚本关联的对象，如怪物、NPC），而非触发事件的玩家。
+## 功能
+
+取得当前脚本关联对象 `FSelf` 的生命值，并以十进制字符串返回。
 
 ## 语法
+
 ```pascal
 Str := callfunc('getlife');
+Life := StrToInt(Str);
 ```
 
-## 参数
-无参数。
+无参数。入口调用：
 
-## 返回值
-返回字符串，为对象当前生命值的整数形式。
-
-## 源码实现
 ```pascal
 Result := IntToStr(TBasicObject(FSelf).SGetLife);
 ```
-基于 `FSelf`（脚本关联的对象本身）调用 `SGetLife`。
 
-## 示例
+## 对象类型差异
 
-### 霸王石中的生命值监控
-基于 `霸王石.txt`：
-```pascal
-var
-   Str : String;
-   Life : Integer;
-begin
-   if n = 1 then exit;
+`SGetLife` 是虚方法，返回值由 `FSelf` 的实际类型决定：
 
-   Str := callfunc ('getlife');
-   Life := StrToInt (Str);
+- `TBasicObject.SGetLife` 的基础实现固定返回 `0`。
+- `TDynamicObject.SGetLife` 返回 `CurLife`。
+- `TUser.SGetLife` 返回 `AttribClass.UserLife`。
 
-   if Life <= 50000 then begin
-      print ('boiceallbyname 地下石巨人 monster false');
-      print ('bohitallbyname 地下石巨人 monster true');
-      n := 1;
-      exit;
-   end;
-end;
-```
+当前 `TMonster` 和 `TNpc` 继承 `TLifeObject`，源码中没有覆盖 `SGetLife`，因此沿用基础实现返回 `0`。不能笼统地把本函数解释为“怪物或 NPC 当前生命值”。
 
-## 注意事项
-1. **重要区别**：`getlife` 获取的是脚本关联对象（FSelf）的生命值，通常是怪物或NPC自身；而 `getsenderlife` 获取的是触发事件的玩家的生命值
-2. 常用于怪物脚本中监控自身生命值，当生命值低于阈值时触发特殊行为（如召唤援军、进入狂暴状态等）
-3. 返回值需要 `StrToInt` 转换后才能进行数值比较
+## 与 getsenderlife 的区别
 
-## 相关函数
-- `getsenderlife` — 获取玩家当前活力值
-- `getmaxlife` — 获取对象最大生命值
-- `getsendermaxlife` — 获取玩家最大活力值
+- `getlife` 在 `FSelf` 上调用。
+- `getsenderlife` 在事件发送者 `FSender` 上调用。

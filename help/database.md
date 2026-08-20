@@ -361,12 +361,13 @@ TUserStringDB
 
 ### 4.4 SDB 在账号系统中的应用
 
-`loginsdb_biscuit/uDBAdapter.pas` 中的 `TSDBAdapter` 使用 `TUserStringDB` 存储账号数据。`Login.sdb` 的字段定义示例：
+`loginsdb_biscuit/uDBAdapter.pas` 中的 `TSDBAdapter` 使用 `TUserStringDB` 存储账号数据。随程序提供的 `bin/Data/Login.sdb` 实际表头为：
 
 ```
-PassWord,CharInfo0,CharInfo1,CharInfo2,CharInfo3,CharInfo4,IpAddr,UserName,Birth,Telephone,MakeDate,LastDate,Address,Email,NativeNumber,MasterKey,
-账号名,密码,角色1:服务器,角色2:服务器,...,IP,用户名,生日,电话,创建日期,最后登录,地址,邮件,身份证号,主密钥,
+PrimaryKey,Password,CharInfo0,CharInfo1,CharInfo2,CharInfo3,CharInfo4,IpAddr,UserName,Birth,Telephone,MakeDate,LastDate,Address,Email,NativeNumber,MasterKey,PtName,PtNativeNumber,
 ```
+
+`PrimaryKey` 是记录主键/账号名；`CharInfo0..4` 的值采用 `角色名:服务器名` 格式；`PtName`、`PtNativeNumber` 是当前文件保留的监护人字段。字段名和顺序必须以实际首行为准。
 
 ---
 
@@ -428,17 +429,19 @@ end;
 ### 5.3 登录验证流程
 
 ```
-客户端 → Balance(3053) → Gateway(3054) → Login(3050)
-                                            │
-                                            ├─ 1. 接收账号名 + 密码
-                                            ├─ 2. TDBAdapter.Select(account, @LGRecord)
-                                            │     └─ SQL: SELECT * FROM account1000y WHERE account = '...'
-                                            ├─ 3. 比对密码
-                                            ├─ 4. 检查角色列表（CharInfo[0..4]）
-                                            ├─ 5. 更新最后登录时间
-                                            │     └─ SQL: UPDATE account1000y SET lastdate = '...' WHERE account = '...'
-                                            └─ 6. 返回角色选择列表
+客户端 → Balance(3053) → Gateway(3054)
+                              │
+                              ├─ 1. Gate 接收 LoginID + LoginPW
+                              ├─ 2. Gate → Login：LG_SELECT，仅发送 PrimaryKey
+                              ├─ 3. Login 使用自身适配器查询 MSSQL 或 Login.sdb
+                              ├─ 4. Login → Gate：返回完整 TLGRecord
+                              ├─ 5. Gate 比对 PrimaryKey 和 PassWord
+                              ├─ 6. Gate → Login：LG_UPDATE，更新 IP/LastDate
+                              ├─ 7. Gate 向客户端发送 CharInfo[0..4]
+                              └─ 8. Gate 按配置向 Paid 校验账号付费状态
 ```
+
+角色数据 DB（3051）不参与账号密码查询；它在玩家选择角色后按角色名处理 `DB_SELECT`。
 
 ---
 

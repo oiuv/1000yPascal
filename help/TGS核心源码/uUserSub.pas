@@ -8562,13 +8562,13 @@ begin
 
    // add by Orber at 2004-10-07 08:40
    if (StrPas(@aHaveItemClass.HaveItemArr[0].rName) = Conv('æ≈◊™Ωµ§')) then begin
-        ExpMulti := 2;
+        ExpMulti := ExpMulti * 2;
    end;
 
    Result := AddPermitExp (pCurAttackMagic^.rcSkillLevel, pCurAttackMagic^.rSkillExp, aexp, aFlag);
 
    // add by Orber at 2004-10-07 08:40
-   ExpMulti := 1;
+   // ExpMulti := 1;
 
    if oldslevel <> pCurAttackMagic^.rcSkillLevel then begin
       if pCurAttackMagic^.rGuildMagicType = 0 then begin
@@ -11912,7 +11912,7 @@ begin
    for i := 0 to 4-1 do begin
       if HaveMaterialArr[i].rName[0] = 0 then continue;
       if HaveMaterialArr[i].rCount > 3 then begin
-         FSendClass.SendJobResult (false, IntToStr (FWorkSound), JOB_SOUND_FALSE, 'Event ¿Á∑·¥¬ √÷¥Î 5∞≥±Ó¡ˆ∏∏ ≥÷¿ªºˆ ¿÷Ω¿¥œ¥Ÿ');
+         FSendClass.SendJobResult (false, IntToStr (FWorkSound), JOB_SOUND_FALSE, 'Event≤ƒ¡œ◊Ó∂‡÷ªƒ‹∑≈÷√5∏ˆ');
          exit;
       end;
    end;
@@ -12038,21 +12038,21 @@ begin
    ClearMaterialData;
 
    if aItemName = '' then begin
-      FSendClass.SendJobResult (false, IntToStr (FWorkSound), JOB_SOUND_FALSE, '¥Ÿ¿Ω ±‚»∏∏¶..');
+      FSendClass.SendJobResult (false, IntToStr (FWorkSound), JOB_SOUND_FALSE, '√ª”–÷–Ω±..');
    end else begin
       ItemClass.GetItemData (aItemName, ItemData);
       if ItemData.rName[0] = 0 then begin
-         FSendClass.SendJobResult (false, IntToStr (FWorkSound), JOB_SOUND_FALSE, '¥Ÿ¿Ω ±‚»∏∏¶..');
+         FSendClass.SendJobResult (false, IntToStr (FWorkSound), JOB_SOUND_FALSE, '√ª”–÷–Ω±..');
          exit;
       end;
       
       ItemData.rCount := aItemCount;
 
-      FSendClass.SendJobResult (true, IntToStr (FWorkSound), JOB_SOUND_TRUE, 'Event æ∆¿Ã≈€ø° ¥Á√∑µ«æ˙Ω¿¥œ¥Ÿ');
+      FSendClass.SendJobResult (true, IntToStr (FWorkSound), JOB_SOUND_TRUE, 'ƒ˙÷–Ω±¡ÀEventŒÔ∆∑');
       HaveMaterialArr[PRODUCT_KEY] := ItemData;
       FSendClass.SendMaterialItem(PRODUCT_KEY, HaveMaterialArr[PRODUCT_KEY]);
 
-      Str := format ('%s¥‘¿Ã %s:%d Event ITEMø° ¥Á√∑µ«æ˙Ω¿¥œ¥Ÿ', [StrPas (@FBasicObject.BasicData.Name),aItemName,aItemCount]);
+      Str := format ('%sƒ˙÷–Ω±¡À %s:%d Event ITEM', [StrPas (@FBasicObject.BasicData.Name),aItemName,aItemCount]);
       SetWordString (SubData.SayString, Str);
       FBasicObject.SendLocalMessage (NOTARGETPHONE, FM_SAYSYSTEM, FBasicObject.BasicData, SubData);
 
@@ -12132,7 +12132,7 @@ begin
    if CheckDelAttribItem then begin
       ProcessDelAddAttribItem;
 
-      FSendClass.SendItemMoveInfo (StrPas (@FBasicObject.BasicData.Name) + ',' + Conv ('@º”º∫ƒ°√ ±‚»≠') + ','
+      FSendClass.SendItemMoveInfo (StrPas (@FBasicObject.BasicData.Name) + ',' + Conv ('@ Ù–‘÷µ≥ı ºªØ') + ','
          + StrPas(@HaveMaterialArr [PRODUCT_KEY].rName) + ':'
          + IntToStr (HaveMaterialArr [PRODUCT_KEY].rUpgrade) + ':'
          + IntToStr (HaveMaterialArr [PRODUCT_KEY].rAddType) + ','

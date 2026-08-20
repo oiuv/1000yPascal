@@ -22,11 +22,11 @@ CSV 格式，逗号分隔，首行为列名。
 | LimitEnergy | Integer | 该境界的元气上限 | `PowerLevelArr[sn-1].LimitEnergy := TempDB.GetFieldValueInteger(iName, 'LimitEnergy')` |
 | Damage | Integer | 攻击力加成值 | `PowerLevelArr[sn-1].Damage := TempDB.GetFieldValueInteger(iName, 'Damage')` |
 | Armor | Integer | 防御力加成值 | `PowerLevelArr[sn-1].Armor := TempDB.GetFieldValueInteger(iName, 'Armor')` |
-| AttackSpeed | Integer | 攻击速度加成（当前数据均为空，待确认） | `PowerLevelArr[sn-1].AttackSpeed := TempDB.GetFieldValueInteger(iName, 'AttackSpeed')` |
-| Avoid | Integer | 闪避加成（当前数据均为空，待确认） | `PowerLevelArr[sn-1].Avoid := TempDB.GetFieldValueInteger(iName, 'Avoid')` |
-| Recovery | Integer | 恢复力加成（当前数据均为空，待确认） | `PowerLevelArr[sn-1].Recovery := TempDB.GetFieldValueInteger(iName, 'Recovery')` |
-| Accuracy | Integer | 命中加成（当前数据均为空，待确认） | `PowerLevelArr[sn-1].Accuracy := TempDB.GetFieldValueInteger(iName, 'Accuracy')` |
-| KeepRecovery | Integer | 维持恢复加成（当前数据均为空，待确认） | `PowerLevelArr[sn-1].KeepRecovery := TempDB.GetFieldValueInteger(iName, 'KeepRecovery')` |
+| AttackSpeed | Integer | 攻击速度加成；当前表内为空，加载为 0 | `GetPowerLevelAttackSpeed` 返回该值 |
+| Avoid | Integer | 闪避加成；当前表内为空，加载为 0 | `GetPowerLevelAvoid` 返回该值 |
+| Recovery | Integer | 恢复加成；当前表内为空，加载为 0 | `GetPowerLevelRecovery` 返回该值 |
+| Accuracy | Integer | 命中加成；当前表内为空，加载为 0 | `GetPowerLevelAccuracy` 返回该值 |
+| KeepRecovery | Integer | 维持恢复加成；当前表内为空，加载为 0 | `GetPowerLevelKeepRecovery` 返回该值 |
 
 ### 境界等级列表
 
@@ -51,6 +51,7 @@ CSV 格式，逗号分隔，首行为列名。
 元气等级影响武功的实际伤害和防御计算：
 - 攻击力：`DamageBody += MagicClass.GetPowerLevelDamage(FCurPowerLevel)`
 - 防御力：`ArmorBody += MagicClass.GetPowerLevelArmor(FCurPowerLevel)`
+- 攻速、闪避、恢复、命中和维持恢复也分别通过 `GetPowerLevel*` 加入 `THaveMagicClass.AddPowerLevelLifeData`。当前配置列为空，所以本仓库数据下实际增量为 0。
 
 ## 相关源码
 

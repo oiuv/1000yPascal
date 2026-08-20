@@ -1,39 +1,27 @@
 # mapregenbyname
 
-## 功能描述
-按名称刷新指定地图。与 `mapregen` 使用地图ID不同，此命令通过地图名称来定位并刷新地图。
+## 功能
 
-## 语法格式
-```pascal
-print('mapregenbyname <地图名称> <刷新目标>');
-```
+把“按地图 ID 刷新”的命令加入指定对象的工作队列。命令名中的 `byname` 指按名称查找承载命令的对象，不是按地图名称查找地图。
 
-## 参数说明
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| 地图名称 | String | 要刷新的地图名称 |
-| 刷新目标 | String | 刷新的目标对象或类型 |
-
-## 源码实现
-基于 `uScriptManager.pas` 中的处理逻辑：
+## 语法
 
 ```pascal
-end else if cmd = 'mapregenbyname' then begin
-   TBasicObject (aSelf).SMapRegenByName (Params, Params [1], Params [2]);
+print('mapregenbyname 地图ID 对象名 对象类型');
 ```
 
-将整个参数数组以及 `Params[1]`（地图名称）和 `Params[2]`（刷新目标）传递给 `SMapRegenByName` 方法。
+| 参数 | 说明 |
+| --- | --- |
+| `地图ID` | 最终传给 `ManagerList.RegenById` 的整数 |
+| `对象名` | 要查找的对象名称 |
+| `对象类型` | `MONSTER`、`NPC` 或 `USER`，比较时不区分大小写 |
 
-## 使用示例
+## 执行逻辑
 
-目前游戏脚本中暂无使用此命令的示例。
+`uScriptManager.pas` 把完整参数数组及 `Params[1]`、`Params[2]` 传给 `SMapRegenByName`。该方法按类型查找对象：怪物和 NPC 在当前 `Manager` 中查找，玩家在全局 `UserList` 中查找。找到后向该对象加入 `CMD_MAPREGEN`；命令执行时读取 `Params[0]`，调用 `SMapRegen(地图ID)`。
 
-## 注意事项
-
-1. **与 mapregen 的区别**：`mapregen` 使用地图ID（数字），`mapregenbyname` 使用地图名称（字符串）
-2. **参数传递**：源码中传递了完整参数数组和两个关键参数，具体行为取决于 `SMapRegenByName` 的实现
+目标对象不存在或类型不是上述三种时，不会加入命令。`bin/Script` 中未发现现成调用示例。
 
 ## 相关命令
-- `mapregen` — 按ID刷新地图
-- `mapaddobjbyname` — 在地图中添加对象
-- `mapdelobjbyname` — 删除地图中的对象
+
+- `mapregen`：立即按地图 ID 调用刷新。

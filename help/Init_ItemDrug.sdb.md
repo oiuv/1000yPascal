@@ -42,7 +42,7 @@ CSV 格式，逗号分隔，首行为列名。
 | Recovery | Integer | 恢复力加成 | `pd^.rRecovery := Db.GetFieldValueinteger (iName, 'Recovery')` |
 | Accuracy | Integer | 命中加成 | `pd^.rAccuracy := Db.GetFieldValueinteger (iName, 'Accuracy')` |
 | KeepRecovery | Integer | 维持恢复加成 | `pd^.rKeepRecovery := Db.GetFieldValueinteger (iName, 'KeepRecovery')` |
-| LightDark | Integer | 明暗效果（待确认具体用途） | `pd^.rLightDark := Db.GetFieldValueinteger (iName, 'LightDark')` |
+| LightDark | Integer | 加载到 `rLightDark`；当前工程除加载和结构定义外没有读取该成员的代码，不能据此认定有运行时效果 | `pd^.rLightDark := Db.GetFieldValueinteger (iName, 'LightDark')` |
 
 ### 药品类型说明
 

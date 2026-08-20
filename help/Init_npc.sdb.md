@@ -315,7 +315,7 @@ boAutoAttack|boolean|是否自动攻击玩家，如果为TRUE会自动攻击玩�
 boHit|boolean|是否可以被玩家攻击，如果为TRUE玩家可以攻击此NPC|TRUE
 animate,
 shape,
-Image,
+Image||当前 `TNpcClass.LoadNpcData` 不读取此表头字段|
 Damage,
 Armor,
 ArmorHead,
@@ -341,6 +341,6 @@ AttackMagic,
 AttackSkill,
 HaveMagic,
 RegenInterval,
-boBattle|boolean|对战NPC，属性比普通NPC更强，一般用于比武NPC|TRUE
+boBattle|boolean|启用战斗 NPC 分支：加载 `AttackMagic`，使用战斗属性计算，并让头、手、脚生命与最大生命一起初始化|TRUE
 boRightRemove,
-EffectNumber,
+EffectNumber||当前 `TNpcClass.LoadNpcData` 不读取此表头字段|

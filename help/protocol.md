@@ -28,7 +28,7 @@ end;
 |:------:|--------|------|:----:|------|
 | 0-1 | PacketSize | Word | 2字节 | 整个包的总大小（包括包头8字节） |
 | 2-5 | RequestID | Integer | 4字节 | 请求标识符，用于匹配请求和响应 |
-| 6 | RequestMsg | Byte | 1字节 | 消息类型（PACKET_*、SM_*、CM_*等） |
+| 6 | RequestMsg | Byte | 1字节 | 外层服务消息类型。服务间包通常直接使用 `LG_*`、`DB_*`、`GM_*` 等；客户端游戏命令通常封装在 `TWordComData.Data` 中，此字段为 0 |
 | 7 | ResultCode | Byte | 1字节 | 结果代码，0表示成功 |
 | 8+ | Data | Byte[] | 变长 | 实际数据内容 |
 
@@ -72,7 +72,7 @@ end;
 └──────────────┴───────────┴────────────┴────────────┴──────────┘
 ```
 
-**注意**: 服务间内部通信中，仅 Gate→Game 不加密，Gate↔DB、Gate↔Login、Gate↔Paid 均启用加密。客户端连接通常启用加密。
+**注意**: 服务间内部通信中，仅 Gate↔Game 不加密，Gate↔DB、Gate↔Login、Gate↔Paid 均启用加密。客户端连接通常启用加密。
 
 ---
 
@@ -527,9 +527,9 @@ end;
 Gate (解密)
   │
   │ 解析 TPacketData
-  │ 提取 RequestMsg 和 Data
+  │ 提取外层 RequestMsg 和 Data
   │
-  │ 重新封装（可能不加密）
+  │ 重新封装为未加密的 TPacketData
   ▼
 Game Server
 ```
@@ -539,15 +539,15 @@ Game Server
 2. 查找 `0x28` 和 `0x29` 定位数据包边界
 3. 提取加密数据并解密
 4. 解析 TPacketData 结构
-5. 根据 RequestMsg 判断消息类型
-6. 转发给 Game Server（通常不加密）
+5. 登录/选角阶段由 Gate 解析 `TWordComData.Data` 首字节的 `CM_*`；游戏阶段按当前状态转发载荷
+6. 以 `GM_SENDGAMEDATA` 转发给 Game Server；该连接的 `TPacketSender`/`TPacketReceiver` 明确以 `aboUseCrypt=false` 创建
 
 #### Game → Gate → 客户端
 
 ```
 Game Server
   │
-  │ TPacketData（通常不加密）
+  │ 未加密的 TPacketData
   ▼
 Gate
   │
@@ -578,7 +578,7 @@ end;
 ```
 
 - 客户端连接: `aboUseCrypt = true`
-- 服务端连接: 视具体连接而定（Gate→Game 不加密，Gate→DB/Login/Paid 加密）
+- 服务端连接: 视具体连接而定（Gate↔Game 不加密，Gate↔DB/Login/Paid 加密）
 
 ### 4.4 缓冲区管理
 
@@ -731,16 +731,14 @@ Client → Gate (3054)
   │ 连接网关
   ▼
 Gate → Login (3050)
-  │ 转发登录请求
-  ▼
-Login → DB (3051)
-  │ 查询账号信息
-  ▼
-DB → Login
-  │ 返回账号数据
+  │ LG_SELECT，仅发送账号 PrimaryKey
   ▼
 Login → Gate
-  │ 返回验证结果
+  │ Login 自己查询 MSSQL 或 Login.sdb，返回 TLGRecord
+  ▼
+Gate
+  │ 比对账号和密码，发送 LG_UPDATE 更新登录信息
+  │ 随后向 Paid 发起 PM_CHECKPAID（启用计费校验时）
   ▼
 Gate → Client
   │ 返回角色列表 (加密)
@@ -857,9 +855,11 @@ REMOTEACCEPTPORT=1021
 |------|:----:|------|
 | TNameString | 19字节 | 角色名（中文9字符，GBK编码） |
 | TCaptionString | 40字节 | 标题（中文20字符，GBK编码） |
-| TWordString | 4096字节 | 固定长度字节数组；实际文本在数组内以 null 结尾 |
+| TWordString | 最多4096字节 | 内存类型为固定数组；线上有效数据是“2字节小端长度 + 文本字节”，文本从偏移2开始 |
 
-**注意**: 所有字符串使用 GBK 编码，不是 UTF-8。
+`SetWordString` 把文本长度写入 `[0..1]`，`SizeofWordString` 返回“文本长度 + 2”。`GetWordString` 会在内存中临时写入 null 以便转换，但 null 不属于必须发送的有效载荷。
+
+**注意**: 当前中国版程序和随附数据使用 GBK/CP936 兼容编码，不是 UTF-8。
 
 ### 6.3 TFeature 结构
 
@@ -947,25 +947,33 @@ name = data.decode('gbk').rstrip('\x00')
 | 8 | 118 | 'v' |
 | 9 | 71 | 'G' |
 
-**完整加密表**: 参见 `python_services/uCrypt.py` 中的实现
+**完整加密算法**：以 `Common/uCrypt.pas` 为源码标准；Python 版本只用于辅助分析和兼容性验证。
 
 ### 8.2 数据包示例
 
-**登录请求**（CM_IDPASS，假设首个请求的 `RequestID=0`）：
+**登录请求**（CM_IDPASS；`RequestID` 取当前连接的 `SendPacketCount`）：
 ```
-44 00  00 00 00 00  00  00  3A 00  03 ...
+44 00  xx xx xx xx  00  00  3A 00  03 ...
 |Size|  | RequestID | Msg Ret |ComData|CM_IDPASS...
 
 加密后: 28 [加密字节流] 29
 ```
 
-客户端先把 58 字节 `TCIdPass`（`rmsg` + 3 个 19 字节 `TNameString`）封装进 `TWordComData`，所以 Data 为 60 字节，完整 `TPacketData.PacketSize` 为 68（`0x0044`）。外层 `RequestMsg` 为 0，`CM_IDPASS=3` 位于 `TWordComData.Data` 的第一个字节。
+客户端先把 58 字节 `TCIdPass`（`rmsg` + 3 个 19 字节 `TNameString`）封装进 `TWordComData`，所以 Data 为 60 字节，完整 `TPacketData.PacketSize` 为 68（`0x0044`）。外层 `RequestMsg` 为 0，`CM_IDPASS=3` 位于 `TWordComData.Data` 的第一个字节。每次建立连接时 `SendPacketCount` 重置为 0，并在每次 `PutPacket` 后递增，因此不能把登录包的 `RequestID` 固定写成 0。
 
 **角色移动** (CM_MOVE):
 ```
-RequestMsg = 11 (CM_MOVE)
-Data: 方向(2字节) + X坐标(2字节) + Y坐标(2字节)
+外层 RequestMsg = 0
+Data:
+  TWordComData.Size (2字节，小端，值为 sizeof(TCMove)=11)
+  TCMove.rmsg       (1字节，CM_MOVE=11)
+  TCMove.rdir       (2字节)
+  TCMove.rx         (2字节)
+  TCMove.ry         (2字节)
+  TCMove.rTick      (4字节，客户端写入移动校验值)
 ```
+
+客户端在 `FLogOn.SendMsg` 中把完整 `TCMove` 复制到 `TWordComData.Data`，再以 `PutPacket(RequestMsg=0, ResultCode=0)` 发送，不能把 `CM_MOVE` 当作外层包头字段。
 
 ### 8.3 相关文档
 

@@ -17,7 +17,7 @@ CSV 格式，逗号分隔，首行为列名。
 | 列名 | 类型 | 说明 | 源码依据 |
 |------|------|------|----------|
 | Name | Integer | 等级编号（1-6） | 行索引 |
-| ViewName | String | 等级显示名称（初级工/技能工/熟练工/达人/名人/神工） | `JobGradeData[iNum-1].Name` |
+| ViewName | String | 当前加载器不读取此列；等级显示名由 `game.ini` 的 `INI_DEF_NAMELESSWORKER` 至 `INI_DEF_VIRTUEMAN` 提供 | `TJobClass.LoadFromFile` 的 `case iNum` |
 | Grade | Integer | 等级序号 | 用于映射常量 JOB_GRADE_NAMELESSWORKER 到 JOB_GRADE_VIRTUEMAN |
 | StartLevel | Integer | 该等级所需的最低技能值 | `JobGradeData[iNum-1].StartLevel := Db.GetFieldValueInteger(iName, 'Startlevel')` |
 | EndLevel | Integer | 该等级所需的最高技能值 | `JobGradeData[iNum-1].EndLevel := Db.GetFieldValueInteger(iName, 'EndLevel')` |

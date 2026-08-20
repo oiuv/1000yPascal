@@ -1,139 +1,56 @@
-# 千年开发指南
+# 千年服务端技术资料
 
-本目录中包括了TGS核心代码、炎黄新章游戏资料、游戏开发文档，游戏开发手册。
+本目录维护 TGS 运维、配置和脚本开发文档。事实核对只使用三类资料：项目 Pascal 源码、`gameserver-tgs1000/bin` 实际程序目录，以及 [炎黄新章游戏资料](炎黄新章游戏资料/README.md)。文档与源码冲突时，以当前源码加载器和实际配置表头为准；不要根据字段名猜测行为。
 
-## 常量定义
+## 核心指南
 
-游戏常量（物品类型、武功分类、职业品级、地图类型等）详见 [constants/ 目录](constants/README.md)。
+- [系统架构与登录链路](architecture.md)
+- [网络协议与封包结构](protocol.md)
+- [数据库与 SDB 文件](database.md)
+- [sv1000.Ini 运维配置](sv1000.ini.md)
+- [game.ini 游戏参数](game.ini.md)
+- [常量索引](constants/README.md)
+- [Pascal 脚本说明](Pascal.md)、[Script.SDB 与脚本入口](Script.md)
+- [事件配置](Event.md)、[任务公告](QuestNotice.md)、[物品日志](ITEMLOG.md)
+- [制造配置](manufacture.md)、[材料配置](Material.md)
 
-## 资料说明
+## Init 数据表
 
-### Init目录
+基础对象与地图：
 
-Init目录中包含了游戏初始化的数据文件，包括物品、NPC、魔物、地图、武功、任务索引等。
+- [Item.SDB](Init_item.sdb.md)、[ItemDrug.SDB](Init_ItemDrug.sdb.md)
+- [NPC.SDB](Init_npc.sdb.md)、[Monster.SDB](Init_monster.sdb.md)
+- [Map.SDB](Init_map.sdb.md)、[AreaData.SDB](Init_AreaData.sdb.md)
+- [DynamicObject.SDB](Init_DynamicObject.Sdb.md)
+- [MineObject.SDB](Init_MineObject.sdb.md)、[MineObjectAvail.SDB](Init_MineObjectAvail.sdb.md)、[MineObjectShape.SDB](Init_MineObjectShape.sdb.md)
 
-#### Dynamicobject.sdb（动态对象）
+武功与属性：
 
-游戏中动态物品（不可移动但可互交物品）对象数据库，具体内容见[Init_DynamicObject.Sdb.md](Init_DynamicObject.Sdb.md)
+- [Magic.SDB](Init_magic.sdb.md)、[MagicParam.SDB](Init_MagicParam.SDB.md)
+- [BestMagic1Cycle](Init_BestMagic1Cycle.sdb.md)、[BestMagic2Cycle](Init_BestMagic2Cycle.sdb.md)、[BestMagic3Cycle](Init_BestMagic3Cycle.sdb.md)、[BestMagicStateData](Init_BestMagicStateData.sdb.md)
+- [AddDamage](Init_AddDamage.sdb.md)、[AddPalmDamage](Init_AddPalmDamage.sdb.md)、[AddArmor](Init_AddArmor.sdb.md)
+- [AddAttribGrade](Init_AddAttribGrade.sdb.md)、[AddAttribProbability](Init_AddAttribProbability.sdb.md)、[AM_WHRelation](Init_AM_WHRelation.sdb.md)
+- [ConsumeEnergy](Init_ConsumeEnergy.sdb.md)、[EnergyLimitTable](Init_EnergyLimitTable.sdb.md)、[NeedStatePoint](Init_NeedStatePoint.sdb.md)、[PowerLevel](Init_PowerLevel.sdb.md)
 
-#### Event.sdb（事件）
+事件、任务与职业：
 
-事件主要有2类，魔物死亡触发或动态物品被摧毁触发，触发效果为在地图上增加Mop和NPC，具体见[Init_Event.SDB.md](Init_Event.SDB.md)
+- [Event.SDB](Init_Event.SDB.md)、[EventParam.SDB](Init_EventParam.SDB.md)
+- [Arena.SDB](Init_Arena.sdb.md)、[PosByDie.SDB](Init_PosByDie.sdb.md)、[QuestSummary.SDB](Init_QuestSummary.sdb.md)、[Zhuang.SDB](Init_Zhuang.sdb.md)
+- [JobGrade](Init_JobGrade.sdb.md)、[JobTalent](Init_JobTalent.sdb.md)、[JobUpgrade](Init_JobUpgrade.sdb.md)
+- [SmeltItem](Init_SmeltItem.sdb.md)、[SmeltItem2](Init_SmeltItem2.sdb.md)、[ToolRate](Init_ToolRate.sdb.md)
 
-#### EventParam.sdb（事件参数）
+## Setting 场景表
 
-和Event.sdb对应，用于描述事件参数，具体见[Init_Event.SDB.md](Init_Event.SDB.md)
+- [CreateGate](CreateGate.SDB.md)、[CreateGateEx](CreateGateEx.SDB.md)
+- [CreateMonster%d](CreateMonster.SDB.md)、[CreateNpc%d](CreateNpc.SDB.md)
+- [CreateDynamicObject%d](CreateDynamicObject.SDB.md)、[CreateMineObject%d](CreateMineObject.sdb.md)
+- [CreateGroupMove](CreateGroupMove.sdb.md)、[CreateMirror](CreateMirror.sdb.md)
+- [CreateSoundObject](CreateSoundObject.sdb.md)、[CreateVirtualObject](CreateVirtualObject.sdb.md)、[CreateZoneEffect](CreateZoneEffect.sdb.md)
 
-#### Item.sdb（物品）
+`%d` 表示加载器按当前地图/服务器编号选择文件，不能简单复制成无编号文件。
 
-这是游戏中所有物品的数据文件，包括物品的属性、物品的描述、物品的图标等。具体介绍见[Init_Item.sdb.md](Init_item.sdb.md)
+## 源码镜像与历史资料
 
-#### JobUpgrade.sdb（升段）
+`TGS核心源码/` 和本目录的 `deftype.pas` 是便于查阅的镜像，权威版本仍是仓库根目录下的项目源码；源码更新后必须同步镜像。`readme.chm`、`TGS2011.chm` 属于历史帮助文件，只能作为辅助线索，不能覆盖当前源码与实际配置。
 
-升段成功率相关算法
-
-```pascal
-   case aItemData.rMaxUpgrade of
-      3 : Rate := JobClass.GetItemUpgradeSuccessRate (aUpgrade);
-      4 : Rate := JobClass.GetItemUpgradeDungeonRate (aUpgrade);
-      else exit;
-   end;
-
-   SuccessCount := Rate + (Rate * aSubDrugRate div 100);   // 基础成功率 + 辅助药品成功率
-   RandomCount := Random (100);
-   if RandomCount < SuccessCount then begin
-      // 加工成功
-   end else begin
-      // 加工失败
-   end;
-```
-
-#### magic.sdb（武功）
-
-游戏中所有武功的数据文件，包括武功的属性、武功的描述等。具体介绍见[Init_Magic.sdb.md](Init_magic.sdb.md)
-
-#### Map.sdb（地图）
-
-这里是游戏所有地图的配置文件，包括地图的编号、地图的属性等。具体介绍见[Init_Map.sdb.md](Init_map.sdb.md)
-
-#### Monster.sdb（魔物）
-
-游戏中所有魔物的数据文件，包括魔物的属性、魔物的描述等。具体介绍见[Init_Monster.sdb.md](Init_monster.sdb.md)
-
-### Setting目录
-
-Setting目录中包含了游戏设置相关的数据文件，包括地图上生成NPC、魔物、矿物、传送门、动态对象、虚拟对象等。
-
-#### CreateGate.sdb 和 CreateGateEx.SDB
-
-游戏中所有传送点的配置数据，具体介绍见[CreateGate.SDB.md](CreateGate.SDB.md)
-
-#### CreateGroupMove.sdb
-
-游戏中集体传送的配置数据，具体介绍见[CreateGroupMove.sdb.md](CreateGroupMove.sdb.md)
-
-#### CreateDynamicObject%d.sdb
-
-游戏场景中动态物品的配置数据，具体介绍见[CreateDynamicObject.sdb.md](CreateDynamicObject.SDB.md)
-
-#### CreateMonster%d.SDB
-
-游戏场景中魔物的配置数据，具体介绍见[CreateMonster.SDB.md](CreateMonster.SDB.md)
-
-#### CreateNpc%d.SDB
-
-游戏场景中NPC的配置数据，具体介绍见[CreateNpc.SDB.md](CreateNpc.SDB.md)
-
-#### CreateSoundObject.sdb
-
-设置场景音效，声音文件在客户端`wav\effect.atw`中。
-
-Name|SoundName|MapID|X|Y|PlayInterval
----|---|---|---|---|---
-音效名称|音效文件名|地图ID|X坐标|Y坐标|播放间隔
-
-#### CreateVirtualObject.sdb（创建虚拟对象）
-
-虚拟对象，主要是水池等恢复效果区域，具体介绍见[CreateVirtualObject.sdb.md](CreateVirtualObject.sdb.md)
-
-### 服务端Smp
-
-south.sma - 长城以南地图属性：/where显示内容
-
-## 游戏开发指南
-
-千年游戏脚本使用的是Pascal语言，脚本在Script目录，开发示例见[Script.md](Script.md)
-
-基本结构如下：
-
-```pascal
-unit Script;
-
-interface
-
-// Function and procedure declarations go here
-
-implementation
-
-// Procedure implementations go here
-
-end.
-```
-
-具体开发细节参考以下项目
-
-- https://github.com/oiuv/1000yPascal.git
-
-当脚本有错时会在tgs1000目录中生成错误日志，如：
-
-```
-// Error-帝王石谷药材商-onleftclick.log
-#callfunc str #nn1
-#strtoint race str
-#notequal #nn3 race #nn2
-#notifgoto #nn3 #nn4
-#exit
-#label #nn4
-#callfunc str #nn5
-#strtoint nvirtue str
-```
+原始炎黄文本使用 CP936/GBK；技术 Markdown 统一使用 UTF-8。

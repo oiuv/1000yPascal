@@ -1,54 +1,33 @@
 # getrace
 
-获取当前脚本关联对象（自身）的种族。注意：此函数操作的是 `FSelf`（脚本关联的对象），而非触发事件的玩家。
+## 功能
+
+读取当前脚本关联对象 `FSelf` 的 `BasicData.Feature.rRace`，并以十进制字符串返回。
 
 ## 语法
+
 ```pascal
 Str := callfunc('getrace');
 ```
 
-## 参数
-无参数。
+无参数。`uScriptManager.pas` 的调用为：
 
-## 返回值
-返回字符串，为种族编号：
-- `'1'` — 人类（玩家）
-- `'3'` — 怪物
-- 其他值对应不同种族
-
-## 源码实现
 ```pascal
 Result := IntToStr(TBasicObject(FSelf).SGetRace);
 ```
 
-## 示例
+## 已定义种族值
 
-### 蜡台中的种族判断
-基于 `蜡台.txt`：
-```pascal
-function OnDanger (aStr : String) : String;
-var
-   Str : String;
-begin
-   Str := callfunc ('getrace');
-   if Str = '3' then begin
-      Result := true;
-      exit;
-   end;
+`deftype.pas` 定义了以下常量：
 
-   if aStr = '火箭' then begin
-      Result := 'true';
-      exit;
-   end;
-end;
-```
+| 返回值 | 常量 | 含义 |
+| --- | --- | --- |
+| `0` | `RACE_NONE` | 未指定 |
+| `1` | `RACE_HUMAN` | 人类/玩家 |
+| `2` | `RACE_ITEM` | 物品 |
+| `3` | `RACE_MONSTER` | 怪物 |
+| `4` | `RACE_NPC` | NPC |
+| `5` | `RACE_DYNAMICOBJECT` | 动态对象 |
+| `6` | `RACE_STATICITEM` | 静态物品 |
 
-## 注意事项
-1. **重要区别**：`getrace` 获取的是脚本关联对象（FSelf）的种族；`getsenderrace` 获取的是触发事件的玩家的种族
-2. 常用于怪物/NPC 脚本中判断对象类型
-3. 种族 `'3'` 通常表示怪物，`'1'` 表示人类玩家
-
-## 相关函数
-- `getsenderrace` — 获取触发事件的玩家种族
-- `getname` — 获取对象名称
-- `getlife` — 获取对象生命值
+返回的是对象种族，不是性别。`getsenderrace` 读取事件发送者 `FSender` 的同一字段。

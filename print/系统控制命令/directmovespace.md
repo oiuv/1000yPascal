@@ -1,60 +1,32 @@
 # directmovespace
 
-## 功能描述
-直接改变对象（NPC或怪物）在地图上的位置，立即执行，无延迟。通常用于将 NPC 或怪物移动到指定位置。
+## 功能
 
-## 语法格式
-```pascal
-print('directmovespace <名称> <类型> <地图ID> <X坐标> <Y坐标>');
-```
-
-## 参数说明
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| 名称 | String | 对象名称（NPC名或怪物名） |
-| 类型 | String | 对象类型：`npc`（NPC）或 `monster`（怪物） |
-| 地图ID | Integer | 目标地图编号 |
-| X坐标 | Integer | 目标 X 坐标 |
-| Y坐标 | Integer | 目标 Y 坐标 |
-
-## 源码实现
-基于 `uScriptManager.pas` 中的处理逻辑：
+按名称查找对象并立即改变位置。命令作用于 `aSelf` 所在的服务上下文，不进入工作队列。
 
 ```pascal
-end else if cmd = 'directmovespace' then begin
-   TBasicObject (aSelf).SMoveSpace (Params [0], Params [1], _StrToInt (Params[2]), _StrToInt (Params [3]), _StrToInt (Params [4]));
+print('directmovespace 名称 类型 地图ID X Y');
 ```
 
-直接调用 `SMoveSpace` 方法，传入名称、类型和坐标，立即执行。
+## 参数与行为
 
-## 使用示例
+| 参数 | 源码行为 |
+|---|---|
+| 名称 | 要查找的玩家、怪物或 NPC 名称 |
+| 类型 | 不区分大小写的 `USER`、`MONSTER` 或 `NPC`；其他值不处理 |
+| 地图ID | 仅 `USER` 分支使用，写入 `SubData.ServerId` 后发送 `FM_GATE` |
+| X、Y | 目标坐标 |
 
-### 考试开始前将考官移到考场
+- `USER`：从全局 `UserList` 查找玩家，先写入 `BasicData.nx/ny`，再发送跨地图的 `FM_GATE` 消息。
+- `MONSTER`：从当前 `Manager.MonsterList` 取第一个同名存活对象，调用 `CallMe(X, Y)`；地图 ID 被忽略。
+- `NPC`：从当前 `Manager.NpcList` 取第一个同名存活对象，调用 `CallMe(X, Y)`；地图 ID 被忽略。
+
+## 源码入口
+
 ```pascal
-// 来自 2级牛俊.txt - 将NPC考官移到考试地图
-print ('directmovespace 晋级2牛俊 npc 86 20 21');
+TBasicObject(aSelf).SMoveSpace(
+  Params[0], Params[1], _StrToInt(Params[2]),
+  _StrToInt(Params[3]), _StrToInt(Params[4]));
 ```
 
-### 将Boss移到指定位置
-```pascal
-// 来自 一级捕盗大将.txt
-print ('directmovespace 一级捕盗大将 npc 50 20 18 0');
-```
-
-### 将怪物移到特定位置
-```pascal
-// 来自 密室太极老人.txt - 将太极公子移到密室
-print ('directmovespace 太极公子 monster 32 17 18 0');
-```
-
-## 注意事项
-
-1. **立即执行**：与 `movespace` 不同，`directmovespace` 没有延迟参数，立即生效
-2. **对象类型**：支持 `npc` 和 `monster` 两种类型
-3. **坐标为0**：最后一个参数为方向值，通常设为 0
-4. **配合冻结使用**：移动后通常配合 `commandicebyname` 冻结对象
-
-## 相关命令
-- `movespace` — 传送玩家到指定地图坐标
-- `movespacebyname` — 按名称传送对象
-- `commandicebyname` — 按名称冻结对象
+依据：`uScriptManager.pas`、`BasicObj.pas` 的 `TBasicObject.SMoveSpace`。

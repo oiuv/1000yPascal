@@ -180,7 +180,7 @@ Shape,
 Life,
 Armor,
 Damage,
-StepCount||代码中看不到，应该无效，由下面格式控制，可以有多个阶段状态|
+StepCount||当前加载器没有读取此列；运行时步阶数据来自下面三组 `SStep`/`EStep` 字段|
 SStep0|Integer或String|关闭状态开始帧|0或0:1:7
 EStep0|Integer或String|关闭状态结束帧|0或0:6:10
 SStep1|Integer或String|开启过程开始帧|

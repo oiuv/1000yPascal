@@ -23,7 +23,7 @@ CSV 格式，逗号分隔，首行为列名。
 | Item1-Item10 | String | 可产出的物品名称（最多10种）。常规 A/B 配置按品质从高到低排列，Item1 对应最高品质、最低概率档；特殊 C/D 配置应直接按该行物品表解释。概率由 ToolRate 的同序号区间和 `Random(10000)` 决定 | `ItemClass.GetItemData(Str, ItemData)` → `pmd^.rAvailItems[j]` |
 | Sound | String | 采集音效数据 | `StrToEffectData(pmd^.rSoundData, Db.GetFieldValueString(iName, 'Sound'))` |
 | RegenIntervals | String | 刷新间隔列表，冒号分隔的3个 10ms tick 值。例如 `18000:30000:60000` 分别约为 3、5、10 分钟 | `pmd^.rRegenIntervals[j] := _StrToInt(rdStr)`；比较处：`CurTick >= FRegenedTick + FRegenInterval` |
-| DropMop | String | 采集时可能掉落的怪物，格式为"怪物名:数量" | `StrPCopy(@pmd^.rDropMop[j].rName, rdStr)` |
+| DropMop | String | 矿藏耗尽时在矿点附近生成的怪物，格式为“怪物名:数量”，最多5组 | `TMineObject.FieldProc` 在 `FDeposit` 降到 0 后调用 `MakeMonster` |
 
 ### 采矿对象分类
 

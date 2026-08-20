@@ -156,7 +156,7 @@ sConnectThru.rPort := GateInfo[nIndex].RemotePort;
 
 ### 3.3 网关注册和心跳机制
 
-Gate 通过两种方式向 Balance 注册：
+当前 `gate_biscuit` 通过 UDP 向 Balance 注册：
 
 **UDP 心跳**（主要方式）：Gate 每 3 秒通过 UDP 发送 `BM_GATEINFO`：
 
@@ -173,7 +173,7 @@ if CurTick >= BalanceSendTick + 3000 then begin
 end;
 ```
 
-**TCP 管理连接**：Gate 也可通过 TCP 连接到 Balance 的 3000 端口（`sckGate`），使用 `TGateConnector` 处理 `BM_GATEINFO` 消息。
+Balance 源码还监听 TCP 3000，并包含处理 `BM_GATEINFO` 的 `TGateConnector`；但当前仓库的 `gate_biscuit` 没有对应 TCP 客户端连接代码，因此不能把它描述为本版本 Gate 的有效注册通道。
 
 **超时判定**：Balance 每秒检查，如果 5 秒未收到某 Gate 的心跳，标记为不可用：
 
@@ -209,7 +209,7 @@ end;
 TGameStatus = (
   gs_none,         // 空闲/未登录
   gs_login,        // 等待登录验证
-  gs_agree,        // 等待同意协议
+  gs_agree,        // 仅声明；当前 Gate 流程未使用
   gs_selectchar,   // 角色选择界面
   gs_gotogame,     // 正在进入游戏（等待 Game 确认）
   gs_playing,      // 游戏中
@@ -220,12 +220,12 @@ TGameStatus = (
 );
 ```
 
-状态转换流程：
+源码中的实际登录/选角状态转换如下。`LG_SELECT` 成功后 Gate 会把状态恢复为 `gs_none`；只有收到角色选择请求后才进入 `gs_selectchar`：
 
 ```
 gs_none ──(客户端发送登录)──► gs_login
-gs_login ──(LG_SELECT 成功)──► gs_agree
-gs_agree ──(客户端同意协议)──► gs_selectchar
+gs_login ──(LG_SELECT 成功，显示角色列表并发起 Paid 校验)──► gs_none
+gs_none ──(计费状态有效且客户端选择角色)──► gs_selectchar
 gs_selectchar ──(选择角色 + DB_SELECT 成功)──► gs_gotogame
 gs_gotogame ──(Game 回复 GM_CONNECT)──► gs_playing
 gs_playing ──(断开/顶号)──► gs_none
@@ -241,11 +241,13 @@ TClientWindow = (
   cw_createlogin,  // 创建账号窗口
   cw_selectchar,   // 角色选择窗口
   cw_main,         // 游戏主窗口
-  cw_agree         // 协议同意窗口
+  cw_agree         // 仅声明；当前 Gate 流程未使用
 );
 ```
 
 Gate 通过 `SM_WINDOW` 消息控制客户端显示/隐藏窗口：
+
+登录成功时 Gate 直接隐藏 `cw_login` 并显示 `cw_selectchar`。服务端根目录的 `GameAgree.TXT` 由 Game Server 的 `TSystemAlert` 加载，在进入游戏后的系统窗口中处理，不属于 Gate 登录状态机。
 
 ```delphi
 procedure TConnector.ShowWindow(aKey: TClientWindow; boShow: Boolean);
@@ -342,24 +344,22 @@ end;
  3   Client → Gate            TCP 连接 (3054)                       gs_none
  4   Gate → Client            SM_WINDOW(cw_login, true)             cw_login
  5   Client → Gate            发送 LoginID + LoginPW                gs_login
- 6   Gate → Login             LG_SELECT (ConnectID, LoginID, PW)    —
+ 6   Gate → Login             LG_SELECT (ConnectID, LoginID)        —
  7   Login → Gate             LG_SELECT 结果 (TLGRecord 含角色列表)  —
- 8   Gate → Client            SM_CHARINFO (角色列表)                 —
- 9   Gate → Client            SM_WINDOW(cw_login, false)            —
-10   Gate → Client            SM_WINDOW(cw_agree, true)             gs_agree, cw_agree
-11   Client → Gate            同意协议                              gs_selectchar
-12   Gate → Client            SM_WINDOW(cw_agree, false)            —
-13   Gate → Client            SM_WINDOW(cw_selectchar, true)        cw_selectchar
-14   Client → Gate            选择角色名 + 服务器                    —
-15   Gate → DB                DB_SELECT (角色名)                    gs_selectchar
+ 8   Gate                     比对 PrimaryKey 和 PassWord           —
+ 9   Gate → Login             LG_UPDATE (IP、LastDate 等账号信息)    —
+10   Gate → Client            隐藏 cw_login，显示 cw_selectchar      gs_none
+11   Gate → Client            SM_CHARINFO (角色列表)                 —
+12   Gate → Paid              PM_CHECKPAID（启用计费校验时）          —
+13   Paid → Gate              返回付费类型和有效期                   gs_none
+14   Client → Gate            选择角色名 + 服务器                    gs_selectchar
+15   Gate → DB                DB_SELECT (角色名)                    —
 16   DB → Gate                DB_SELECT 结果 (TDBRecord)            —
-17   Gate → Client            (可选) PM_CHECKPAID → Paid 验证计费    —
-18   Gate → Game              GM_CONNECT (ConnectID, TDBRecord)     gs_gotogame
-19   Game → Gate              GM_CONNECT (确认)                     gs_playing
-20   Gate → Client            SM_WINDOW(cw_selectchar, false)       —
-21   Gate → Client            SM_WINDOW(cw_main, true)              cw_main
-22   Gate → DB                DB_LOCK (角色名)                      —
-23   Game → Gate              游戏数据流                            GM_SENDGAMEDATA 转发
+17   Gate → Game              GM_CONNECT (ConnectID, TDBRecord)     gs_gotogame
+18   Game → Gate              GM_CONNECT (确认)                     gs_playing
+19   Gate → Client            隐藏 cw_selectchar，显示 cw_main       cw_main
+20   Gate → DB                DB_LOCK (角色名)                      —
+21   Game → Gate              游戏数据流                            GM_SENDGAMEDATA 转发
 ```
 
 ### 5.2 涉及的服务和消息类型

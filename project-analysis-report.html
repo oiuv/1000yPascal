@@ -160,7 +160,7 @@ code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9
 <tr><td><code>client/</code></td><td>完整的 Delphi Windows 游戏客户端，含 40+ 功能窗体（登录/角色/交易/技能/公会/背包等）</td></tr>
 <tr><td><code>authentication/</code></td><td>离线授权生成工具（硬件指纹 + SHA1 + AES 授权码）</td></tr>
 <tr><td><code>python_services/</code></td><td>Python 辅助服务集（协议分析/服务重写/日志收集/监控）</td></tr>
-<tr><td><code>docs/</code></td><td>完整的千年游戏脚本开发手册（Git 子模块）</td></tr>
+<tr><td><code>docs/</code></td><td>运维、配置与游戏脚本技术文档（Git 子模块，持续维护）</td></tr>
 </table>
 </div>
 
@@ -287,8 +287,9 @@ code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9
 
 阶段3: 登录认证
   └─ Gate ──→ Login (TCP:3050) 发送 LG_SELECT
-  └─ Login 查询DB返回 TLGRecord
+  └─ Login 使用自身的 MSSQL/SDB 账号适配器返回 TLGRecord
   └─ Gate 验证 PrimaryKey + PassWord
+  └─ Gate 更新账号登录信息并校验 Paid 状态
 
 阶段4: 角色选择/创建
   └─ 创建: Gate ──→ DB (TCP:3051) 发送 DB_CREATENEW
@@ -302,8 +303,10 @@ code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9
 
 <div class="card">
 <h3>网关状态机</h3>
-<div class="flow">游戏状态: gs_none → gs_login → gs_agree → gs_selectchar → gs_gotogame → gs_playing
+<div class="flow">游戏状态: gs_none → gs_login → gs_none → gs_selectchar → gs_gotogame → gs_playing
 窗口状态: cw_none → cw_login → cw_selectchar → cw_main
+
+说明: gs_agree/cw_agree 仅在枚举中声明，当前 Gate 流程未使用；GameAgree.TXT 由 Game Server 处理。
 
 超时机制:
   • 非游戏状态 60秒无响应 → 发送 [TIMEOUT]
@@ -347,10 +350,10 @@ code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9
 <div class="card">
 <h3>FDB 文件格式</h3>
 <div class="flow">文件头 (TDBHeader):
-  ID: "IDX" (4 bytes)
+  ID: "DBID" (4 bytes)
   RecordCount: Integer
   RecordDataSize: Integer
-  RecordFullSize: Integer (含索引)
+  RecordFullSize: Integer (单条 TDBRecord 的完整存储大小)
 
 索引头 (TIndexHeader):
   IndexRecordCount · BlankRecordCount · FDBUpdateDate
@@ -452,7 +455,7 @@ code { background: #21262d; padding: 2px 6px; border-radius: 4px; font-size: 0.9
 <li><strong>40+</strong> 客户端窗体文件对</li>
 <li><strong>300+</strong> 游戏数据/脚本文件</li>
 <li><strong>20+</strong> Python 辅助脚本</li>
-<li><strong>50+</strong> 开发文档</li>
+<li>按配置、协议、脚本 API 和原始游戏资料分类的技术文档</li>
 </ul>
 </div>
 </div>

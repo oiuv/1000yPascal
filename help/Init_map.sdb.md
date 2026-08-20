@@ -264,7 +264,7 @@ MapName|string| 地图文件名称，在客户端Map文件（*.map）可用工�
 TilName|string| 地图地面（如地毯）文件名，在客户端Til文件（*til.til） | southtil.til
 ObjName|string| 地图物体（如树木）文件名，在客户端Obj文件（*obj.obj） | southobj.obj
 RofName|string| 地图顶层（如屋顶）文件名，在客户端Rof文件（*rof.obj） | southrof.obj
-SoundBase|int| 背景音乐文件名，不需要扩展名，支持`.wav`和`.mp3`格式，文件在客户端Wav目录 | 1001
+SoundBase|string| 背景音乐基名，不写扩展名；进入地图时服务器固定追加 `.wav` 后发送给客户端 | 1001
 SoundEffect|int| 音效文件名，不需要`.wav`扩展名，文件在客户端Wav目录effect.atw中，由EffectInterval控制生效间隔 | 1002
 MapTitle|string| 地图标题，需要唯一不重复 | 侠客村
 boUseBowMagic|boolean| 是否可使用弓术和投术 | TRUE
@@ -298,8 +298,8 @@ EffectInterval|int|地图声音音效播放间隔|3000
 TargetServerID|int| 传送服务器ID，在RegenInterval倒计时到0时触发传送，如果有SubMap，还会把所有子地图玩家传送 | 1
 TargetX|int| 传送目标X坐标，注意不要设置MotherMap | 10
 TargetY|int| 传送目标Y坐标，注意不要设置MotherMap | 10
-boDark|boolean|代码中有内容，但无实现，应该无效|
-boRain|boolean|代码中有内容，但无实现，应该无效|
+boDark|boolean|加载到 `TManager.boDark`，玩家进入地图时写入 `SM_NEWMAP.rboDark` 发给客户端|
+boRain|boolean|加载到 `TManager.boRain`，玩家进入地图时写入 `SM_NEWMAP.rboRain` 发给客户端；与服务端天气开关 `boWeather` 不是同一字段|
 boPick
 Script
 LoginServerID|int| 登录服务器ID，如果有设置，在玩家登录游戏时会触发（GM不会）|1
@@ -319,10 +319,10 @@ SubMap
 MotherMap
 boNotUseHideItem
 boShowMiniMap|boolean|注意这个是对战用，显示团队成员，如果普通地图设置会不显示NPC和跳点|FALSE
-boFirstPickUp|boolean| 从源码中看这个是没用的，没找到相关代码 | FALSE
-UseDay||从源码看这个是没用的，没找到相关代码|
-StartHour||从源码看这个是没用的，没找到相关代码|
-EndHour||从源码看这个是没用的，没找到相关代码|
+boFirstPickUp|boolean|当前 Pascal 源码没有读取此表头字段|FALSE
+UseDay||当前 Pascal 源码没有读取此表头字段|
+StartHour||当前 Pascal 源码没有读取此表头字段|
+EndHour||当前 Pascal 源码没有读取此表头字段|
 SoundStart
 SoundEnd
 UseDrugName

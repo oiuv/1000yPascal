@@ -21,4 +21,4 @@ Name,EnergyPoint,MoveSpeed,AttackSpeed,Recovery,KeepRecovery,Avoid,Accuracy,Dama
 ## 相关源码
 与 BestMagic1Cycle.sdb 共用同一加载逻辑，参见 [Init_BestMagic1Cycle.sdb.md](Init_BestMagic1Cycle.sdb.md)。
 
-加载时 `i=1`，对应 `BestMagic2Cycle.sdb`，存入 `DataLists[1]` 和 `Cycles[1]`。第二重境界的元气需求通常低于第一重（如 6000 vs 8000），属性值更高。
+加载时 `i=1`，对应 `BestMagic2Cycle.sdb`，存入 `DataLists[1]` 和 `Cycles[1]`。各字段数值以当前部署表为准；加载器不根据循环编号自动增减属性。

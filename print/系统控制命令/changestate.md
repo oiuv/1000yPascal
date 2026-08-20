@@ -1,38 +1,26 @@
 # changestate
 
-## 功能描述
-改变当前对象的状态。通过命令队列执行，具体效果取决于传入的参数。
+## 功能
 
-## 语法格式
-```pascal
-print('changestate <参数>');
-```
+把状态修改加入当前脚本对象 `aSelf` 的工作队列，延时参数为 `0`。
 
-## 参数说明
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| 参数 | String | 状态变化相关参数（具体含义取决于游戏逻辑） |
-
-## 源码实现
-基于 `uScriptManager.pas` 中的处理逻辑：
+## 语法
 
 ```pascal
-end else if Cmd = 'changestate' then begin
-   TBasicObject (aSelf).PushCommand (CMD_CHANGESTATE, Params, 0);
+print('changestate 状态值');
 ```
 
-通过 `PushCommand` 将命令放入队列，延迟为0（尽快执行），使用 `CMD_CHANGESTATE` 命令类型。
+`状态值` 先经 `_StrToInt` 转为整数，入队后再按 `Byte` 读取。
 
-## 使用示例
+## 状态含义
 
-目前游戏脚本中暂无直接使用 `changestate` 命令的 print 调用示例。脚本中出现的 `OnChangeState` 是事件回调函数，不是此命令的调用。
+执行 `CMD_CHANGESTATE` 时会调用对象的虚方法 `SChangeState`：
 
-## 注意事项
+- 普通 `TBasicObject` 实现写入 `BasicData.Feature.rfeaturestate`。`TFeatureState` 的枚举顺序为：`0=wfs_normal`、`1=wfs_care`、`2=wfs_sitdown`、`3=wfs_die`、`4=wfs_running`、`5=wfs_running2`、`6=wfs_shop`。
+- `TDynamicObject` 覆盖此方法，改写 `ObjectStatus`。`TDynamicObjectState` 的枚举顺序为：`0=dos_Closed`、`1=dos_Openning`、`2=dos_Openned`、`3=dos_Scroll`。
 
-1. **命令队列**：通过 `PushCommand` 执行，不是立即生效
-2. **与 OnChangeState 的区别**：`OnChangeState` 是状态变化时触发的事件回调，`changestate` 是主动改变状态的命令
-3. **参数含义**：具体参数含义需要参考 `CMD_CHANGESTATE` 的处理逻辑
+因此同一个数字的含义取决于 `aSelf` 的实际对象类型。源码没有在脚本入口校验枚举范围，脚本应只传入对应类型的有效值。`bin/Script` 中未发现直接调用示例。
 
-## 相关命令
-- `changedynobjstate` — 改变动态对象状态
-- `selfchangedynobjstate` — 改变自身动态对象状态
+## 注意
+
+`OnChangeState` 是脚本事件回调，不是本命令。

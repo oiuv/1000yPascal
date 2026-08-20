@@ -1,38 +1,20 @@
 # startwindow
 
-## 功能描述
-系统打开窗口。与 `showwindow` 功能类似，用于向玩家显示系统窗口界面。
+## 功能
 
-## 语法格式
-```pascal
-print('startwindow <窗口路径> <参数>');
-```
+在当前脚本对象 `aSelf` 上调用 `SShowWindow`，并把脚本所属对象 `FSelf` 作为窗口 `Commander`。
 
-## 参数说明
-| 参数 | 类型 | 说明 |
-|------|------|------|
-| 窗口路径 | String | 窗口文件路径（如 `.\help\xxx.txt`） |
-| 参数 | Integer | 窗口参数 |
-
-## 源码实现
-基于 `uScriptManager.pas` 中的处理逻辑：
+## 语法
 
 ```pascal
-end else if cmd = 'startwindow' then begin
-   TBasicObject (aSelf).SShowWindow (FSelf, Params [0], _StrToInt (Params [1]));
+print('startwindow 文件路径 类型');
 ```
 
-注意：`startwindow` 使用 `FSelf`（脚本对象自身）作为窗口接收者，而 `showwindow` 使用 `aSender`（触发脚本的玩家）。
+`类型` 经 `_StrToInt` 转为 `Byte`。如果 `aSelf` 的实际类型是 `TUser`，类型 `0` 调用 `ShowHelpWindow`，非 `0` 调用 `ShowTradeWindow`，并执行与 `showwindow` 相同的窗口状态和文件存在性检查。
 
-## 使用示例
+## 与 showwindow 的区别
 
-目前游戏脚本中暂无直接使用 `startwindow` 的示例。脚本中通常使用 `showwindow` 来向玩家显示窗口。
+- `showwindow`：在事件发送者 `aSender` 上调用。
+- `startwindow`：在当前对象 `aSelf` 上调用。
 
-## 注意事项
-
-1. **与 showwindow 的区别**：`showwindow` 作用于 `aSender`（玩家），`startwindow` 作用于 `FSelf`（脚本对象自身）
-2. **窗口路径**：通常指向 `.\help\` 目录下的文本文件
-
-## 相关命令
-- `showwindow` — 向玩家显示窗口
-- `tradewindow` — 打开交易窗口
+`TBasicObject.SShowWindow` 的基础实现为空，只有实际类型覆盖该方法时才会产生效果；当前源码中可确认的覆盖实现是 `TUser.SShowWindow`。`bin/Script` 中未发现 `startwindow` 调用示例。

@@ -1,119 +1,33 @@
 # putsendermagicitem
 
-## 功能描述
-给予玩家物品，并记录物品来源和归属信息。
+## 功能
 
-## 语法格式
-```pascal
-print('putsendermagicitem 物品名:数量 归属者 归属者种族');
-```
+根据 `ItemClass` 中的模板构造物品，写入所有者字段，记录一条 UDP 对象日志，然后尝试加入事件发送者 `aSender` 的背包。
 
-## 参数说明
-- **物品名:数量**：String - 物品名称和数量，用冒号分隔
-- **归属者**：String - 物品的来源或归属者，通常以 `@` 开头（如 `@quest神医`）
-- **归属者种族**：Integer - 归属者的种族值（通常为数字）
-
-## 源码实现
-基于 `uScriptManager.pas` 第263-264行：
+## 语法
 
 ```pascal
-end else if cmd = 'putsendermagicitem' then begin
-   TBasicObject (aSender).SPutMagicItem (Params [0], Params [1], _StrToInt (Params [2]));
+print('putsendermagicitem 物品名:数量 所有者名 所有者种族');
 ```
 
-基于 `!UUser.pas` 第10284-10319行的实现：
+| 参数 | 说明 |
+| --- | --- |
+| `物品名:数量` | 以冒号拆分；物品模板不存在时直接退出。数量转换结果为 `0` 时改为 `1`，所以省略冒号和数量也会给 1 个 |
+| `所有者名` | 原样写入 `ItemData.rOwnerName`；源码没有要求 `@` 前缀 |
+| `所有者种族` | 经 `_StrToInt` 转换并作为 `Byte` 传入，写入 `rOwnerRace` |
 
-```pascal
-procedure TUser.SPutMagicItem (aWeapon, aMopName : String; aRace : Byte);
-var
-   Str, ItemName, ItemCount : String;
-   ItemData : TItemData;
-   cnt : Integer;
-   usd : TStringData;
-begin
-   Str := aWeapon;
-   Str := GetValidStr3 (Str, ItemName, ':');
-   Str := GetValidStr3 (Str, ItemCount, ':');
+服务器还把当前 `ServerID`、玩家坐标写入 `rOwnerServerID`、`rOwnerX`、`rOwnerY`，并把 `rOwnerIP` 清空。
 
-   ItemClass.GetItemData (ItemName, ItemData);
-   if ItemData.rName [0] = 0 then exit;
-   ItemData.rCount := _StrToInt (ItemCount);
-   if ItemData.rCount = 0 then ItemData.rCount := 1;
+## 执行顺序
 
-   if ItemData.rName[0] > 0 then begin
-      ItemData.rOwnerRace := aRace;        // 设置物品所有者种族
-      ItemData.rOwnerServerID := ServerID;    // 设置物品所有者服务器ID
-      StrPCopy(@ItemData.rOwnerName, aMopName); // 设置物品所有者名称
-      StrPCopy (@ItemData.rOwnerIP, '');
-      ItemData.rOwnerX := BasicData.x;
-      ItemData.rOwnerY := BasicData.y;
-   end;
+1. 调用 `ItemClass.GetItemData` 取得物品模板。
+2. 设置数量及所有者字段。
+3. 通过 `FrmSockets.UdpObjectAddData` 发送 `Item:物品名,数量,`。
+4. 调用 `HaveItemClass.AddItem`；成功时向玩家发送侧边消息。
 
-   // UDP日志记录
-   usd.rmsg := 1;
-   SetWordString (usd.rWordString, 'Item:' + StrPas (@ItemData.rName) + ',' + IntToStr (ItemData.rCount) + ',');
-   cnt := sizeof(usd) - sizeof(TWordString) + sizeofwordstring (usd.rwordstring);
-   FrmSockets.UdpObjectAddData (cnt, @usd);
+UDP 内容不含所有者名或种族，而且日志发送发生在 `AddItem` 之前。因此这条 UDP 记录表示一次发放尝试，不能单独证明物品已经成功进入背包。
 
-   // 给予物品
-   if HaveItemClass.AddItem (ItemData) then begin
-      SendClass.SendSideMessage (format (Conv('%s ��� %d��'), [StrPas (@ItemData.rViewName), ItemData.rCount]));
-   end;
-```
+## 注意
 
-## 使用示例
-
-### 基础物品给予
-```pascal
-// 给予1个物品
-print('putsendermagicitem 生肉:1 @quest神医 4');
-```
-
-### 真实游戏示例
-基于 `quest神医.txt` 中的使用：
-
-```pascal
-// 给予神医丹药 (实际物品名根据游戏数据库确定)
-print ('putsendermagicitem 神医丹药:1 @quest神医 4');
-```
-
-基于 `event龙师父.txt` 中的使用：
-
-```pascal
-// 获取随机物品并给予
-Name := callfunc ('getrandomitem 0');
-Str := 'putsendermagicitem ' + Name;
-Str := Str + ' @event龙师父 4';
-print (Str);
-```
-
-## 物品归属者说明
-
-### 归属者格式
-- **@quest神医** - 来自神医任务
-- **@event龙师父** - 来自龙师父事件
-- **@一级老侠客** - 来自NPC一级老侠客
-- **@quest** - 通用任务来源
-
-### UDP日志机制
-所有物品给予操作都会通过UDP记录到日志中，格式为：
-```
-Item:物品名,数量,
-```
-
-归属者的 `@` 前缀用于在UDP日志服务中区分玩家和非玩家的物品来源。
-
-## 注意事项
-
-1. **物品格式**：物品名和数量用冒号分隔，数量默认为1
-2. **归属者格式**：归属者名称通常以 `@` 开头，用于UDP日志记录
-3. **种族值**：归属者的种族值，通常是整数
-4. **空格处理**：参数之间用空格分隔，不能有多余空格
-5. **物品限制**：物品必须存在于 `Item.sdb` 数据库中
-6. **背包空间**：给予前应先检查背包空间是否足够
-
-## 相关命令
-- `getsenderitem` - 获取玩家物品
-- `getsenderitemexistence` - 检查物品是否存在
-- `deletequestitem` - 删除任务物品
-- `checkenoughspace` - 检查背包空间
+- `bin/Script` 中确有 `@任务或事件名` 形式的所有者名，这是现有脚本约定，不是命令入口强制格式。
+- 本方法自身不预检背包空位；需要保证发放成功时，脚本可先调用 `checkenoughspace`。

@@ -737,6 +737,7 @@ const
   SAYCOMMAND_DESTROYPARTY      = 36;
   SAYCOMMAND_KICKOUTPARTY      = 37;
   SAYCOMMAND_PARTYMESSENGER    = 38;
+  SAYCOMMAND_ANSWER            = 39;
 
 procedure BuildSayCommand;
 begin
@@ -755,7 +756,7 @@ begin
   UserSayCommand.AddObject(Conv('@同意加入门派'), TObject(9));
   UserSayCommand.AddObject(Conv('@进门券价格'),   TObject(10));
   UserSayCommand.AddObject(Conv('@存入'),         TObject(11));
-  UserSayCommand.AddObject(Conv('@1'),            TObject(12));
+  UserSayCommand.AddObject(Conv('@item'),            TObject(12));
   UserSayCommand.AddObject(Conv('@囚禁情报'),     TObject(13));
   UserSayCommand.AddObject(INI_SERCHSKILL,        TObject(14));
   UserSayCommand.AddObject(INI_SERCHENABLE,       TObject(15));
@@ -782,6 +783,7 @@ begin
   UserSayCommand.AddObject(Conv('@解散队伍'),     TObject(36));
   UserSayCommand.AddObject(Conv('@驱逐'),         TObject(37));
   UserSayCommand.AddObject(Conv('@组队信息'),     TObject(38));
+  UserSayCommand.AddObject(Conv('@答'),           TObject(39));
 end;
 //
 
@@ -5246,7 +5248,7 @@ begin
               end;
               Exit;
             end;
-          SAYCOMMAND_MAKEITEM: // Conv('@1')   //制造物品
+          SAYCOMMAND_MAKEITEM: // Conv('@item')   //制造物品
             begin
               ItemClass.GetItemData (strs[1], ItemData);
               if ItemData.rName[0] = 0 then exit;
@@ -5463,15 +5465,15 @@ begin
                exit;
             end;
             }
-            {
-            if strs[0] = Conv('@翠') then begin
+            SAYCOMMAND_ANSWER: // Conv('@答')
+            begin
                if QuizSystem.Active = false then begin
-                  SendClass.SendChatMessage (Conv('泅犁 Quiz甫 柳青窍绊 乐瘤 臼嚼聪促'), SAY_COLOR_SYSTEM);
+                  SendClass.SendChatMessage (Conv('当前没有进行任何有奖问答'), SAY_COLOR_SYSTEM);
                   exit;
                end else begin
                   if QuizSystem.Answer = strs[1] then begin
                      QuizSystem.Active := false;
-                     tmpstr := format (Conv('%s丛膊辑 柠令甫 嘎眠继嚼聪促'),[StrPas (PChar (@BasicData.ViewName))] );
+                     tmpstr := format (Conv('%s成功回答了问题'),[StrPas (PChar (@BasicData.ViewName))] );
                      UserList.SendTopMessage (tmpstr);
                      ItemClass.GetItemData (QuizSystem.PresentName, ItemData);
 
@@ -5485,8 +5487,8 @@ begin
                      JobClass.GetUpgradeItemLifeData (ItemData);
                      if ItemData.rboDouble = false then ItemData.rCount := 1;
 
-                     tmpBasicData.Feature.rRace := RACE_NPC;
-                     StrPCopy (@tmpBasicData.Name, Conv('柠令惑前'));
+                     tmpBasicData.Feature.rRace := RACE_HUMAN;
+                     StrPCopy (@tmpBasicData.Name, Conv('问答奖品'));
                      tmpBasicData.x := BasicData.x;
                      tmpBasicData.y := BasicData.y;
                      SignToItem (ItemData, ServerID, tmpBasicData, '');
@@ -5495,7 +5497,7 @@ begin
                end;
                exit;
             end;
-            }
+
             {
             if Strs[0] = Conv('@函脚') then begin
                if boPolymorph = true then exit;
@@ -6186,34 +6188,34 @@ begin
                   UserList.SendTestMessage ('[' + Name + ']', _StrToInt (Strs [1]), _StrToInt (Strs [2]),_StrToInt (Strs [3]),_StrToInt (Strs [4]),_StrToInt (Strs [5]),_StrToInt (Strs [6]));
                   exit;
                end;
-               if UpperCase (Strs[0]) = Conv('@巩力') then begin
+               if UpperCase (Strs[0]) = Conv('@问题') then begin
                   aQuizstr := GetValidStr3 (astr, tmpStr , ' ');
                   QuizSystem.SetQuestion (aQuizStr);
-                  SendClass.SendChatMessage (Conv('巩力啊 殿废登菌嚼聪促'), SAY_COLOR_SYSTEM);
+                  SendClass.SendChatMessage (Conv('问题已设置'), SAY_COLOR_SYSTEM);
                   exit;
                end;
-               if UpperCase (Strs[0]) = Conv('@沥翠') then begin
+               if UpperCase (Strs[0]) = Conv('@答案') then begin
                   aQuizStr := GetValidStr3 (astr, tmpStr, ' ');
                   QuizSystem.SetAnswer (aQuizStr);
-                  SendClass.SendChatMessage (Conv('沥翠捞 殿废登菌嚼聪促'), SAY_COLOR_SYSTEM);
+                  SendClass.SendChatMessage (Conv('答案已设置'), SAY_COLOR_SYSTEM);
                   exit;
                end;
-               if UpperCase (Strs[0]) = Conv('@惑前') then begin
+               if UpperCase (Strs[0]) = Conv('@奖品') then begin
                   QuizSystem.SetPresent (Strs[1], _StrToInt(Strs[2]) );
-                  SendClass.SendChatMessage (Conv('惑前捞 殿废登菌嚼聪促'), SAY_COLOR_SYSTEM);
+                  SendClass.SendChatMessage (Conv('奖品已设置'), SAY_COLOR_SYSTEM);
                   exit;
                end;
 
-               if UpperCase (Strs[0]) = Conv('@柠令角矫') then begin
+               if UpperCase (Strs[0]) = Conv('@答题开始') then begin
                   QuizSystem.Active := true;
                   str := QuizSystem.Question;
-                  str := str + Conv(' 惑前:') + QuizSystem.PresentName;
+                  str := str + Conv(' 奖品:') + QuizSystem.PresentName;
                   str := str + '(' + IntToStr (QuizSystem.Count) + ')';
                   UserList.SendCenterMessage (str);
                   exit;
                end;
 
-               if UpperCase (Strs[0]) = Conv('@柠令犬牢') then begin
+               if UpperCase (Strs[0]) = Conv('@问题确认') then begin
                   SendClass.SendChatMessage (QuizSystem.Presentation, SAY_COLOR_SYSTEM);
                   exit;
                end;
@@ -6269,11 +6271,11 @@ begin
                   if Str <> '' then SendClass.SendChatMessage (Str, SAY_COLOR_SYSTEM);
                   exit;
                end;
-               if Strs [0] = Conv('@流诀檬扁拳') then begin
+               if Strs [0] = Conv('@技能初始化') then begin
                   HaveJobClass.ClearJobData;
                   exit;
                end;
-               if Strs [0] = Conv('@犁瓷汲沥') then begin
+               if Strs [0] = Conv('@技能设定') then begin
                   HaveJobClass.SetJobTalent (_StrToInt (Strs [1]));
                   exit;
                end;
@@ -6282,13 +6284,13 @@ begin
                   TNpcList(Manager.NpcList).ReLoadFromNpcSetting (Strs [1]);
                   exit;
                end;
-               if Strs [0] = Conv('@涅胶飘蔼') then begin
+               if Strs [0] = Conv('@任务数据') then begin
                   Str := format ('completequest : %d, currentquest : %d, queststr : %s, firstquest : %d', [userquestclass.CompleteQuestNo,
                      userquestclass.CurrentQuestNo, userquestclass.QuestStr, UserQuestClass.FirstQuestNo]);
                   SendClass.SendChatMessage (Str, SAY_COLOR_SYSTEM);
                   exit;
                end;
-               if Strs [0] = Conv('@涅胶飘檬扁拳') then begin
+               if Strs [0] = Conv('@任务设定') then begin
                   UserQuestClass.CompleteQuestNo := _StrToInt (Strs [1]);
                   UserQuestClass.CurrentQuestNo := _StrToInt (Strs [2]);
                   UserQuestClass.QuestStr := Strs [3];
@@ -6296,7 +6298,7 @@ begin
                   exit;
                end;
                //2002-08-09 giltae
-               if Strs[0] = Conv('@涅胶飘夸距肺靛') then begin
+               if Strs[0] = Conv('@重载任务摘要') then begin
                   QuestSummaryClass.ReLoadFromFile;
                   exit;
                end;
@@ -6783,7 +6785,7 @@ begin
                   end;
                   exit;
                end;
-               if UpperCase (Strs[0]) = Conv('@shifang1111') then begin
+               if UpperCase (Strs[0]) = Conv('@释放') then begin
                   msgstr := PrisonClass.DelUser (Strs[1]);
                   if msgstr = '' then begin
                       SendClass.SendChatMessage (Conv('处理完毕'), SAY_COLOR_SYSTEM);

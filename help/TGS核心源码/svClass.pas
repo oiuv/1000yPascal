@@ -8927,11 +8927,11 @@ var
    str : String;
 begin
    Result := '';
-   str := Conv('⒗柠令汲疙⒗') + #13;
-   str := str + Conv('巩力 : ') + Question + #13;
-   str := str + Conv('沥翠 : ') + Answer + #13;
-   str := str + Conv('惑前 : ') + FPresentName + #13 ;
-   str := str + Conv('肮荐 : ') + IntToStr (FPresentCnt) + #13#0;
+   str := Conv('【问答内容】') + #13;
+   str := str + Conv('问题 : ') + Question + #13;
+   str := str + Conv('答案 : ') + Answer + #13;
+   str := str + Conv('奖品 : ') + FPresentName + #13 ;
+   str := str + Conv('数量 : ') + IntToStr (FPresentCnt) + #13#0;
    Result := str;
 end;
 

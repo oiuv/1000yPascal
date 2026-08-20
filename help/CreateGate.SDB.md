@@ -17,7 +17,7 @@
 - DelItem为传送自动删除的物品（有则删除，无则不影响）
 - AddItem为GATE_KIND_ORDERADDITEM的奖励设置
 - Quest值为3种：1=歼灭怪物，2=步法超过85，3=年龄小于20岁
-- RegenInterval为传送门重新激活时间，一般设置目标地图刷新时间一至
+- RegenInterval为传送门重新激活间隔，数值直接与 `mmAnsTick` 比较；`mmAnsTick` 每 10 ms 增加 1
 - ActiveInterval为传送门生效状态时间，常和RegenInterval配合使用
 - OpenClock可设置开启时间在几点（最多5个），Kind为GATE_KIND_SPECIALTIME(用`8:30/10:30`指定时间)、GATE_KIND_FIXPOSITION、GATE_KIND_FIXTIME、GATE_KIND_SPORTSWAR(用`8:10:12:14`指定小时)
 - MaxUser限制Kind为GATE_KIND_SPORTSWAR时指定活动人数上限
@@ -38,6 +38,4 @@
    GATE_KIND_INTOZHUANG    = 10;  # 传送门种类：进入聚贤庄（炎黄版本）
 ```
 
-# CreateGateEx.SDB
-
-随机传送门
+扩展传送门使用另一套表头和加载器，参见 [CreateGateEx.SDB](CreateGateEx.SDB.md)。

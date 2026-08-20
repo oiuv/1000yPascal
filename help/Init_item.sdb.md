@@ -234,8 +234,8 @@ HitMotion| int | 物品的攻击动作，主要是针对装备类| 2
 HitType| int | 物品的攻击类型，主要是针对装备类| 1
 Color| int | 物品的颜色，主要是针对可染色类，参考染色染 | 1  
 Sex| int | 装备类物品的性别限制，1-男，2-女，为空不限制 | 1
-Weight| int | 物品重量，表中装备类为1，其它类为空，从源码看好像是无效设置| 1
-NeedGrade| int | 表中对掌风和招式设置为6，从源码看好像无效设置，代码未实现具体功能| 6
+Weight| int | 当前 `TItemClass` 加载器不读取此表头字段| 1
+NeedGrade| int | 加载到 `TItemData.rNeedGrade`；当前 Pascal 源码没有找到该成员的消费位置| 6
 Price| int | 物品的售价| 100
 BuyPrice| int | 物品的购买价格（NPC回收的价格）| 100
 RepairPrice| int | 物品的修理价格| 100
