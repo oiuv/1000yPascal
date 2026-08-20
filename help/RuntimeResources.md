@@ -36,6 +36,6 @@
 - 这些文本按随包习惯使用 GBK；上线前在副本中验证中文。
 - `notice - bak.txt` 等备份名不会被加载。
 - Notice/Tip/BadIp 可由现有菜单路径重载；GameAgree、Information、DontChar、ACS 应安排重启生效。
-- 修改前保留整套同版本文件，避免把神武线上文本直接覆盖到炎黄程序目录。
+- 修改前保留整套同版本文件，避免把云端神武优化版文本直接覆盖到炎黄程序目录。
 
 源码依据：`SVMain.pas`、`svClass.pas`、`Common/AnsStringCls.pas`。

@@ -10,6 +10,7 @@
 
 | 文档 | 内容 |
 |------|------|
+| [BASICS.md](BASICS.md) | 包边界、容量、颜色、国家版本等基础常量 |
 | [ITEM_KIND.md](ITEM_KIND.md) | 物品类型常量 (60+种) |
 | [ITEM_ATTRIBUTE.md](ITEM_ATTRIBUTE.md) | 物品属性常量 |
 | [ITEM_SPKIND.md](ITEM_SPKIND.md) | 物品特殊类型 |

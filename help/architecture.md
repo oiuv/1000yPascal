@@ -14,7 +14,7 @@
                           │                                                              │
                           │   ┌──────────┐    ┌──────────┐    ┌──────────┐              │
   ┌──────────┐  TCP 3053  │   │  Login   │    │    DB    │    │   Paid   │              │
-  │  Client  │◄───────────┤   │  :3050   │    │  :3051   │    │ :5999    │              │
+  │  Client  │◄───────────┤   │  :3050   │    │  :3051   │    │ :配置值  │              │
   │          │            │   └────▲─────┘    └────▲─────┘    └────▲─────┘              │
   │  (外部)  │            │        │               │               │                     │
   └────┬─────┘            │        │               │               │                     │
@@ -41,7 +41,7 @@
                           │                                                              │
                           │   UDP 日志推送:                                              │
                           │   ITEM:6001  MOUSEEVENT:6010  MONITER:6011                 │
-                          │   CONNECT:6022  PAY:6000  OBJECT:3003                      │
+                          │   CONNECT:6022  PAY:6000  OBJECT:3003  RELATION:3005        │
                           └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -51,7 +51,7 @@
 |------|----------|------|
 | **Balance** | `balance/` | 负载均衡器。接收客户端连接，根据最少连接数算法分配至可用 Gate，通过 UDP 接收 Gate 心跳 |
 | **Gate** | `gate_biscuit/` | 网关服务器。维护客户端连接和完整登录状态机，路由消息到 Game/DB/Login/Paid |
-| **Login** | `loginsql/` | 登录服务器。管理账号数据（注册/验证/密码），通过 ODBC 连接 SQL Server |
+| **Login** | `loginsdb_biscuit/` 或 `loginsql/` | 两个二选一实现：SDB 账号适配器，或通过 BDE/ODBC 连接 SQL Server |
 | **DB** | `db/` | 数据库服务器。管理角色数据持久化，使用自定义 FDB 文件格式存储 |
 | **Game** | `gameserver-tgs1000/` | 游戏服务器。处理游戏逻辑、地图管理、怪物/NPC 更新、用户交互 |
 | **Paid** | （外部服务） | 计费服务器。验证用户付费状态和到期时间 |
@@ -63,11 +63,14 @@
 - `Balance TCP 3053` — 客户端初始连接入口（短连接）
 - `Gate TCP 3054` — 客户端游戏连接入口（长连接）
 
-因此生产部署通常只对外开放 Balance 和 Gate，其余服务应由防火墙限制在内网。源码中的 `RemoteIP.txt` 白名单提供额外限制，但源码本身不能证明服务器当前的公网暴露状态：
+因此生产部署通常只对外开放 Balance 和 Gate，其余服务应由防火墙限制在内网。DB 与 SQL Login 的客户端接入检查使用程序工作目录下的 `IPList.txt`，不是 `RemoteIP.txt`；文件不存在时检查器会禁用并允许所有来源。源码本身不能证明服务器当前的公网暴露状态：
 
-- Login (`sckAccept`) — 仅接受白名单 IP（`IPChecker.IsThereAtList`）
-- DB (`sckAccept`) — 仅接受白名单 IP
+- SQL Login (`loginsql/sckAccept`) — `IPList.txt` 存在时按列表检查；缺失时允许全部来源
+- SDB Login (`loginsdb_biscuit/sckAccept`) — 当前实现不调用 `IPChecker`，直接接受连接
+- DB (`sckAccept`) — `IPList.txt` 存在时按列表检查；缺失时允许全部来源
 - Game — 通过 Gate 间接访问，不直接对外
+
+DB 读取的 `RemoteIP.txt` 属于另一组远程连接器配置，不能代替接入白名单。无论文件是否存在，都应使用主机防火墙把 Login、DB、Game 和 Paid 限制在受信内网。
 
 ---
 
@@ -82,9 +85,10 @@
 | **3050** | Login | 监听 | Gate → Login 连接 | 内网 |
 | **3051** | DB | 监听 | Gate → DB 连接 | 内网 |
 | **3052** | Game | 监听 | Gate → Game 连接 | 内网 |
-| **5999** | Paid | 监听 | Gate → Paid 连接 | 内网 |
+| **配置决定** | Paid | 监听 | Gate → Paid；新建 Gate 配置写入 5999，缺项读取回退到 3049 | 内网 |
 | **3000** | Balance | 监听 | Gate 管理连接（TCP 通道） | 内网 |
-| **1021** | Login | 远程管理 | Login 远程管理端口 | 内网 |
+| **1021** | SDB Login | 监听 | `REMOTEACCEPTPORT` 远程连接 | 内网 |
+| **6060** | SQL Login 的远端服务 | 连接目标 | SQL Login 读取 `[REMOTE_SERVER]` 后主动连接的缺省端口 | 内网 |
 | **1024** | DB | 远程管理 | DB 远程同步端口 | 内网 |
 | **1020** | DB | 远程管理 | DB 物品远程同步端口 | 内网 |
 | **3040** | Battle | 监听 | 战斗服务器 | 内网 |
@@ -94,7 +98,7 @@
 
 | 端口 | 方向 | 用途 |
 |------|------|------|
-| **3030** | Gate → Balance | Gate 心跳注册（`BM_GATEINFO`），每 3 秒发送 |
+| **3030** | Gate → Balance | Gate 心跳注册（`BM_GATEINFO`）；当前源码实际约每秒发送，见 3.3 节缺陷说明 |
 | **6001** | Game → Logger | ITEM 物品日志 |
 | **6010** | Game → Logger | MOUSEEVENT 鼠标事件日志 |
 | **6011** | Game → Logger | MONITER 监控日志 |
@@ -158,7 +162,7 @@ sConnectThru.rPort := GateInfo[nIndex].RemotePort;
 
 当前 `gate_biscuit` 通过 UDP 向 Balance 注册：
 
-**UDP 心跳**（主要方式）：Gate 每 3 秒通过 UDP 发送 `BM_GATEINFO`：
+**UDP 心跳**（主要方式）：代码用 `BalanceSendTick + 3000` 表达三秒阈值，通过 UDP 发送 `BM_GATEINFO`：
 
 ```delphi
 // gate_biscuit/FMain.pas — timerDisplayTimer
@@ -172,6 +176,8 @@ if CurTick >= BalanceSendTick + 3000 then begin
   udpBalance.SendBuffer(buffer, sizeof(TBalanceData));
 end;
 ```
+
+但当前源码没有任何位置更新 `BalanceSendTick`。程序运行时间超过三秒后，上述条件持续为真，而 `timerDisplay` 的间隔是 1000 毫秒，所以实际行为约为**每秒发送一次**，不是每三秒一次。这是确定的源码缺陷；文档和兼容服务不能只按条件字面推导周期。
 
 Balance 源码还监听 TCP 3000，并包含处理 `BM_GATEINFO` 的 `TGateConnector`；但当前仓库的 `gate_biscuit` 没有对应 TCP 客户端连接代码，因此不能把它描述为本版本 Gate 的有效注册通道。
 
@@ -328,7 +334,7 @@ if CheckTime >= 1000 then begin
 end;
 ```
 
-`LimitPacketCount` 在 `GATE.INI` 中配置，默认值为 10。
+`LimitPacketCount` 在 `GATE.INI` 中配置，默认值为 10。不过 `Update` 由 10 毫秒定时器调用，8 槽环形索引约 80 毫秒便回到同一槽；槽位时间戳在检查前已参与本轮计算，因此稳定运行后 `CheckTime >= 1000` 通常不能成立。当前代码不能被视为持续有效的“一秒最多 10 包”防护，生产环境仍需外围限速，修复源码后才能依赖此阈值。
 
 ---
 
@@ -538,10 +544,10 @@ end;
               │   Game    │ │   Login   │ │    DB     │
               └─────┬─────┘ └─────┬─────┘ └─────┬─────┘
                     │              │              │
-              TCP 3040       TCP 1021       TCP 1024/1020
-              (Battle)     (远程管理)     (远程同步)
+              TCP 3040     SDB:TCP 1021     TCP 1024/1020
+              (Battle)     (远程连接)     (远程同步)
                                    │
-              TCP 5999             │
+              TCP 配置值           │
                     │              │
               ┌─────▼─────┐ ┌─────▼─────┐
               │   Paid    │ │  Notice   │
@@ -555,6 +561,8 @@ end;
 - Balance 的 `sckGate`（TCP 3000）作为**服务端**接受 Gate 的管理连接
 - Game 的 `GateConnectorList` 作为**服务端**接受 Gate 的连接
 - DB 的 `sckAccept` 作为**服务端**接受 Gate 的连接
+
+SDB Login 监听配置的 `REMOTEACCEPTPORT`（缺省 1021）；SQL Login 不监听该端口，而是作为客户端连接 `[REMOTE_SERVER]`（缺省 `127.0.0.1:6060`）。
 
 ### 7.2 UDP 日志推送
 

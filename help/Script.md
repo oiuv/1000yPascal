@@ -7,11 +7,11 @@
 | 位置 | 版本与用途 |
 |---|---|
 | `gameserver-tgs1000/bin/Script/` | 炎黄新章随包脚本；用于核对当前配置引用和基础示例 |
-| [`docs/Script/`](../Script/README.md) | 神武奇章真实线上脚本；用于参考业务流程和旧版用法 |
+| [`docs/Script/`](../Script/README.md) | 云端千年神武奇章线上优化版脚本；用于参考该运营版业务流程 |
 | `gameserver-tgs1000/uScriptManager.pas` | 当前 `print`、`callfunc` 注册和 `Self/Sender` 分派标准 |
 | `gameserver-tgs1000/ScriptCls.pas` | 当前语法编译和执行标准 |
 
-旧线上脚本不能直接覆盖当前目录。迁移时要检查接口名、脚本编号、对象/物品/地图名称以及配套 `Help`、`NpcSetting` 文件。已知兼容缺口是神武线上和炎黄随包的 `龙师父.txt` 都残留 `getjobgrade`，但当前分派器未注册，应改为 `getsenderjobgrade`。
+云端神武版脚本不能直接覆盖当前目录。迁移时要检查接口名、脚本编号、对象/物品/地图名称以及配套 `Help`、`NpcSetting` 文件，并区分云端运营定制与版本演进。已知兼容缺口是云端神武版和炎黄随包的 `龙师父.txt` 都残留 `getjobgrade`，但当前分派器未注册，应改为 `getsenderjobgrade`。
 
 脚本关键字和变量名不区分大小写，但单引号内的字符串保持原样。当前 `print`/`callfunc` 分派器不会自动转换命令名大小写；接口名应使用索引页所列的精确形式。
 
@@ -47,6 +47,16 @@ Name,FileName,Desc,
 - `System.txt`：登录时以玩家为 `Self` 调用 `OnUserStart`。
 
 不要把“某类对象的常见事件”写成解释器限制；能否触发取决于服务器是否存在对应 `CallEvent` 调用路径。
+
+## 当前随包的实际加载边界
+
+`TScriptManager.LoadFromFile` 只遍历 `Script/Script.SDB` 的 `FileName` 字段，并逐个加载被索引的脚本，不会扫描目录中的全部 `.txt`。当前炎黄随包有 164 个脚本 `.txt`，`Script.SDB` 索引 145 个且引用文件全部存在；其余 19 个文件默认不加载：
+
+- `火炉1.txt`、`物品回收商.txt`、`event龙师父.txt`；
+- `event西域魔人虚像1.txt`～`event西域魔人虚像4.txt`；
+- `gateA_A.txt`～`gateA_C.txt`、`gateB_A.txt`～`gateB_C.txt`、`gateC_A.txt`～`gateC_C.txt`、`gateD_A.txt`～`gateD_C.txt`。
+
+这些文件可以用于分析备用实现，但“文件存在”不等于“服务器当前会执行”。启用其中任何脚本都必须先分配 `Script.SDB` 编号，再检查引用该编号的 `Init`/`Setting` 对象；不能只复制文件。
 
 ## Self 与 Sender
 

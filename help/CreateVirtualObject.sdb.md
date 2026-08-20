@@ -1,24 +1,35 @@
 # CreateVirtualObject%d.sdb
 
-创建地图中的虚拟物品，如水池，用于回血等。文件中的`%d`为地图编号。
+为指定地图创建可点击的虚拟对象，例如绿洲或恢复池。`%d` 使用当前 `Manager.ServerId`，加载路径为 `Setting/CreateVirtualObject%d.sdb`。
 
-### Kind（类型）
+## 数据结构
 
+当前随包表头为：
+
+```text
+Name,X,Y,Width,Height,Kind,Life
 ```
-Kind 类别 作用
-1 绿洲 物品
-2 药水池 玩家
-3 王陵药水 数值
 
-Kind=1 对Item.sdb文件Kind=35产生效果。
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| Name | String | 记录索引，同时复制为对象名称 |
+| X / Y | Integer | 对象坐标 |
+| Width / Height | Integer | 对象作用区域宽度和高度 |
+| Kind | Integer | 点击效果类型，见下表 |
+| Life | Integer | `Kind=2/3` 时每次恢复的数值；源码直接累加，不做百分比换算 |
 
-Kind=2 对玩家产生效果，按数值恢复状态条。（500=5.00）
+## Kind 类型
 
-Kind=3 对Item.sdb文件Kind=35产生效果，按数值补充。
+| 值 | 常量 | 点击后的实际行为 |
+|---:|------|------------------|
+| 0 | `VIRTUALOBJ_KIND_NONE` | 无专用效果 |
+| 1 | `VIRTUALOBJ_KIND_OASIS` | 发送 `FM_CHANGEDURAWATERCASE`，把玩家持有的 `ITEM_KIND_WATERCASE`（`Item.sdb` Kind=35）当前耐久补满 |
+| 2 | `VIRTUALOBJ_KIND_FILLLIFE` | 发送 `FM_FILLLIFE`，按 `Life` 同时增加活力、内力、外力和武功值 |
+| 3 | `VIRTUALOBJ_KIND_FILLOASISLIFE` | 先补满水袋，再按 `Life` 增加元气、活力、内力、外力和武功值 |
 
-   VIRTUALOBJ_KIND_NONE       = 0;   # 虚拟物品种类：无
-   VIRTUALOBJ_KIND_OASIS      = 1;   # 虚拟物品种类：帝王石窟的沙漠绿洲
-   VIRTUALOBJ_KIND_FILLLIFE   = 2;   # 虚拟物品种类：新手村，增加活力、内力、外力、武功
-   VIRTUALOBJ_KIND_FILLOASISLIFE = 3;  # 虚拟物品种类：安全区，增加活力、内力、外力、武功、元气
+玩家处理 `FM_FILLLIFE` 时使用 `FillTick + 1500` 限制连续饮用；`FillTick` 与 `mmAnsTick` 使用服务器逻辑 tick。源码对上述属性采用直接加法，最终上限由后续属性同步/约束逻辑决定。
 
-```
+## 源码依据
+
+- `BasicObj.pas` — `TVirtualObject.FieldProc`、`TVirtualObjectList.LoadFromFile`
+- `UUser.pas` — `FM_CHANGEDURAWATERCASE`、`FM_FILLLIFE`

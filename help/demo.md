@@ -76,11 +76,6 @@ SELLITEM:千年水石
 BUYTITLE:杂货商
 BUYCAPTION:我只收购异宝！
 BUYIMAGE:131
-BUYITEM:银月魂
-BUYITEM:蓝月魂
-BUYITEM:金月魂
-BUYITEM:赤月魂
-BUYITEM:翠月魂
 BUYITEM:珍珠
 BUYITEM:翡翠
 BUYITEM:水晶
@@ -92,6 +87,8 @@ BUYITEM:公主项链
 ```
 
 这是`Npc.sdb`中杂货商参数设置的脚本文件，设定了NPC可交易的列表。
+
+上述物品名已按当前炎黄 `Init/Item.sdb` 校验。云端神武版脚本使用的银月魂、蓝月魂、金月魂、赤月魂、翠月魂不在当前炎黄物品表中，不能直接加入本示例；这些奖励也不能视为原版神武或当前炎黄规则。
 
 ### NPC自动说话内容
 
@@ -109,7 +106,7 @@ Name,boSelfSay,boMain,MainNumber,HearString,SayString,NeedItem,GiveItem,CountLim
 
 ### 交易界面内容
 
-在`Help`目录中新建`杂商货.txt`，内容如下：
+在`Help`目录中新建`杂货商.txt`，内容如下：
 ```
 <trade>
 <head>

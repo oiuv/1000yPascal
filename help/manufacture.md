@@ -1,10 +1,10 @@
 # 制造配方对照表
 
-本表整理自原始游戏帮助资料，并按炎黄随包 `Init/Item.SDB` 的 `Name`、`ViewName`、`Material` 等字段复核。当前仓库和实际程序目录中没有找到名为 `manufacture.atd` 的加载文件，因此本页是运维对照资料，不应作为“服务端会直接加载该文件”的依据。
+本表整理自原始游戏帮助资料，并按炎黄随包 `Init/Item.SDB` 的 `Name`、`Grade`、`Material` 字段复核。表中的“显示简称”是为了合并男女装备而整理的阅读标签，不是 `Item.SDB.ViewName` 原值；当前物品表中男女装备的 `ViewName` 仍分别带有“男子/女子”前缀。当前仓库和实际程序目录中没有找到名为 `manufacture.atd` 的加载文件，因此本页是运维对照资料，不应作为“服务端会直接加载该文件”的依据。
 
 材料采用 `物品名:数量` 格式；编辑实际数据时以 `Item.SDB` 的当前行及源码加载规则为准。
 
-Name|ViewName|Sex|Job|order|Grade|Material1|Material2|Material3|Material4|
+Name|显示简称（整理值）|Sex|Job|order|Grade|Material1|Material2|Material3|Material4|
 -|-|-|-|-|-|-|-|-|-
 男子铁制头盔|铁制头盔|男|工匠|头盔|10|木皮:2|骨头一:3|青玉:2|普通水石:1|
 女子铁制头盔|铁制头盔|女|工匠|头盔|10|木皮:3|骨头一:2|青玉:2|普通水石:1|

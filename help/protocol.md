@@ -10,7 +10,7 @@
 
 ### 1.1 TPacketData 结构
 
-所有网络通信都基于 `TPacketData` 结构体，定义在 `uPackets.pas` 中：
+主要 TCP 服务消息使用 `TPacketData`，定义在 `uPackets.pas` 中。它不是所有通信的统一外层：Game 的 UDP 日志使用 `TComData` 长度前缀，Gate 向 Balance 上报时直接发送 packed `TBalanceData`。因此抓包或实现兼容服务时必须先按连接方向确定外层结构，不能把 UDP 数据按 `TPacketData` 解码。
 
 ```pascal
 TPacketData = record
@@ -34,7 +34,9 @@ end;
 
 **包头固定大小**: 8字节（PacketSize + RequestID + RequestMsg + ResultCode）
 
-**最大 Data 载荷**：`MAX_PACKET_SIZE = 8192` 字节。完整 `TPacketData` 还包含 8 字节包头，因此结构最大为 8200 字节。
+**结构体 Data 上限**：`MAX_PACKET_SIZE = 8192` 字节。完整 `TPacketData` 还包含 8 字节包头，因此结构最大为 8200 字节。这只是记录字段和 `PutPacket` 入参检查的上限，不是当前加密发送路径的安全载荷上限。
+
+`TPacketSender.PutPacket` 使用固定 8192 字节临时缓冲区；加密会把 `(8 + Data长度)` 按每 3 字节扩展为 4 字节，并再写入起止标记和结尾零字节。按现有实现计算，启用加密时 `Data` 最多只能安全取 **6133 字节**。更大的载荷即使通过 `aSize <= MAX_PACKET_SIZE` 检查，也可能越界写入临时缓冲区；这是当前源码缺陷，兼容实现应在进入加密前采用更严格的长度检查。
 
 ### 1.3 加密数据包格式
 
@@ -671,7 +673,7 @@ end;
               ▼             ▼             ▼
        ┌──────────┐  ┌──────────┐  ┌──────────┐
        │   Game   │  │    DB    │  │  Paid    │
-       │(TCP 3052)│  │(TCP 3051)│  │(TCP 5999)│
+       │(TCP 3052)│  │(TCP 3051)│  │(配置端口)│
        └──────────┘  └──────────┘  └──────────┘
 ```
 
@@ -685,7 +687,7 @@ end;
 | **Login** | 3050 | TCP | 登录服务，账号验证 |
 | **DB** | 3051 | TCP | 数据库服务，角色存档 |
 | **Game** | 3052 | TCP | 游戏服务，游戏逻辑 |
-| **Paid** | 5999 | TCP | 计费服务（部分配置使用 3049） |
+| **Paid** | 配置决定 | TCP | 计费服务；Gate 新建配置时写入 5999，读取缺项时回退到 3049 |
 
 ### 5.3 UDP 通信
 
@@ -715,6 +717,7 @@ Gate 定期向 Balance 的 UDP 3030 端口发送状态信息：
 | CONNECT | 6022 | 连接日志 |
 | PAY | 6000 | 支付日志 |
 | OBJECT | 3003 | 对象日志 |
+| RELATION | 3005 | 关系日志 |
 
 ### 5.4 服务间消息流
 
@@ -792,6 +795,12 @@ UDPLOCALPORT=3030
 [GATE_SERVER]
 LOCALIP=127.0.0.1
 LOCALPORT=3054
+SERVERNAME=<服务器显示名>
+LIMITUSERCOUNT=0
+LIMITPACKETCOUNT=10
+CHECKPAIDINFO=TRUE
+BUFFERSIZES2S=16384
+BUFFERSIZES2C=8192
 BALANCEIP=127.0.0.1
 BALANCEPORT=3030
 
@@ -813,6 +822,34 @@ REMOTEPORT=5999
 LOCALPORT=5998
 ```
 
+`REMOTEPORT=5999` 是缺少 `GATE.INI` 时生成的模板值；读取已有配置且该键缺失时，源码缺省值是 3049。`LOCALPORT=5998` 会被生成，但当前 Gate 源码没有读取或使用该键。`LIMITPACKETCOUNT` 是配置阈值，不代表当前环形采样实现能够稳定执行一秒限包，实际缺陷见架构文档。
+
+Gate 还读取两个独立文件：
+
+```ini
+; Village.INI
+[VILLAGE]
+COUNT=1
+NAME0=<出生村名>
+X0=513
+Y0=205
+ServerID0=0
+
+; CreateChar.INI
+[CLOTHES]
+CLOTHES_COAT_MAN=COATMAN
+CLOTHES_PANTS_MAN=PANTSMAN
+CLOTHES_COAT_WOMAN=COATWOMAN
+CLOTHES_PANTS_WOMAN=PANTSWOMAN
+[WEAPON]
+WEAPON_SWORD=SWORD
+WEAPON_KNIFE=KNIFE
+WEAPON_SPEAR=SPEAR
+WEAPON_AX=AX
+[ETC]
+ETC_01=ETC01
+```
+
 **DB.INI**:
 ```ini
 [DB_SERVER]
@@ -823,7 +860,7 @@ RemotePort=1024
 ItemRemotePort=1020
 ```
 
-**login.ini**:
+**SDB Login 的 login.ini**（`loginsdb_biscuit`）：
 ```ini
 [ODBC]
 DSN=account1000y
@@ -834,6 +871,26 @@ Password=sa
 CLIENTACCEPTPORT=3050
 REMOTEACCEPTPORT=1021
 ```
+
+该实现读取 `REMOTEACCEPTPORT` 并监听远程连接，但数据库对象创建代码已被注释，账号实际由 `TSDBAdapter` 管理；`ODBC` 三个键仍会读取，却不用于建立 SQL 连接。
+
+**SQL Login 的 login.ini**（`loginsql`）：
+
+```ini
+[ODBC]
+DSN=account1000y
+UserName=<SimplePass 编码值>
+Password=<SimplePass 编码值>
+
+[SERVER]
+CLIENTACCEPTPORT=3050
+
+[REMOTE_SERVER]
+IP=127.0.0.1
+PORT=6060
+```
+
+SQL 实现不会读取 `REMOTEACCEPTPORT`；它读取 `[REMOTE_SERVER]`，并作为客户端主动连接该地址。`UserName` 和 `Password` 在交给 BDE/ODBC 前都会调用 `SimplePass.Decode`，不能把示例中的明文 `sa` 当成已验证可用的部署值。
 
 ---
 

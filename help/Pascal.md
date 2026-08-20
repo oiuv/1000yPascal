@@ -119,4 +119,4 @@ end;
 
 ## 版本兼容
 
-[`../Script/`](../Script/README.md) 是神武奇章线上脚本，当前 `gameserver-tgs1000/bin/Script` 是炎黄新章随包脚本。脚本中的真实用法不等于当前仍注册该接口：两套 `龙师父.txt` 都残留 `getjobgrade`，而当前分派器没有该分支，应使用 `getsenderjobgrade`。
+[`../Script/`](../Script/README.md) 是云端千年神武奇章线上优化版脚本，当前 `gameserver-tgs1000/bin/Script` 是未修改的炎黄新章随包脚本。云端脚本中的真实用法不等于原版规则或当前仍注册该接口：两套 `龙师父.txt` 都残留 `getjobgrade`，而当前分派器没有该分支，应使用 `getsenderjobgrade`。

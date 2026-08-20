@@ -12,7 +12,7 @@ procedure OnDieBefore (aStr : String);
 
 ## 示例
 
-神武线上与炎黄随包的 `东海名所2.txt` 都用它播放破坏音效：
+云端神武版与炎黄随包的 `东海名所2.txt` 都用它播放破坏音效：
 
 ```pascal
 procedure OnDieBefore (aStr : String);

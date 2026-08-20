@@ -18,7 +18,7 @@ function OnDanger (aStr : String) : String;
 
 ## 示例
 
-以下逻辑见神武线上与炎黄随包的 `火坛.txt`：
+以下逻辑见云端神武版与炎黄随包的 `火坛.txt`：
 
 ```pascal
 function OnDanger (aStr : String) : String;

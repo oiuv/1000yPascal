@@ -13,7 +13,7 @@ FirstQuest := StrToInt (Str);
 
 因此不能把本函数解释成“读取 NPC 的任务”：
 
-- `System.OnUserStart` 由登录玩家作为 `Self` 调用，本函数读取该玩家，神武线上和炎黄随包的 `System.txt` 都采用此写法；
+- `System.OnUserStart` 由登录玩家作为 `Self` 调用，本函数读取该玩家，云端神武版和炎黄随包的 `System.txt` 都采用此写法；
 - 普通 NPC、Monster、DynamicObject 使用基础实现时只会得到 `0`；
 - NPC 交互脚本要读取触发玩家，应使用 `getsenderfirstquest`。
 
@@ -28,6 +28,6 @@ if FirstQuest < 1 then begin
 end;
 ```
 
-来源：神武线上和炎黄随包 `System.txt` 的共同核心逻辑。
+来源：云端神武版和炎黄随包 `System.txt` 的共同核心逻辑。
 
 相关函数：`getsenderfirstquest`、`getcurrentquest`、`getcompletequest`。

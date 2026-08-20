@@ -15,7 +15,7 @@ procedure OnHit (aStr : String);
 
 ## 示例
 
-神武线上与炎黄随包的 `东海名所2.txt` 都在首次命中时召唤四只怪物：
+云端神武版与炎黄随包的 `东海名所2.txt` 都在首次命中时召唤四只怪物：
 
 ```pascal
 procedure OnHit (aStr : String);

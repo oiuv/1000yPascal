@@ -10,7 +10,7 @@ print ('changefirstquest <任务编号>');
 
 ## 真实用法
 
-`System.OnUserStart` 由登录玩家作为 `Self` 调用，所以神武线上和炎黄随包脚本都可以这样初始化该玩家：
+`System.OnUserStart` 由登录玩家作为 `Self` 调用，所以云端神武版和炎黄随包脚本都可以这样初始化该玩家：
 
 ```pascal
 Str := callfunc ('getfirstquest');

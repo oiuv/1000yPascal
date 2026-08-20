@@ -1,5 +1,7 @@
 # 千年游戏开发手册
 
+运维配置、协议、数据表及资料边界统一从 [千年服务端技术资料](help/README.md) 进入；脚本事件可从 [过程事件索引](procedure/README.md) 和 [返回值事件索引](function/README.md) 查阅。
+
 ## 基本介绍
 
 古老的千年使用的是pascal语言，开发相关目录结构如下：
@@ -45,7 +47,7 @@ implementation
 end.
 ```
 
-以下结构取自神武奇章线上脚本 [`Script/储物袋.txt`](Script/储物袋.txt)。该文件名为“储物袋”，脚本内的单元名为“储物箱”，服务器按 `Script.SDB` 的文件映射加载，不要求二者同名：
+以下结构取自云端千年神武奇章线上优化版脚本 [`Script/储物袋.txt`](Script/储物袋.txt)。该文件名为“储物袋”，脚本内的单元名为“储物箱”，服务器按 `Script.SDB` 的文件映射加载，不要求二者同名：
 ```pascal
 unit 储物箱;
 
@@ -100,4 +102,4 @@ end.
 
 更多语法限制请见 [help/Pascal.md](help/Pascal.md)。
 
-脚本示例有两个版本来源：`gameserver-tgs1000/bin/Script` 是当前炎黄新章随包脚本，[`docs/Script`](Script/README.md) 是神武奇章线上脚本归档。线上脚本可证明旧版本的实际用法，但移植前仍须以当前 Pascal 分派器确认接口兼容性。
+脚本示例有两个版本来源：`gameserver-tgs1000/bin/Script` 是当前未修改的炎黄新章随包脚本，[`docs/Script`](Script/README.md) 是云端千年神武奇章线上优化版脚本归档。云端脚本只能证明该运营版本的实际用法；定制奖励不能视为原版规则，移植前仍须以当前 Pascal 分派器确认接口兼容性。

@@ -19,7 +19,7 @@ function OnMove (aStr : String) : String;
 
 ## 示例
 
-以下结构来自神武线上与炎黄随包均存在的 `gateB_C.txt`，省略了重复的怪物检查：
+以下结构来自云端神武版与炎黄随包均存在的 `gateB_C.txt`，省略了重复的怪物检查。当前炎黄 `gateB_C.txt` **没有进入 `Script.SDB` 索引**，所以这是备用门脚本的语法示例，不代表当前随包已经启用该入口：
 
 ```pascal
 function OnMove (aStr : String) : String;

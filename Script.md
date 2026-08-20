@@ -5,7 +5,7 @@
 ## 版本与证据来源
 
 - `gameserver-tgs1000/bin/Script/`：炎黄新章随包脚本，与当前源码配套核对。
-- [`docs/Script/`](Script/README.md)：神武奇章真实线上脚本，适合参考业务流程，但旧接口必须先做兼容检查。
+- [`docs/Script/`](Script/README.md)：云端千年神武奇章线上优化版脚本，适合参考业务流程，但定制内容和接口必须先做兼容检查。
 - `uScriptManager.pas`、`ScriptCls.pas`、`Common/ScriptBasic.pas`：当前接口和解释器语义的最终标准。
 
 两套真实 `System.txt` 都使用玩家自身的 `FirstQuestNo` 判断首次登录。核心逻辑如下：
@@ -72,4 +72,4 @@ end;
 - `Sender` 通常是触发交互或攻击的玩家，也可能为 `nil`。
 - 只有调用方读取返回值的事件才具备拦截语义，例如传送门路径中的 `OnMove` 和攻击前的 `OnDanger`。
 
-编写新脚本时，先从当前 `bin/Script` 复制结构，再查对应事件和接口页面；迁移神武线上脚本时还要检查 [版本兼容说明](Script/README.md)。
+编写新脚本时，先从当前 `bin/Script` 复制结构，再查对应事件和接口页面；迁移云端神武版脚本时还要检查 [版本兼容说明](Script/README.md)。

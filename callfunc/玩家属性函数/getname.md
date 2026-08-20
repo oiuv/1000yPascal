@@ -38,13 +38,16 @@ begin
 end;
 ```
 
-### 绣球中的NPC名称显示
-基于 `绣球.txt`：
+### NPC 名称显示
+
+按当前 `CommandScript` 的命令格式，应先把完整正文拼到 `say ` 后再调用 `print`：
 ```pascal
 aName := callfunc ('getname');
-Str := 'say ' + aName;
-print('等待摆擂征婚者:' + Str);
+Str := 'say 等待摆擂征婚者:' + aName;
+print (Str);
 ```
+
+炎黄随包和云端神武版两版 `绣球.txt` 原文都写成 `print('等待摆擂征婚者:' + Str)`。该字符串不以已注册命令开头，不会命中 `CommandScript` 分派，因此这里只保留经当前源码校正后的写法，并把原文视为脚本缺陷。
 
 ## 注意事项
 1. **重要区别**：`getname` 获取的是脚本关联对象（FSelf）的名称；`getsendername` 获取的是触发事件的玩家名称

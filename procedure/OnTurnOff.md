@@ -10,7 +10,7 @@ procedure OnTurnOff (aStr : String);
 
 ## 示例
 
-神武线上与炎黄随包的 `火坛.txt` 都在点燃数量低于四个后重新禁止攻击 Boss：
+云端神武版与炎黄随包的 `火坛.txt` 都在点燃数量低于四个后重新禁止攻击 Boss：
 
 ```pascal
 procedure OnTurnOff (aStr : String);

@@ -10,7 +10,7 @@ procedure OnRegen (aStr : String);
 
 ## 真实脚本用法
 
-神武线上与炎黄随包的 `铁闸门.txt` 都在门重生后联动重生三个酒坛：
+云端神武版与炎黄随包的 `铁闸门.txt` 都在门重生后联动重生三个酒坛：
 
 ```pascal
 procedure OnRegen (aStr : String);
