@@ -348,24 +348,25 @@ end;
  1   Client → Balance         TCP 连接 (3053)                       —
  2   Balance → Client         SM_CONNECTTHRU (最少连接 Gate 的 IP:Port)  —
  3   Client → Gate            TCP 连接 (3054)                       gs_none
- 4   Gate → Client            SM_WINDOW(cw_login, true)             cw_login
- 5   Client → Gate            发送 LoginID + LoginPW                gs_login
- 6   Gate → Login             LG_SELECT (ConnectID, LoginID)        —
- 7   Login → Gate             LG_SELECT 结果 (TLGRecord 含角色列表)  —
- 8   Gate                     比对 PrimaryKey 和 PassWord           —
- 9   Gate → Login             LG_UPDATE (IP、LastDate 等账号信息)    —
-10   Gate → Client            隐藏 cw_login，显示 cw_selectchar      gs_none
-11   Gate → Client            SM_CHARINFO (角色列表)                 —
-12   Gate → Paid              PM_CHECKPAID（启用计费校验时）          —
-13   Paid → Gate              返回付费类型和有效期                   gs_none
-14   Client → Gate            选择角色名 + 服务器                    gs_selectchar
-15   Gate → DB                DB_SELECT (角色名)                    —
-16   DB → Gate                DB_SELECT 结果 (TDBRecord)            —
-17   Gate → Game              GM_CONNECT (ConnectID, TDBRecord)     gs_gotogame
-18   Game → Gate              GM_CONNECT (确认)                     gs_playing
-19   Gate → Client            隐藏 cw_selectchar，显示 cw_main       cw_main
-20   Gate → DB                DB_LOCK (角色名)                      —
-21   Game → Gate              游戏数据流                            GM_SENDGAMEDATA 转发
+ 4   Client → Gate            CM_VERSION (目标Gate版本、区域版本)     gs_none
+ 5   Gate → Client            通过：SM_MESSAGE；失败：SM_CLOSE        cw_login（通过时）
+ 6   Client → Gate            CM_IDPASS (LoginID + LoginPW)         gs_login
+ 7   Gate → Login             LG_SELECT (ConnectID, LoginID)        —
+ 8   Login → Gate             LG_SELECT 结果 (TLGRecord 含角色列表)  —
+ 9   Gate                     比对 PrimaryKey 和 PassWord           —
+10   Gate → Login             LG_UPDATE (IP、LastDate 等账号信息)    —
+11   Gate → Client            隐藏 cw_login，显示 cw_selectchar      gs_none
+12   Gate → Client            SM_CHARINFO (角色列表)                 —
+13   Gate → Paid              PM_CHECKPAID（启用计费校验时）          —
+14   Paid → Gate              返回付费类型和有效期                   gs_none
+15   Client → Gate            CM_SELECTCHAR (角色名 + 服务器)        gs_selectchar
+16   Gate → DB                DB_SELECT (角色名)                    —
+17   DB → Gate                DB_SELECT 结果 (TDBRecord)            —
+18   Gate → Game              GM_CONNECT (ConnectID, TDBRecord)     gs_gotogame
+19   Game → Gate              GM_CONNECT (确认)                     gs_playing
+20   Gate → Client            隐藏 cw_selectchar，显示 cw_main       cw_main
+21   Gate → DB                DB_LOCK (角色名)                      —
+22   Game → Gate              游戏数据流                            GM_SENDGAMEDATA 转发
 ```
 
 ### 5.2 涉及的服务和消息类型
@@ -381,7 +382,7 @@ end;
 
 ### 5.3 角色锁定机制（DB_LOCK）
 
-当角色成功进入游戏后（步骤 22），Gate 向 DB 发送 `DB_LOCK`：
+当角色成功进入游戏后（步骤 21），Gate 向 DB 发送 `DB_LOCK`：
 
 ```delphi
 // gate_biscuit/uConnector.pas — GameMessageProcess
@@ -675,5 +676,8 @@ end;
 ### 客户端版本
 
 ```delphi
-PROGRAM_VERSION = 40;  // 当前客户端版本（Legacy 版本 39 被拒绝）
+// PROGRAM_VERSION = 39; // 源码中保留的旧值
+PROGRAM_VERSION = 40;    // 仓库当前启用值
 ```
+
+版本检查针对 Gate 的实际构建值。用户确认当前未修改的线上炎黄部署要求 39；仓库源码当前启用 40，不能把两者写成同一个部署版本。客户端连接具体服务器时必须发送该 Gate 实际要求的值。

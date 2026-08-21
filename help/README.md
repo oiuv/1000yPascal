@@ -5,6 +5,7 @@
 ## 核心指南
 
 - [系统架构与登录链路](architecture.md)
+- [客户端连接与通信](client-communication.md)
 - [网络协议与封包结构](protocol.md)
 - [数据库与 SDB 文件](database.md)
 - [sv1000.Ini 运维配置](sv1000.ini.md)

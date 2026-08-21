@@ -507,8 +507,11 @@ end;
   │                           │                           │
   │──── TCP连接 ─────────────────────────────────────────>│
   │                                                         │
-  │<─── 版本检查 ─────────────────────────────────────────│
-  │     (SM_RECONNECT 或继续)                                │
+  │──── CM_VERSION ───────────────────────────────────────>│
+  │     (目标Gate版本 + NATION_VERSION，加密)                 │
+  │                                                         │
+  │<─── SM_MESSAGE 或 SM_CLOSE ────────────────────────────│
+  │     (版本通过或拒绝)                                      │
   │                                                         │
   │──── 登录请求 ────────────────────────────────────────>│
   │     (CM_IDPASS, 加密)                                    │
@@ -977,11 +980,12 @@ name = data.decode('gbk').rstrip('\x00')
 
 **问题**: 连接后被服务器断开
 
-**原因**: 客户端版本号不是40
+**原因**: 客户端版本号与目标 Gate 的实际构建版本不一致
 
 **解决**: 
-- 检查 `PROGRAM_VERSION` 常量（deftype.pas）
-- 当前版本: 40（版本39会被拒绝）
+- 检查目标 Gate 使用的 `PROGRAM_VERSION` 和 `NATION_VERSION`
+- 仓库 `deftype.pas` 当前启用 40，旁边保留注释值 39；用户确认当前线上炎黄 Gate 要求 39
+- 不要以仓库源码常量替代线上部署确认值
 
 ---
 
@@ -1030,18 +1034,20 @@ Data:
   TCMove.rTick      (4字节，客户端写入移动校验值)
 ```
 
-客户端在 `FLogOn.SendMsg` 中把完整 `TCMove` 复制到 `TWordComData.Data`，再以 `PutPacket(RequestMsg=0, ResultCode=0)` 发送，不能把 `CM_MOVE` 当作外层包头字段。
+客户端在 `FLogOn.SocketAddData` 中把完整 `TCMove` 复制到 `TWordComData.Data`，再以 `PutPacket(RequestMsg=0, ResultCode=0)` 发送，不能把 `CM_MOVE` 当作外层包头字段。
 
 ### 8.3 相关文档
 
+- [客户端连接与通信](client-communication.md) — 按客户端源码说明入口配置、重定向、登录和收发调用链
 - [消息类型常量](constants/MESSAGES.md) — 完整的 SM_*/CM_*/FM_* 常量列表
 - [数据结构定义](deftype.pas) — deftype.pas 的详细文档
 - [Balance 服务](../../python_services/balance/README.md) — 负载均衡服务说明
 - [Gate 服务](../../python_services/gate/README.md) — 网关服务说明
+- [Python CLI 客户端](../../python_services/client/README.md) — 炎黄协议联调入口与当前实现范围
 
 ---
 
 **文档版本**: 1.0  
 **最后更新**: 2026-02  
 **源码版本**: 1000y Delphi 7  
-**协议版本**: 40
+**协议版本**: 仓库源码 40；当前线上炎黄部署 39
