@@ -386,9 +386,9 @@ end;
 - `SM_CHARINFO` (3): 角色基本信息
 - `SM_ATTRIBBASE` (5): 基础属性
 - `SM_ATTRIB_VALUES` (23): 属性值
-- `SM_ATTRIB_LIFE` (25): 生命数据
+- `SM_ATTRIB_LIFE` (25): 活力数据
 - `SM_HAVEITEM` (6): 物品列表
-- `SM_HAVEMAGIC` (7): 魔法列表
+- `SM_HAVEMAGIC` (7): 武功列表
 - `SM_WEARITEM` (8): 装备信息
 
 #### 场景和对象
@@ -404,7 +404,7 @@ end;
 - `SM_TURN` (15): 转向
 - `SM_SAY` (12): 说话
 - `SM_MOTION` (22): 动作
-- `SM_MAGIC` (19): 使用魔法
+- `SM_MAGIC` (19): 使用武功
 
 #### 窗口和UI
 - `SM_WINDOW` (1): 通用窗口

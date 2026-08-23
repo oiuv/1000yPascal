@@ -111,7 +111,7 @@ Field Message — 场景内对象间通信消息，通过 `TFieldPhone.SendMessa
 | `FM_SETPOSITION` | 149 | 设置位置 |
 | `FM_FILLLIFE` | 150 | 恢复活力（新手村药水池） |
 | `FM_SETEFFECT` | 151 | 设置效果（2003-10） |
-| `FM_ADDLIFEORENERGY` | 153 | 增加生命或能量（2003-10） |
+| `FM_ADDLIFEORENERGY` | 153 | 增加活力或元气（2003-10） |
 | `FM_ADDMINEREXP` | 154 | 增加矿工经验 |
 
 ### 特殊消息
@@ -163,7 +163,7 @@ Server Message — 服务端发送给客户端的消息。
 | `SM_WEARITEM` | 8 | 穿戴物品 |
 | `SM_ATTRIB_VALUES` | 23 | 属性值 |
 | `SM_ATTRIB_FIGHTBASIC` | 24 | 战斗基础属性 |
-| `SM_ATTRIB_LIFE` | 25 | 生命属性 |
+| `SM_ATTRIB_LIFE` | 25 | 活力属性 |
 | `SM_EXTRAATTRIB_VALUES` | 87 | 额外属性值 |
 | `SM_ABILITYATTRIB` | 96 | 角色能力属性 |
 

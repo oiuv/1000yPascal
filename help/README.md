@@ -4,6 +4,7 @@
 
 ## 核心指南
 
+- [统一术语表](TERMINOLOGY.md)
 - [系统架构与登录链路](architecture.md)
 - [客户端连接与通信](client-communication.md)
 - [网络协议与封包结构](protocol.md)

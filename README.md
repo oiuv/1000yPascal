@@ -1,6 +1,8 @@
 # 千年游戏开发手册
 
-运维配置、协议、数据表及资料边界统一从 [千年服务端技术资料](help/README.md) 进入；脚本事件可从 [过程事件索引](procedure/README.md) 和 [返回值事件索引](function/README.md) 查阅。
+运维配置、协议、数据表及资料边界统一从 [千年服务端技术资料](help/README.md) 进入；
+源码英文名与客户端中文名遵循 [统一术语表](help/TERMINOLOGY.md)；脚本事件可从
+[过程事件索引](procedure/README.md) 和 [返回值事件索引](function/README.md) 查阅。
 
 ## 基本介绍
 
